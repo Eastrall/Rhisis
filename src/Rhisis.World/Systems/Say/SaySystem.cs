@@ -1,11 +1,7 @@
-﻿using Rhisis.Core.Exceptions;
-using Rhisis.World.Core.Systems;
+﻿using Rhisis.World.Core.Systems;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Interfaces;
 using Rhisis.World.Game.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace Rhisis.World.Systems.Say
 {
@@ -20,19 +16,23 @@ namespace Rhisis.World.Systems.Say
         {
         }
 
-        public static void GetTargetSay (IPlayerEntity player, string[] parameters, SayEventArgs e)
+        public static void GetTargetSay (IPlayerEntity player, int target, string[] parameters, SayEventArgs e)
         {
-            var targetName = from p in player. select parameters[0];
+            // Grab character's name using parameters[0]
+
+            var targetName = from p in player.Context.Entities select player.Id;
+            // Get ID of player with his name + Check if it exist, if not, use RhisisSystemException
+            // Check if the character is online to be able to send MP
 
             if (e.TargetSayId == player.Id)
             {
-                throw new RhisisSystemException($"Can't start a Trade with ourselve ({player.Object.Name})");
+                throw new RhisisSystemException($"Can't say ourselve ({player.Object.Name})");
             }
         }
-
         public static void PrivateMessageSay(IPlayerEntity player, string[] parameters)
         {
-
+            // Get all parameters[1+] and create un string to send as PM
+            string privateMessage = string.Join(" ", parameters);
         }
     }
 }
