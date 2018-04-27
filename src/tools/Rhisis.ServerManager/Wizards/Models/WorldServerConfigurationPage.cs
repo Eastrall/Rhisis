@@ -1,7 +1,6 @@
 ﻿using Rhisis.Core.Structures.Configuration;
 using Rhisis.ServerManager.Models;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace Rhisis.ServerManager.Wizards.Models
 {
@@ -26,9 +25,5 @@ namespace Rhisis.ServerManager.Wizards.Models
 
         public ObservableCollection<WorldSystem> WorldSystems { get; }
 
-        public override async Task Apply(WorldConfiguration worldConfiguration)
-        {
-
-        }
     }
 }

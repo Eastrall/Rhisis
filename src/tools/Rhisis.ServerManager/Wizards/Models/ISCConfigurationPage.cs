@@ -1,5 +1,4 @@
 ﻿using Rhisis.Core.Structures.Configuration;
-using System.Threading.Tasks;
 
 namespace Rhisis.ServerManager.Wizards.Models
 {
@@ -13,9 +12,5 @@ namespace Rhisis.ServerManager.Wizards.Models
 
         public string Password { get; set; }
 
-        public override async Task Apply(ISCConfiguration configuration)
-        {
-
-        }
     }
 }

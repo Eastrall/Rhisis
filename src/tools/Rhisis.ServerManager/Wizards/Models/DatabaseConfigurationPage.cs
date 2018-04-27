@@ -1,5 +1,4 @@
 ﻿using Rhisis.Core.Structures.Configuration;
-using System.Threading.Tasks;
 
 namespace Rhisis.ServerManager.Wizards.Models
 {
@@ -20,9 +19,5 @@ namespace Rhisis.ServerManager.Wizards.Models
 
         public DatabaseProvider Provider { get; set; }
 
-        public override async Task Apply(DatabaseConfiguration configuration)
-        {
-
-        }
     }
 }
