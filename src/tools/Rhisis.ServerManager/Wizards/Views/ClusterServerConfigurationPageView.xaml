@@ -1,0 +1,44 @@
+﻿<catel:UserControl  x:Class="Rhisis.ServerManager.Wizards.Views.ClusterServerConfigurationPageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:catel="http://schemas.catelproject.com"
+      xmlns:res="clr-namespace:Rhisis.ServerManager.Properties"
+      xmlns:orc="http://www.wildgums.net.au/orc"
+      mc:Ignorable="d" Background="White"
+      d:DesignHeight="300" d:DesignWidth="300">
+    <orc:StackGrid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Host -->
+        <TextBlock Text="{x:Static res:Resources.Host}" Margin="0,8,0,0" />
+        <TextBox Margin="0,8,0,0" Text="{Binding Host, Mode=TwoWay}" />
+
+
+        <!-- Port -->
+        <TextBlock Text="{x:Static res:Resources.Port}" Margin="0,8,0,0" />
+        <TextBox  Margin="0,8,0,0" Text="{Binding Port, Mode=TwoWay}" />
+
+        <TextBlock Text="{x:Static res:Resources.Identifier}" Margin="0,8,0,0" />
+        <TextBox Margin="0,8,0,0" Text="{Binding Id, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
+        
+        <TextBlock Text="{x:Static res:Resources.Name}" Margin="0,8,0,0" />
+        <TextBox  Margin="0,8,0,0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
+
+        <TextBlock Text="{x:Static res:Resources.EnableLoginProtect}" Margin="0,16,0,0" />
+        <CheckBox  Margin="0,16,0,0" IsChecked="{Binding EnableLoginProtect}"/>
+    </orc:StackGrid>
+</catel:UserControl>

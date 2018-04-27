@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CC42CC8A-A3BC-4913-90A0-1AF2213A870F}"
 EndProject
@@ -40,6 +40,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhisis.Installer", "src\tools\Rhisis.Installer\Rhisis.Installer.csproj", "{8EF0988E-C4FC-4E5A-9EA4-C7E720CF24AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhisis.Tools.Core", "src\tools\Rhisis.Tools.Core\Rhisis.Tools.Core.csproj", "{BEC2AFBB-87F5-46C8-A75C-0191614B7707}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhisis.ServerManager", "src\tools\Rhisis.ServerManager\Rhisis.ServerManager.csproj", "{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,10 @@ Global
 		{BEC2AFBB-87F5-46C8-A75C-0191614B7707}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEC2AFBB-87F5-46C8-A75C-0191614B7707}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEC2AFBB-87F5-46C8-A75C-0191614B7707}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +114,7 @@ Global
 		{3DAEED31-28E8-4220-869C-B05951420155} = {33862335-9BF3-4985-81B2-4136B4CAB46C}
 		{8EF0988E-C4FC-4E5A-9EA4-C7E720CF24AC} = {33862335-9BF3-4985-81B2-4136B4CAB46C}
 		{BEC2AFBB-87F5-46C8-A75C-0191614B7707} = {33862335-9BF3-4985-81B2-4136B4CAB46C}
+		{DDE4F627-C7CC-41E2-978C-F675C7B5D3FC} = {33862335-9BF3-4985-81B2-4136B4CAB46C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B573C179-78E3-4F7B-8CFB-289754036BBA}
