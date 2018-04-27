@@ -1,19 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Rhisis.Database
+namespace Rhisis.Core.Structures.Configuration
 {
     [DataContract]
-    public class DatabaseConfiguration
+    public class DatabaseConfiguration : BaseConfiguration
     {
-        [DataMember(Name = "host")]
-        [DefaultValue("127.0.0.1")]
-        public string Host { get; set; }
-
-        [DataMember(Name = "port")]
-        [DefaultValue("3306")]
-        public int Port { get; set; }
-
         [DataMember(Name = "username")]
         [DefaultValue("root")]
         public string Username { get; set; }

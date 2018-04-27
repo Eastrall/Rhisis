@@ -1,4 +1,4 @@
-﻿namespace Rhisis.Database
+﻿namespace Rhisis.Core.Structures.Configuration
 {
     public enum DatabaseProvider
     {
