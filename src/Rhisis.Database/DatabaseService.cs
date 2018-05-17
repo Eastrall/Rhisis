@@ -1,6 +1,7 @@
 ﻿using Rhisis.Database.Contexts;
 using Rhisis.Database.Exceptions;
 using System;
+using Rhisis.Core.Structures.Configuration;
 
 namespace Rhisis.Database
 {

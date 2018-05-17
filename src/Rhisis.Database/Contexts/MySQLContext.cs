@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Rhisis.Core.Structures.Configuration;
 
 namespace Rhisis.Database.Contexts
 {

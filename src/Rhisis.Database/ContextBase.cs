@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database.Interfaces;
 using Rhisis.Database.Repositories;
 using Rhisis.Database.Structures;
