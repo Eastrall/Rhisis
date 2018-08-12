@@ -58,8 +58,7 @@ namespace Rhisis.World.Game.Chat
                     Name = WorldServer.Movers[moverId].Name,
                     Size = ObjectComponent.DefaultObjectSize,
                     Spawned = true,
-                    Level = WorldServer.Movers[moverId].Level,
-                    en
+                    Level = WorldServer.Movers[moverId].Level
                 };
 
                 monster.TimerComponent = new TimerComponent
