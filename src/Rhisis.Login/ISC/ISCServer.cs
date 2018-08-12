@@ -52,7 +52,7 @@ namespace Rhisis.Login.ISC
         protected override void OnClientDisconnected(ISCClient connection)
         {
             if (string.IsNullOrEmpty(connection.ServerInfo?.Name))
-                Logger.Info("Unknow server disconnected from InterServer.");
+                Logger.Info("Unknown server disconnected from InterServer.");
             else
             {
                 Logger.Info("Server '{0}' disconnected from InterServer.", connection.ServerInfo.Name);

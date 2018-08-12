@@ -57,7 +57,7 @@ namespace Rhisis.Login
             this._interServer = new ISCServer(this.LoginConfiguration.ISC);
             this._interServer.Start();
 
-            Logger.Info("Rhisis login server is up");
+            Logger.Info("Login Server is up.");
         }
 
         /// <inheritdoc />
