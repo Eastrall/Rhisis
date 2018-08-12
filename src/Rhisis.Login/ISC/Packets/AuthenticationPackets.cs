@@ -19,7 +19,7 @@ namespace Rhisis.Login.ISC.Packets
             }
         }
 
-        public static void SendAuthenticationResult(INetUser client, InterServerError error)
+        public static void SendAuthenticationResult(INetUser client, InterServerCode error)
         {
             using (var packet = new NetPacket())
             {

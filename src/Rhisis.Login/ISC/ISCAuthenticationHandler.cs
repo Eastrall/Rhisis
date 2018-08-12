@@ -26,13 +26,13 @@ namespace Rhisis.Login.ISC
                 if (client.IcsServer.HasClusterWithId(id))
                 {
                     Logger.Warn("Server '{0}' disconnected. Reason: Cluster already exists.", name);
-                    PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_FAILED_CLUSTER_EXISTS);
+                    PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_FAILED_CLUSTER_EXISTS);
                     client.IcsServer.DisconnectClient(client.Id);
                 }
 
                 client.ServerInfo = new ClusterServerInfo(id, host, name);
                 
-                PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_SUCCESS);
+                PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_SUCCESS);
                 Logger.Info("Cluster Server '{0}' connected to InterServer.", name);
             }
             else if (client.Type == InterServerType.World)
@@ -44,7 +44,7 @@ namespace Rhisis.Login.ISC
                 {
                     // No cluster for this server
                     Logger.Warn("Cluster Server with id: '{0}' doesn't exists for World Server '{1}'", clusterId, name);
-                    PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_FAILED_NO_CLUSTER);
+                    PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_FAILED_NO_CLUSTER);
                     client.IcsServer.DisconnectClient(client.Id);
                 }
 
@@ -55,19 +55,19 @@ namespace Rhisis.Login.ISC
                 {
                     // World already exists in cluster
                     Logger.Warn("World Server '{0}' already exists in Cluster '{1}'", name, clusterInfo.Name);
-                    PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_FAILED_WORLD_EXISTS);
+                    PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_FAILED_WORLD_EXISTS);
                     client.IcsServer.DisconnectClient(client.Id);
                 }
 
                 client.ServerInfo = new WorldServerInfo(id, host, name, clusterId);
                 clusterInfo.Worlds.Add(client.ServerInfo as WorldServerInfo);
-                PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_SUCCESS);
+                PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_SUCCESS);
                 PacketFactory.SendUpdateWorldList(cluster, clusterInfo.Worlds);
                 Logger.Info("World Server '{0}' connected to Cluster '{1}'.", name, clusterInfo.Name);
             }
             else
             {
-                PacketFactory.SendAuthenticationResult(client, InterServerError.AUTH_FAILED_UNKNOW_SERVER);
+                PacketFactory.SendAuthenticationResult(client, InterServerCode.AUTH_FAILED_UNKNOW_SERVER);
                 client.IcsServer.DisconnectClient(client.Id);
             }
         }

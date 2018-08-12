@@ -2,7 +2,7 @@
 {
     public enum InterServerType
     {
-        Unknow,
+        Unknown,
         Cluster,
         World
     }

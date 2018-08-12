@@ -1,6 +1,6 @@
 ﻿namespace Rhisis.Core.ISC.Packets
 {
-    public enum InterServerError : uint
+    public enum InterServerCode : uint
     {
         AUTH_SUCCESS = 0,
         AUTH_FAILED_UNKNOW_SERVER,

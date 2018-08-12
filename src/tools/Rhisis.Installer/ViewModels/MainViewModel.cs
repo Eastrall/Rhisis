@@ -153,7 +153,7 @@ namespace Rhisis.Installer.ViewModels
                 {
                     bool result = this.DialogService.ShowQuestion(
                         App.Instance.GetTranslation("NoDatabaseTitle"), 
-                        App.Instance.GetTranslation("NoDatabaseTitle", this._databaseConfiguration.Database));
+                        App.Instance.GetTranslation("NoDatabaseMessage", this._databaseConfiguration.Database));
 
                     if (result)
                     {
@@ -163,8 +163,9 @@ namespace Rhisis.Installer.ViewModels
             }
 
             DatabaseService.UnloadConfiguration();
+            ConfigurationHelper.Save(DatabaseConfigurationPath, this._databaseConfiguration);
             await Task.Delay(500);
-
+            
             this.CurrentStep++;
         }
 

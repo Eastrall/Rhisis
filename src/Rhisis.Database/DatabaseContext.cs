@@ -13,7 +13,7 @@ namespace Rhisis.Database
     public class DatabaseContext : DbContext
     {
         private const string MySqlConnectionString = "server={0};userid={1};pwd={2};port={4};database={3};sslmode=none;";
-        private const string MsSqlConnectionString = "Server={0};Database={1};User Id={2};Password={3};";
+        private const string MsSqlConnectionString = "Server={0},{1};Database={2};User Id={3};Password={4};";
         private static readonly string DefaultConfigFile = Path.Combine(Environment.CurrentDirectory, "..", "..", "bin", "config", "database.json");
         private readonly DatabaseConfiguration _configuration;
 
@@ -74,7 +74,7 @@ namespace Rhisis.Database
                     optionsBuilder.UseSqlServer(this.GetConnectionString(this._configuration, MsSqlConnectionString));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotImplementedException();
             }
             
             base.OnConfiguring(optionsBuilder);
@@ -119,12 +119,16 @@ namespace Rhisis.Database
             {
                 case DatabaseProvider.MySql:
                     return string.Format(connectionString,
-                        configuration.Host, configuration.Username, configuration.Password,
-                        configuration.Database, configuration.Port);
+                        configuration.Host,
+                        configuration.Username,
+                        configuration.Password,
+                        configuration.Database,
+                        configuration.Port);
                 case DatabaseProvider.MsSql:
                     return string.Format(connectionString,
-                        configuration.Database,
                         configuration.Host,
+                        configuration.Port,
+                        configuration.Database,
                         configuration.Username,
                         configuration.Password);
 

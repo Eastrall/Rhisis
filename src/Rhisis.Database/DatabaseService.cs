@@ -61,7 +61,7 @@ namespace Rhisis.Database
         public static DatabaseContext GetContext()
         {
             return Configuration == null
-                ? throw new RhisisDatabaseConfigurationException("Database is not configured.")
+                ? throw new RhisisDatabaseConfigurationException("Database configuration is not set.")
                 : new DatabaseContext(Configuration);
         }
     }

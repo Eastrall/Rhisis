@@ -21,7 +21,7 @@ namespace Rhisis.Cluster.ISC
         {
             var authenticationResult = packet.Read<uint>();
 
-            Logger.Debug("Authentication result: {0}", (InterServerError)authenticationResult);
+            Logger.Debug("Authentication result: {0}", (InterServerCode)authenticationResult);
         }
 
         [PacketHandler(InterPacketType.UpdateClusterWorldsList)]

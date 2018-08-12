@@ -102,11 +102,11 @@ namespace Rhisis.Installer.ViewModels
                 context.OpenConnection();
 
                 this.Configuration.IsValid = true;
-                this.DialogService.ShowInformation("Connection success", "The connection has succeeded");
+                this.DialogService.ShowInformation("Connection success", "The connection has succeeded.");
             }
             catch (DbException e)
             {
-                this.DialogService.ShowInformation("Connection error", $"Cannot find database. {e.Message}");
+                this.DialogService.ShowError("Connection error", e.Message);
             }
             finally
             {
