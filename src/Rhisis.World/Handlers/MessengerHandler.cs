@@ -27,5 +27,15 @@ namespace Rhisis.World.Handlers
 
             client.Player.NotifySystem<MessengerSystem>(addFriendCancelEventArgs);
         }
+
+        [PacketHandler(PacketType.ADDFRIENDNAMEREQEST)]
+        public static void OnAddFriendNameRequest(WorldClient client, INetPacketStream packet)
+        {
+            var leaderId = packet.Read<int>();
+            var memberName = packet.Read<string>();
+            var addFriendNameRequestEventArgs = new AddFriendNameRequestEventArgs(leaderId, memberName);
+
+            client.Player.NotifySystem<MessengerSystem>(addFriendNameRequestEventArgs);
+        }
     }
 }

@@ -3,6 +3,7 @@ using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Messenger.EventArgs;
+using System;
 using System.Linq;
 
 namespace Rhisis.World.Systems.Messenger
@@ -35,6 +36,9 @@ namespace Rhisis.World.Systems.Messenger
                 case AddFriendRequestEventArgs addFriendRequestEventArgs:
                     this.OnAddFriendRequest(playerEntity, addFriendRequestEventArgs);
                     break;
+                case AddFriendNameRequestEventArgs addFriendNameRequestEventArgs:
+                    this.OnAddFriendNameRequest(playerEntity, addFriendNameRequestEventArgs);
+                    break;
                 case AddFriendCancelEventArgs addFriendCancelEventArgs:
                     this.OnAddFriendCancel(playerEntity, addFriendCancelEventArgs);
                     break;
@@ -48,23 +52,37 @@ namespace Rhisis.World.Systems.Messenger
                 .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.MemberId)
                 .FirstOrDefault() as IPlayerEntity;
 
-            if(member == null)
+            OnAddFriendRequest(playerEntity, member);
+        }
+
+        private void OnAddFriendNameRequest(IPlayerEntity playerEntity, AddFriendNameRequestEventArgs e)
+        {
+            var member = playerEntity.Context.Entities
+                .Where(x => x is IPlayerEntity memberEntity && string.Equals(memberEntity.Object.Name, e.MemberName, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault() as IPlayerEntity;
+
+            OnAddFriendRequest(playerEntity, member);
+        }
+
+        private void OnAddFriendRequest(IPlayerEntity playerEntity, IPlayerEntity memberEntity)
+        {
+            if (memberEntity == null)
             {
-                Logger.Error($"Player {e.MemberId} was not found.");
+                Logger.Error($"Player {memberEntity.PlayerData.Id} was not found.");
             }
             else
             {
-                if(playerEntity.Messenger.IsFriend(member.Id))
+                if (playerEntity.Messenger.IsFriend(memberEntity.Id))
                 {
-                    Logger.Warn($"Player {member.PlayerData.Id} is already a friend.");
+                    Logger.Warn($"Player {memberEntity.PlayerData.Id} is already a friend.");
                 }
                 else
                 {
-                    WorldPacketFactory.SendAddFriendRequest(playerEntity, member);
+                    WorldPacketFactory.SendAddFriendRequest(playerEntity, memberEntity);
                 }
             }
         }
-        
+
         private void OnAddFriendCancel(IPlayerEntity playerEntity, AddFriendCancelEventArgs e)
         {
             var member = playerEntity.Context.Entities
