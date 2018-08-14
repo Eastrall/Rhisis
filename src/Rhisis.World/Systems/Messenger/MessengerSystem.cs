@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Rhisis.Core.Data;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
@@ -38,6 +39,9 @@ namespace Rhisis.World.Systems.Messenger
                     break;
                 case AddFriendNameRequestEventArgs addFriendNameRequestEventArgs:
                     this.OnAddFriendNameRequest(playerEntity, addFriendNameRequestEventArgs);
+                    break;
+                case AddFriendEventArgs addFriendEventArgs:
+                    this.OnAddFriend(playerEntity, addFriendEventArgs);
                     break;
                 case AddFriendCancelEventArgs addFriendCancelEventArgs:
                     this.OnAddFriendCancel(playerEntity, addFriendCancelEventArgs);
@@ -80,6 +84,33 @@ namespace Rhisis.World.Systems.Messenger
                 {
                     WorldPacketFactory.SendAddFriendRequest(playerEntity, memberEntity);
                 }
+            }
+        }
+
+        private void OnAddFriend(IPlayerEntity playerEntity, AddFriendEventArgs e)
+        {
+            var friend = playerEntity.Context.Entities
+                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.MemberId)
+                .FirstOrDefault() as IPlayerEntity;
+
+            if (friend == null)
+            {
+                Logger.Warn($"Player {e.MemberId} does not exist.");
+            }
+            else
+            {
+                Logger.Debug($"Adding each other to friend list.");
+
+                friend.Messenger.Friends.Add(playerEntity);
+                playerEntity.Messenger.Friends.Add(friend);
+
+                // TODO: Check Max Friends
+
+                WorldPacketFactory.SendAddFriend(friend, playerEntity);
+                WorldPacketFactory.SendAddFriend(playerEntity, friend);
+
+                WorldPacketFactory.SendDefinedText(friend, DefineText.TID_GAME_MSGINVATECOM);
+                WorldPacketFactory.SendDefinedText(playerEntity, DefineText.TID_GAME_MSGINVATECOM);
             }
         }
 

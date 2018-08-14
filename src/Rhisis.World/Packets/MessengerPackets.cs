@@ -29,5 +29,17 @@ namespace Rhisis.World.Packets
                 toEntity.Connection.Send(packet);
             }
         }
+
+        public static void SendAddFriend(IPlayerEntity toEntity, IPlayerEntity friendEntity)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(toEntity.PlayerData.Id, SnapshotType.ADDFRIEND);
+                packet.Write(friendEntity.PlayerData.Id);
+                packet.Write(friendEntity.Object.Name);
+
+                toEntity.Connection.Send(packet);
+            }
+        }
     }
 }

@@ -37,5 +37,19 @@ namespace Rhisis.World.Handlers
 
             client.Player.NotifySystem<MessengerSystem>(addFriendNameRequestEventArgs);
         }
+
+        [PacketHandler(PacketType.ADDFRIEND)]
+        public static void OnAddFriend(WorldClient client, INetPacketStream packet)
+        {
+            var memberId = packet.Read<int>();
+            var leaderId = packet.Read<int>();
+            var memberGender = packet.Read<byte>();
+            var leaderGender = packet.Read<byte>();
+            var memberJob = packet.Read<int>();
+            var leaderJob = packet.Read<int>();
+            var addFriendEventArgs = new AddFriendEventArgs(leaderId, memberId, leaderGender, memberGender, leaderJob, memberJob);
+
+            client.Player.NotifySystem<MessengerSystem>(addFriendEventArgs);
+        }
     }
 }
