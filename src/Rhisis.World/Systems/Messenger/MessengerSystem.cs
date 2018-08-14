@@ -35,12 +35,16 @@ namespace Rhisis.World.Systems.Messenger
                 case AddFriendRequestEventArgs addFriendRequestEventArgs:
                     this.OnAddFriendRequest(playerEntity, addFriendRequestEventArgs);
                     break;
+                case AddFriendCancelEventArgs addFriendCancelEventArgs:
+                    this.OnAddFriendCancel(playerEntity, addFriendCancelEventArgs);
+                    break;
+
             }
         }
 
-        private void OnAddFriendRequest(IPlayerEntity entity, AddFriendRequestEventArgs e)
+        private void OnAddFriendRequest(IPlayerEntity playerEntity, AddFriendRequestEventArgs e)
         {
-            var member = entity.Context.Entities
+            var member = playerEntity.Context.Entities
                 .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.MemberId)
                 .FirstOrDefault() as IPlayerEntity;
 
@@ -50,15 +54,25 @@ namespace Rhisis.World.Systems.Messenger
             }
             else
             {
-                if(entity.Messenger.IsFriend(member.Id))
+                if(playerEntity.Messenger.IsFriend(member.Id))
                 {
-                    Logger.Warn($"Player {member.Id} is already a friend.");
+                    Logger.Warn($"Player {member.PlayerData.Id} is already a friend.");
                 }
                 else
                 {
-                    WorldPacketFactory.SendAddFriendRequest(entity, member);
+                    WorldPacketFactory.SendAddFriendRequest(playerEntity, member);
                 }
             }
+        }
+        
+        private void OnAddFriendCancel(IPlayerEntity playerEntity, AddFriendCancelEventArgs e)
+        {
+            var member = playerEntity.Context.Entities
+                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.LeaderId)
+                .FirstOrDefault() as IPlayerEntity;
+
+            Logger.Debug($"Player {playerEntity.PlayerData.Id} denied friend request of {e.LeaderId}");
+            WorldPacketFactory.SendAddFriendCancel(playerEntity, member);
         }
     }
 }
