@@ -109,8 +109,7 @@ namespace Rhisis.World.Systems.Messenger
                 WorldPacketFactory.SendAddFriend(friend, playerEntity);
                 WorldPacketFactory.SendAddFriend(playerEntity, friend);
 
-                WorldPacketFactory.SendDefinedText(friend, DefineText.TID_GAME_MSGINVATECOM);
-                WorldPacketFactory.SendDefinedText(playerEntity, DefineText.TID_GAME_MSGINVATECOM);
+                // TODO: SendDefinedText with name parameter.
             }
         }
 
