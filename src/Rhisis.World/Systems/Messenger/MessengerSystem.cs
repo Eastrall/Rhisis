@@ -72,7 +72,7 @@ namespace Rhisis.World.Systems.Messenger
         {
             if (memberEntity == null)
             {
-                Logger.Error($"Player {memberEntity.PlayerData.Id} was not found.");
+                Logger.Error($"memberEntity is null.");
             }
             else
             {
