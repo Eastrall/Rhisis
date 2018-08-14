@@ -16,6 +16,8 @@ namespace Rhisis.World.Game.Entities
         StatisticsComponent Statistics { get; set; }
 
         TradeComponent Trade { get; set; }
+
+        MessengerComponent Messenger { get; set; }
         
         NetUser Connection { get; set; }
 
