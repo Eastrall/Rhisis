@@ -29,6 +29,9 @@ namespace Rhisis.World.Game.Entities
         public TradeComponent Trade { get; set; }
 
         /// <inheritdoc />
+        public MessengerComponent Messenger { get; set; }
+
+        /// <inheritdoc />
         public NetUser Connection { get; set; }
 
         /// <inheritdoc />
@@ -46,6 +49,7 @@ namespace Rhisis.World.Game.Entities
         {
             this.Trade = new TradeComponent();
             this.Follow = new FollowComponent();
+            this.Messenger = new MessengerComponent();
         }
     }
 }
