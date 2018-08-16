@@ -4,17 +4,17 @@ namespace Rhisis.World.Systems.Messenger.EventArgs
 {
     public class AddFriendNameRequestEventArgs : SystemEventArgs
     {
-        public int LeaderId { get; }
-        public string MemberName { get; }
+        public int SenderId { get; }
+        public string ReceiverId { get; }
 
-        public AddFriendNameRequestEventArgs(int leaderId, string memberName)
+        public AddFriendNameRequestEventArgs(int senderId, string receiverId)
         {
-            this.LeaderId = leaderId;
-            this.MemberName = memberName;
+            this.SenderId = senderId;
+            this.ReceiverId = receiverId;
         }
 
         public override bool CheckArguments() =>
-            this.LeaderId > 0
-            && !string.IsNullOrWhiteSpace(this.MemberName);
+            this.SenderId > 0
+            && !string.IsNullOrWhiteSpace(this.ReceiverId);
     }
 }

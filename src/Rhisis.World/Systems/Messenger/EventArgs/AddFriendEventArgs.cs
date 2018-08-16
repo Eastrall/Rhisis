@@ -4,24 +4,24 @@ namespace Rhisis.World.Systems.Messenger.EventArgs
 {
     public class AddFriendEventArgs : SystemEventArgs
     {
-        public int LeaderId { get; }
-        public int MemberId { get; }
-        public byte LeaderGender { get; }
-        public byte MemberGender { get; }
-        public int LeaderJob { get; }
-        public int MemberJob { get; }
+        public int SenderId { get; }
+        public int ReceiverId { get; }
+        public byte SenderGender { get; }
+        public byte ReceiverGender { get; }
+        public int SenderJob { get; }
+        public int ReceiverJob { get; }
 
-        public AddFriendEventArgs(int leaderId, int memberId, byte leaderGender, byte memberGender, int leaderJob, int memberJob)
+        public AddFriendEventArgs(int senderId, int receiverId, byte senderGender, byte receiverGender, int senderJob, int receiverJob)
         {
-            LeaderId = leaderId;
-            MemberId = memberId;
-            LeaderGender = leaderGender;
-            MemberGender = memberGender;
-            LeaderJob = leaderJob;
-            MemberJob = memberJob;
+            SenderId = senderId;
+            ReceiverId = receiverId;
+            SenderGender = senderGender;
+            ReceiverGender = receiverGender;
+            SenderJob = senderJob;
+            ReceiverJob = receiverJob;
         }
 
         // TODO: Check Job and Gender arguments
-        public override bool CheckArguments() => LeaderId > 0 && MemberId > 0 && LeaderId != MemberId;
+        public override bool CheckArguments() => SenderId > 0 && ReceiverId > 0 && SenderId != ReceiverId;
     }
 }

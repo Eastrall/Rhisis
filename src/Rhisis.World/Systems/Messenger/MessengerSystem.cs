@@ -1,5 +1,4 @@
 ﻿using NLog;
-using Rhisis.Core.Data;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
@@ -53,7 +52,7 @@ namespace Rhisis.World.Systems.Messenger
         private void OnAddFriendRequest(IPlayerEntity playerEntity, AddFriendRequestEventArgs e)
         {
             var member = playerEntity.Context.Entities
-                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.MemberId)
+                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.ReceiverId)
                 .FirstOrDefault() as IPlayerEntity;
 
             OnAddFriendRequest(playerEntity, member);
@@ -62,7 +61,7 @@ namespace Rhisis.World.Systems.Messenger
         private void OnAddFriendNameRequest(IPlayerEntity playerEntity, AddFriendNameRequestEventArgs e)
         {
             var member = playerEntity.Context.Entities
-                .Where(x => x is IPlayerEntity memberEntity && string.Equals(memberEntity.Object.Name, e.MemberName, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x is IPlayerEntity memberEntity && string.Equals(memberEntity.Object.Name, e.ReceiverId, StringComparison.InvariantCultureIgnoreCase))
                 .FirstOrDefault() as IPlayerEntity;
 
             OnAddFriendRequest(playerEntity, member);
@@ -72,7 +71,7 @@ namespace Rhisis.World.Systems.Messenger
         {
             if (memberEntity == null)
             {
-                Logger.Error($"memberEntity is null.");
+                Logger.Error($"Cannot find target player.");
             }
             else
             {
@@ -90,12 +89,12 @@ namespace Rhisis.World.Systems.Messenger
         private void OnAddFriend(IPlayerEntity playerEntity, AddFriendEventArgs e)
         {
             var friend = playerEntity.Context.Entities
-                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.MemberId)
+                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.ReceiverId)
                 .FirstOrDefault() as IPlayerEntity;
 
             if (friend == null)
             {
-                Logger.Warn($"Player {e.MemberId} does not exist.");
+                Logger.Warn($"Player {e.ReceiverId} does not exist.");
             }
             else
             {
@@ -116,10 +115,10 @@ namespace Rhisis.World.Systems.Messenger
         private void OnAddFriendCancel(IPlayerEntity playerEntity, AddFriendCancelEventArgs e)
         {
             var member = playerEntity.Context.Entities
-                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.LeaderId)
+                .Where(x => x is IPlayerEntity memberEntity && memberEntity != null && memberEntity.PlayerData.Id == e.SenderId)
                 .FirstOrDefault() as IPlayerEntity;
 
-            Logger.Debug($"Player {playerEntity.PlayerData.Id} denied friend request of {e.LeaderId}");
+            Logger.Debug($"Player {playerEntity.PlayerData.Id} denied friend request of {e.SenderId}");
             WorldPacketFactory.SendAddFriendCancel(playerEntity, member);
         }
     }

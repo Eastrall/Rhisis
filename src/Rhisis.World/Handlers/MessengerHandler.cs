@@ -11,9 +11,9 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.ADDFRIENDREQEST)]
         public static void OnAddFriendRequest(WorldClient client, INetPacketStream packet)
         {
-            var leaderId = packet.Read<int>();
-            var memberId = packet.Read<int>();
-            var addFriendRequestEventArgs = new AddFriendRequestEventArgs(leaderId, memberId);
+            var senderId = packet.Read<int>();
+            var receiverId = packet.Read<int>();
+            var addFriendRequestEventArgs = new AddFriendRequestEventArgs(senderId, receiverId);
 
             client.Player.NotifySystem<MessengerSystem>(addFriendRequestEventArgs);
         }
@@ -21,9 +21,9 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.ADDFRIENDCANCEL)]
         public static void OnAddFriendCancel(WorldClient client, INetPacketStream packet)
         {
-            var leaderId = packet.Read<int>();
-            var memberId = packet.Read<int>();
-            var addFriendCancelEventArgs = new AddFriendCancelEventArgs(leaderId, memberId);
+            var senderId = packet.Read<int>();
+            var receiverId = packet.Read<int>();
+            var addFriendCancelEventArgs = new AddFriendCancelEventArgs(senderId, receiverId);
 
             client.Player.NotifySystem<MessengerSystem>(addFriendCancelEventArgs);
         }
@@ -31,9 +31,9 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.ADDFRIENDNAMEREQEST)]
         public static void OnAddFriendNameRequest(WorldClient client, INetPacketStream packet)
         {
-            var leaderId = packet.Read<int>();
-            var memberName = packet.Read<string>();
-            var addFriendNameRequestEventArgs = new AddFriendNameRequestEventArgs(leaderId, memberName);
+            var senderId = packet.Read<int>();
+            var receiverId = packet.Read<string>();
+            var addFriendNameRequestEventArgs = new AddFriendNameRequestEventArgs(senderId, receiverId);
 
             client.Player.NotifySystem<MessengerSystem>(addFriendNameRequestEventArgs);
         }
@@ -41,13 +41,13 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.ADDFRIEND)]
         public static void OnAddFriend(WorldClient client, INetPacketStream packet)
         {
-            var memberId = packet.Read<int>();
-            var leaderId = packet.Read<int>();
-            var memberGender = packet.Read<byte>();
-            var leaderGender = packet.Read<byte>();
-            var memberJob = packet.Read<int>();
-            var leaderJob = packet.Read<int>();
-            var addFriendEventArgs = new AddFriendEventArgs(leaderId, memberId, leaderGender, memberGender, leaderJob, memberJob);
+            var receiverId = packet.Read<int>();
+            var senderId = packet.Read<int>();
+            var receiverGender = packet.Read<byte>();
+            var senderGender = packet.Read<byte>();
+            var receiverJob = packet.Read<int>();
+            var senderJob = packet.Read<int>();
+            var addFriendEventArgs = new AddFriendEventArgs(senderId, receiverId, senderGender, receiverGender, senderJob, receiverJob);
 
             client.Player.NotifySystem<MessengerSystem>(addFriendEventArgs);
         }
