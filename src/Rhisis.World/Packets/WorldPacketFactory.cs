@@ -51,9 +51,8 @@ namespace Rhisis.World.Packets
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.DEFINEDTEXT);
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.DEFINEDTEXT1);
                 packet.Write(textId);
-                packet.Write(0);
 
                 entity.Connection.Send(packet);
             }
