@@ -3,10 +3,10 @@ using Ether.Network.Packets;
 using NLog;
 using Rhisis.Core.Exceptions;
 using Rhisis.Core.Helpers;
-using Rhisis.Network.ISC.Structures;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
 using Rhisis.Core.Structures.Configuration;
+using Rhisis.Network;
+using Rhisis.Network.ISC.Structures;
+using Rhisis.Network.Packets;
 using System;
 using System.Collections.Generic;
 
@@ -37,8 +37,6 @@ namespace Rhisis.Login
         /// </summary>
         public string RemoteEndPoint { get; private set; }
 
-        
-
         /// <summary>
         /// Creates a new <see cref="LoginClient"/> instance.
         /// </summary>
@@ -66,6 +64,7 @@ namespace Rhisis.Login
             this.Dispose();
         }
 
+        /// <inheritdoc />
         public override void Send(INetPacketStream packet)
         {
             if (Logger.IsTraceEnabled)
