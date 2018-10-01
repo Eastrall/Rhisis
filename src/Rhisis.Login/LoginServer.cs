@@ -80,8 +80,6 @@ namespace Rhisis.Login
             DatabaseFactory.Instance.Initialize(DatabaseConfigFile);
             Logger.Trace($"Database config -> {DatabaseFactory.Instance.Configuration}");
 
-            DependencyContainer.Instance.Initialize().BuildServiceProvider();
-
             BusinessLayer.Initialize();
             DependencyContainer.Instance.Initialize().BuildServiceProvider();
 
