@@ -1,7 +1,6 @@
 ﻿using Ether.Network.Packets;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
-using Rhisis.Network.Packets.World;
 using Rhisis.World.Systems.NpcShop;
 using Rhisis.World.Systems.NpcShop.EventArgs;
 
@@ -12,8 +11,8 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.OPENSHOPWND)]
         public static void OnOpenShopWindow(WorldClient client, INetPacketStream packet)
         {
-            var openShopPacket = new OpenShopWindowPacket(packet);
-            var npcEvent = new NpcShopOpenEventArgs(openShopPacket.ObjectId);
+            var objectId = packet.Read<int>();
+            var npcEvent = new NpcShopOpenEventArgs(objectId);
 
             client.Player.NotifySystem<NpcShopSystem>(npcEvent);
         }
@@ -27,8 +26,11 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.BUYITEM)]
         public static void OnBuyItem(WorldClient client, INetPacketStream packet)
         {
-            var buyItemPacket = new BuyItemPacket(packet);
-            var npcShopEvent = new NpcShopBuyEventArgs(buyItemPacket.ItemId, buyItemPacket.Quantity, buyItemPacket.Tab, buyItemPacket.Slot);
+            var tab = packet.Read<byte>();
+            var slot = packet.Read<byte>();
+            var quantity = packet.Read<short>();
+            var itemId = packet.Read<int>();
+            var npcShopEvent = new NpcShopBuyEventArgs(itemId, quantity, tab, slot);
 
             client.Player.NotifySystem<NpcShopSystem>(npcShopEvent);
         }
@@ -36,8 +38,9 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.SELLITEM)]
         public static void OnSellItem(WorldClient client, INetPacketStream packet)
         {
-            var sellItemPacket = new SellItemPacket(packet);
-            var npcShopEvent = new NpcShopSellEventArgs(sellItemPacket.ItemUniqueId, sellItemPacket.Quantity);
+            var itemUniqueId = packet.Read<byte>();
+            var quantity = packet.Read<short>();
+            var npcShopEvent = new NpcShopSellEventArgs(itemUniqueId, quantity);
 
             client.Player.NotifySystem<NpcShopSystem>(npcShopEvent);
         }

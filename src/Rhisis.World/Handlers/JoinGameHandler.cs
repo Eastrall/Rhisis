@@ -8,7 +8,6 @@ using Rhisis.Database;
 using Rhisis.Database.Entities;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
-using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
@@ -25,15 +24,27 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.JOIN)]
         public static void OnJoin(WorldClient client, INetPacketStream packet)
         {
-            var joinPacket = new JoinPacket(packet);
+            var worldId = packet.Read<int>();
+            var playerId = packet.Read<int>();
+            var authenticationKey = packet.Read<int>();
+            var partyId = packet.Read<int>();
+            var guildId = packet.Read<int>();
+            var guildWarId = packet.Read<int>();
+            var idOfMulti = packet.Read<int>(); // what is this?
+            var slot = packet.Read<byte>();
+            var playerName = packet.Read<string>();
+            var username = packet.Read<string>();
+            var password = packet.Read<string>();
+            var messengerState = packet.Read<int>();
+            var messengerCount = packet.Read<int>();
             DbCharacter character = null;
 
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-                character = database.Characters.Get(joinPacket.PlayerId);
+                character = database.Characters.Get(playerId);
 
             if (character == null)
             {
-                Logger.Error($"Invalid player id received from client; cannot find player with id: {joinPacket.PlayerId}");
+                Logger.Error($"Invalid player id received from client; cannot find player with id: {playerId}");
                 return;
             }
 

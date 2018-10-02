@@ -1,7 +1,6 @@
 ﻿using Ether.Network.Packets;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
-using Rhisis.Network.Packets.World;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Inventory.EventArgs;
 
@@ -12,8 +11,10 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.MOVEITEM)]
         public static void OnMoveItem(WorldClient client, INetPacketStream packet)
         {
-            var moveItemPacket = new MoveItemPacket(packet);
-            var inventoryEvent = new InventoryMoveEventArgs(moveItemPacket.SourceSlot, moveItemPacket.DestinationSlot);
+            var itemType = packet.Read<byte>();
+            var sourceSlot = packet.Read<byte>();
+            var destinationSlot = packet.Read<byte>();
+            var inventoryEvent = new InventoryMoveEventArgs(sourceSlot, destinationSlot);
 
             client.Player.NotifySystem<InventorySystem>(inventoryEvent);
         }
@@ -21,8 +22,9 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.DOEQUIP)]
         public static void OnDoEquip(WorldClient client, INetPacketStream packet)
         {
-            var equipItemPacket = new EquipItemPacket(packet);
-            var inventoryEvent = new InventoryEquipEventArgs(equipItemPacket.UniqueId, equipItemPacket.Part);
+            var uniqueId = packet.Read<int>();
+            var part = packet.Read<int>();
+            var inventoryEvent = new InventoryEquipEventArgs(uniqueId, part);
 
             client.Player.NotifySystem<InventorySystem>(inventoryEvent);
         }

@@ -18,10 +18,21 @@ namespace Rhisis.Login
         [PacketHandler(PacketType.PING)]
         public static void OnPing(LoginClient client, INetPacketStream packet)
         {
-            var pak = new PingPacket(packet);
+            int time = 0;
+            bool isTimeout = false;
 
-            if (!pak.IsTimeOut)
-                CommonPacketFactory.SendPong(client, pak.Time);
+            try
+            {
+                time = packet.Read<int>();
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e, $"Client {client.Id} timed out.");
+                isTimeout = true;
+            }
+            
+            if (!isTimeout)
+                CommonPacketFactory.SendPong(client, time);
         }
 
         [PacketHandler(PacketType.CERTIFY)]
