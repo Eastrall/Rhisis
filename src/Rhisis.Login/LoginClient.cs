@@ -21,6 +21,11 @@ namespace Rhisis.Login
         /// Gets the ID assigned to this session.
         /// </summary>
         public uint SessionId { get; }
+        
+        /// <summary>
+        /// Gets the client's logged username.
+        /// </summary>
+        public string Username { get; private set; }
 
         /// <summary>
         /// Gets the list of connected clusters.
@@ -36,9 +41,7 @@ namespace Rhisis.Login
         /// Gets the remote end point (IP and port) for this client.
         /// </summary>
         public string RemoteEndPoint { get; private set; }
-
         
-
         /// <summary>
         /// Creates a new <see cref="LoginClient"/> instance.
         /// </summary>
@@ -66,6 +69,19 @@ namespace Rhisis.Login
             this.Dispose();
         }
 
+        /// <summary>
+        /// Sets the client's username.
+        /// </summary>
+        /// <param name="username"></param>
+        public void SetClientUsername(string username)
+        {
+            if (!string.IsNullOrEmpty(this.Username))
+                throw new InvalidOperationException("Client username already set.");
+
+            this.Username = username;
+        }
+
+        /// <inheritdoc />
         public override void Send(INetPacketStream packet)
         {
             if (Logger.IsTraceEnabled)
@@ -81,7 +97,6 @@ namespace Rhisis.Login
         /// <inheritdoc />
         public override void HandleMessage(INetPacketStream packet)
         {
-            FFPacket pak = null;
             uint packetHeaderNumber = 0;
 
             if (Socket == null)
@@ -92,13 +107,12 @@ namespace Rhisis.Login
 
             try
             {
-                pak = packet as FFPacket;
                 packetHeaderNumber = packet.Read<uint>();
 
                 if (Logger.IsTraceEnabled)
                     Logger.Trace("Received {0} packet from {1}.", (PacketType)packetHeaderNumber, this.RemoteEndPoint);
 
-                PacketHandler<LoginClient>.Invoke(this, pak, (PacketType)packetHeaderNumber);
+                PacketHandler<LoginClient>.Invoke(this, packet, (PacketType)packetHeaderNumber);
             }
             catch (KeyNotFoundException)
             {

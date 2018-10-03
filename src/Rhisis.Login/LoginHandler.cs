@@ -7,6 +7,7 @@ using Rhisis.Database.Entities;
 using Rhisis.Login.Packets;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.Network.Packets.Login;
 using System;
 
 namespace Rhisis.Login
@@ -28,23 +29,21 @@ namespace Rhisis.Login
         public static void OnLogin(LoginClient client, INetPacketStream packet)
         {
             var cryptographyService = DependencyContainer.Instance.Resolve<ICryptographyService>();
-            var buildVersion = packet.Read<string>();
-            var username = packet.Read<string>();
-            var password = string.Empty;
+            var certifyPacket = new CertifyPacket(packet, client.ServerConfiguration.PasswordEncryption);
+            string password = null;
 
             if (client.ServerConfiguration.PasswordEncryption)
             {
-                byte[] passwordData = packet.ReadArray<byte>(16 * 42);
                 byte[] encryptionKey = cryptographyService.BuildEncryptionKeyFromString(client.ServerConfiguration.EncryptionKey, 16);
 
-                password = cryptographyService.Decrypt(passwordData, encryptionKey);
+                password = cryptographyService.Decrypt(certifyPacket.EncryptedPassword, encryptionKey);
             }
             else
             {
                 password = packet.Read<string>();
             }
 
-            if (buildVersion != client.ServerConfiguration.BuildVersion)
+            if (certifyPacket.BuildVersion != client.ServerConfiguration.BuildVersion)
             {
                 Logger.Warn($"Unable to authenticate user from {client.RemoteEndPoint}. Reason: bad client build version.");
                 LoginPacketFactory.SendLoginError(client, ErrorType.CERT_GENERAL);
@@ -55,7 +54,7 @@ namespace Rhisis.Login
             DbUser dbUser = null;
 
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-                dbUser = database.Users.Get(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+                dbUser = database.Users.Get(x => x.Username.Equals(certifyPacket.Username, StringComparison.OrdinalIgnoreCase));
 
             if (dbUser == null)
             {
@@ -72,9 +71,10 @@ namespace Rhisis.Login
                 client.Disconnect();
                 return;
             }
-
-            LoginPacketFactory.SendServerList(client, username, client.ClustersConnected);
-            Logger.Info($"User '{username}' logged succesfully from {client.RemoteEndPoint}.");
+            
+            LoginPacketFactory.SendServerList(client, certifyPacket.Username, client.ClustersConnected);
+            client.SetClientUsername(certifyPacket.Username);
+            Logger.Info($"User '{client.Username}' logged succesfully from {client.RemoteEndPoint}.");
         }
     }
 }
