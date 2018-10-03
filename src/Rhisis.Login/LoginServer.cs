@@ -78,7 +78,7 @@ namespace Rhisis.Login
             Logger.Debug("Loading database configuration from '{0}'...", DatabaseConfigFile);
             DatabaseFactory.Instance.Initialize(DatabaseConfigFile);
             Logger.Trace($"Database config -> {DatabaseFactory.Instance.Configuration}");
-            
+
             BusinessLayer.Initialize();
             DependencyContainer.Instance.Initialize().BuildServiceProvider();
 
