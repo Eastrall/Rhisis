@@ -1,6 +1,7 @@
 ﻿using Ether.Network.Packets;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.Network.Packets.World;
 using Rhisis.World.Systems.Follow;
 
 namespace Rhisis.World.Handlers
@@ -15,6 +16,12 @@ namespace Rhisis.World.Handlers
             var followEvent = new FollowEventArgs(targetObjectId, distance);
 
             client.Player.NotifySystem<FollowSystem>(followEvent);
+        }
+
+        [PacketHandler(PacketType.SETTARGET)]
+        public static void SetTarget(WorldClient client, INetPacketStream packet)
+        {
+            var setTargetPacket = new SetTargetPacket(packet);
         }
     }
 }
