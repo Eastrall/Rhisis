@@ -34,7 +34,7 @@ namespace Rhisis.Network.Packets
         QUERYREMOVEMAIL = 0x0000001B,
         QUERYGETMAILITEM = 0x0000001C,
         QUERYMAILBOX = 0x0000001D,
-        ALLMAIL = 0x0000001E,
+        ALLMAIL = 0x0000001E, // Not implemented in official files
         QUERYGETMAILGOLD = 0x0000001F,
         READMAIL = 0x00000024,
         DO_ESCAPE = 0x00000020,

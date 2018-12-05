@@ -3,6 +3,7 @@ using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
+using Rhisis.World.Systems.Mailbox.EventArgs;
 
 namespace Rhisis.World.Systems.Mailbox
 {
@@ -29,24 +30,54 @@ namespace Rhisis.World.Systems.Mailbox
             switch(e)
             {
                 case QueryMailboxEventArgs queryMailboxEvent:
-                    QueryMailbox(playerEntity, queryMailboxEvent);
+                    GetMails(playerEntity, queryMailboxEvent);
+                    break;
+                case QueryPostMailEventArgs queryPostMailEvent:
+                    SendMail(playerEntity, queryPostMailEvent);
+                    break;
+                case QueryRemoveMailEventArgs queryRemoveMailEvent:
+                    RemoveMail(playerEntity, queryRemoveMailEvent);
+                    break;
+                case QueryGetMailItemEventArgs queryGetMailItemEvent:
+                    GetMailItem(playerEntity, queryGetMailItemEvent);
+                    break;
+                case QueryGetMailGoldEventArgs queryGetMailGoldEvent:
+                    GetMailMoney(playerEntity, queryGetMailGoldEvent);
+                    break;
+                case ReadMailEventArgs readMailEvent:
+                    ReadMail(playerEntity, readMailEvent);
                     break;
             }
         }
 
-        private void QueryMailbox(IPlayerEntity player, QueryMailboxEventArgs e)
+        private void GetMails(IPlayerEntity player, QueryMailboxEventArgs e)
         {
-            // get mail
             WorldPacketFactory.SendMailbox(player);
         }
 
-        /// <summary>
-        /// Get mailbox via ISC when we don't have the data here
-        /// </summary>
-        private void SendMailboxRequest()
+        private void SendMail(IPlayerEntity player, QueryPostMailEventArgs e)
         {
-
+            
         }
 
+        private void RemoveMail(IPlayerEntity player, QueryRemoveMailEventArgs e)
+        {
+            // Delete mail, no packet back needed
+        }
+
+        private void GetMailItem(IPlayerEntity player, QueryGetMailItemEventArgs e)
+        {
+            // Remove item from mail, probably send got item packet back
+        }
+
+        private void GetMailMoney(IPlayerEntity player, QueryGetMailGoldEventArgs e)
+        {
+            // Remove money from mail, probably send got money packet back
+        }
+
+        private void ReadMail(IPlayerEntity player, ReadMailEventArgs e)
+        {
+            // Set mail to read, no packet back needed
+        }
     }
 }

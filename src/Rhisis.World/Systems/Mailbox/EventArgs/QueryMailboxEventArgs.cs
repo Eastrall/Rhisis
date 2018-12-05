@@ -1,6 +1,6 @@
 ﻿using Rhisis.World.Game.Core.Systems;
 
-namespace Rhisis.World.Systems.Mailbox
+namespace Rhisis.World.Systems.Mailbox.EventArgs
 {
     public class QueryMailboxEventArgs : SystemEventArgs
     {
