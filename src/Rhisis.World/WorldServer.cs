@@ -96,7 +96,7 @@ namespace Rhisis.World
         /// <returns></returns>
         public IPlayerEntity GetPlayerEntity(string name)
         {
-            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.Object.Name == name);
+            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.Object.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             return client?.Player;
         }
     }

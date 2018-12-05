@@ -19,6 +19,8 @@ namespace Rhisis.Database
         /// <inheritdoc />
         public IItemRepository Items { get; private set; }
 
+        public IMailRepository Mails { get; private set; }
+
         /// <summary>
         /// Creates a new <see cref="Database"/> object instance.
         /// </summary>
@@ -55,6 +57,7 @@ namespace Rhisis.Database
             this.Users = new UserRepository(this._databaseContext);
             this.Characters = new CharacterRepository(this._databaseContext);
             this.Items = new ItemRepository(this._databaseContext);
+            this.Mails = new MailRepository(this._databaseContext);
         }
     }
 }

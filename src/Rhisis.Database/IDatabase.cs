@@ -22,6 +22,11 @@ namespace Rhisis.Database
         IItemRepository Items { get; }
 
         /// <summary>
+        /// Gets the mails.
+        /// </summary>
+        IMailRepository Mails { get; }
+
+        /// <summary>
         /// Complete the pending database operations.
         /// </summary>
         void Complete();

@@ -2,6 +2,7 @@
 using NLog;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Database;
+using Rhisis.Database.Entities;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
@@ -66,33 +67,34 @@ namespace Rhisis.World.Systems.Mailbox
 
             var receiverId = 0;
             Game.Structures.Item item = null;
-            var itemQuantity = 0;
             var neededGold = 500; // should be a config value
 
             // Receiver is offline
             if (receiverEntity is null)
             {
-                var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var dbCharacter = database.Characters.Get(x => x.Name == e.Receiver);
-                if (dbCharacter is null)
-                    return; // Is there an error packet?
-                receiverId = dbCharacter.Id;
+                using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+                {
+                    var dbCharacter = database.Characters.Get(x => x.Name == e.Receiver);
+                    if (dbCharacter is null)
+                        return; // Is there an error packet?
+                    receiverId = dbCharacter.Id;
+                }
             }
             else // Receiver is online
             {
                 receiverId = receiverEntity.PlayerData.Id;
             }
 
+            // Item slot is a valid inventory slot
             if (e.ItemSlot < InventorySystem.InventorySize)
             {
                 item = player.Inventory.Items[e.ItemSlot];
-                if (e.ItemQuantity > item.Quantity)
-                    return; // Is there an error packet?
-
-                itemQuantity = item.Quantity;
+                if (item.Id > -1 && e.ItemQuantity > item.Quantity)
+                    return; // Is there an error packet? 
             }
             else // Itemslot is not a valid inventory slot
             {
+                Logger.Error($"ItemSlot {e.ItemSlot} is not a valid inventory slot.");
                 return; // Is there an error packet?
             }
             
@@ -105,7 +107,7 @@ namespace Rhisis.World.Systems.Mailbox
                     if (neededGold >= player.PlayerData.Gold)
                         return; // Is there an error packet?
                 }
-                catch (OverflowException) // Catch integer overflows
+                catch (OverflowException) // Catch integer overflows to prevent exploits
                 {
                     return; // Is there an error packet?
                 }
@@ -113,20 +115,38 @@ namespace Rhisis.World.Systems.Mailbox
 
             player.PlayerData.Gold -= neededGold;
 
-            if (item.Data.IsStackable)
+            if (item.Id > -1 && item.Data.IsStackable)
             {
                 var futureQuantity = item.Quantity - e.ItemQuantity;
                 if (futureQuantity == 0)
                     player.Inventory.Items.Remove(item);
                 item.Quantity = futureQuantity;
             }
-            else
+            else if (item.Id > -1)
             {
                 player.Inventory.Items.Remove(item);
             }
-            item.ExtraUsed = 0; // wth?
+            item.ExtraUsed = 0;
 
-            // create mail
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
+                var receiver = database.Characters.Get(x => x.Id == receiverId);
+                //var mailItem = item.Id == -1 ? new DbItem() : database.Items.Get(x => x.Id == item.Id);
+                var mailItem = database.Items.Get(x => x.Id == 1);
+                database.Mails.Create(new DbMail
+                {
+                    Sender = sender,
+                    Receiver = receiver,
+                    Gold = e.Gold,
+                    Item = mailItem,
+                    ItemQuantity = e.ItemQuantity,
+                    Title = e.Title,
+                    Text = e.Text,
+                    Read = false
+                });
+                database.Complete();
+            }
 
             // Send message to receiver when he's online
             if (receiverEntity != null)

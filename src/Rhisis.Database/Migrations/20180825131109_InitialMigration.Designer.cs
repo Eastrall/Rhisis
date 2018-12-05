@@ -136,6 +136,33 @@ namespace Rhisis.Database.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("Rhisis.Database.Entities.DbMail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Sender");
+
+                    b.Property<int>("Receiver");
+
+                    b.Property<int>("Gold");
+
+                    b.Property<int>("Item");
+
+                    b.Property<short>("ItemQuantity");
+
+                    b.Property<string>("Title");
+
+                    b.Property<string>("Text");
+
+                    b.Property<bool>("Read");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("mails");
+                });
+
             modelBuilder.Entity("Rhisis.Database.Entities.DbCharacter", b =>
                 {
                     b.HasOne("Rhisis.Database.Entities.DbUser", "User")

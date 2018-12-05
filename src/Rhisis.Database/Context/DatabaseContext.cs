@@ -33,6 +33,11 @@ namespace Rhisis.Database.Context
         public DbSet<DbItem> Items { get; set; }
 
         /// <summary>
+        /// Gets or sets the mails.
+        /// </summary>
+        public DbSet<DbMail> Mails { get; set; }
+
+        /// <summary>
         /// Create a new <see cref="DatabaseContext"/> instance.
         /// </summary>
         /// <param name="options"></param>
