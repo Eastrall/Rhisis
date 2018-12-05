@@ -31,7 +31,7 @@ namespace Rhisis.World.Handlers
         public static void OnQueryPostMail(WorldClient client, INetPacketStream packet)
         {
             var onQueryPostMailPacket = new QueryPostMailPacket(packet);
-            var queryPostMailEvent = new QueryPostMailEventArgs();
+            var queryPostMailEvent = new QueryPostMailEventArgs(onQueryPostMailPacket.ItemSlot, onQueryPostMailPacket.ItemQuantity, onQueryPostMailPacket.Receiver, onQueryPostMailPacket.Gold, onQueryPostMailPacket.Title, onQueryPostMailPacket.Text);
             client.Player.NotifySystem<MailboxSystem>(queryPostMailEvent);
         }
 
@@ -44,7 +44,7 @@ namespace Rhisis.World.Handlers
         public static void OnQueryRemoveMail(WorldClient client, INetPacketStream packet)
         {
             var onQueryRemoveMailPacket = new QueryRemoveMailPacket(packet);
-            var queryRemoveMailEvent = new QueryRemoveMailEventArgs();
+            var queryRemoveMailEvent = new QueryRemoveMailEventArgs(onQueryRemoveMailPacket.MailId);
             client.Player.NotifySystem<MailboxSystem>(queryRemoveMailEvent);
         }
 
@@ -57,7 +57,7 @@ namespace Rhisis.World.Handlers
         public static void OnQueryGetMailItem(WorldClient client, INetPacketStream packet)
         {
             var onQueryGetMailItem = new QueryGetMailItemPacket(packet);
-            var queryGetMailItemEvent = new QueryGetMailItemEventArgs();
+            var queryGetMailItemEvent = new QueryGetMailItemEventArgs(onQueryGetMailItem.MailId);
             client.Player.NotifySystem<MailboxSystem>(queryGetMailItemEvent);
         }
 
@@ -70,15 +70,20 @@ namespace Rhisis.World.Handlers
         public static void OnQueryGetMailGold(WorldClient client, INetPacketStream packet)
         {
             var onQueryGetMailGold = new QueryGetMailGoldPacket(packet);
-            var queryGetMailGoldEvent = new QueryGetMailGoldEventArgs();
+            var queryGetMailGoldEvent = new QueryGetMailGoldEventArgs(onQueryGetMailGold.MailId);
             client.Player.NotifySystem<MailboxSystem>(queryGetMailGoldEvent);
         }
 
+        /// <summary>
+        /// Set mail as read.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
         [PacketHandler(PacketType.READMAIL)]
         public static void OnReadMail(WorldClient client, INetPacketStream packet)
         {
             var onReadMail = new ReadMailPacket(packet);
-            var readMailEvent = new ReadMailEventArgs();
+            var readMailEvent = new ReadMailEventArgs(onReadMail.MailId);
             client.Player.NotifySystem<MailboxSystem>(readMailEvent);
         }
     }

@@ -21,9 +21,9 @@ namespace Rhisis.Network.Packets.World.Mailbox
         public string Receiver { get; }
 
         /// <summary>
-        /// Gets the amount of money.
+        /// Gets the amount of gold.
         /// </summary>
-        public int Money { get; }
+        public int Gold { get; }
 
         /// <summary>
         /// Gets the title of the mail.
@@ -45,7 +45,7 @@ namespace Rhisis.Network.Packets.World.Mailbox
             this.ItemSlot = packet.Read<byte>();
             this.ItemQuantity = packet.Read<short>();
             this.Receiver = packet.Read<string>();
-            this.Money = packet.Read<int>();
+            this.Gold = packet.Read<int>();
             this.Title = packet.Read<string>();
             this.Text = packet.Read<string>();
         }

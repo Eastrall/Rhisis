@@ -1,14 +1,17 @@
 ﻿using Rhisis.World.Game.Core.Systems;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Rhisis.World.Systems.Mailbox.EventArgs
 {
-    class QueryGetMailItemEventArgs : SystemEventArgs
+    public class QueryGetMailItemEventArgs : SystemEventArgs
     {
-        public QueryGetMailItemEventArgs()
+        /// <summary>
+        /// Gets the id of the mail
+        /// </summary>
+        public int MailId { get; }
+
+        public QueryGetMailItemEventArgs(int mailId)
         {
+            this.MailId = mailId;
         }
 
         public override bool CheckArguments()

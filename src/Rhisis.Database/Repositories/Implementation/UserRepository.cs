@@ -7,7 +7,7 @@ namespace Rhisis.Database.Repositories.Implementation
     /// <summary>
     /// User repository.
     /// </summary>
-    public sealed class UserRepository : RepositoryBase<DbUser>, IUserRepository
+    internal sealed class UserRepository : RepositoryBase<DbUser>, IUserRepository
     {
         /// <summary>
         /// Creates and initialize an <see cref="UserRepository"/>.
