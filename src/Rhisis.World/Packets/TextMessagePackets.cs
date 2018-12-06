@@ -1,48 +1,65 @@
 ﻿using System;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Systems.Mailbox;
 
 namespace Rhisis.World.Packets
 {
     public static partial class WorldPacketFactory
     {
+        /// <summary>
+        /// Shows a window with a custom message at the client.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="text"></param>
         public static void SendAddDiagText(IPlayerEntity player, string text)
         {
             using (var packet = new FFPacket())
             {
-                // ifdef __S_SERVER_UNIFY
-                packet.StartNewMergedPacket(0, SnapshotType.TEXT);
-                packet.Write((byte)0x02); //const BYTE TEXT_DIAG = 0x02 https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/_Network/MsgHdr.h#L1583
-                // else __S_SERVER_UNIFY
-                packet.StartNewMergedPacket(0, SnapshotType.DIAG_TEXT);
-                // endif __S_SERVER_UNIFY
+                if (MailboxSystem.TEXT_TYPE == TextType.TEXT_DIAG)
+                {
+                    packet.StartNewMergedPacket(0, SnapshotType.TEXT);
+                    packet.Write((byte)TextType.TEXT_DIAG);
+                }
+                else
+                    packet.StartNewMergedPacket(0, SnapshotType.DIAG_TEXT);
+
                 packet.Write(text);
+                player.Connection.Send(packet);
             }
         }
 
-        public static void SendAddDefinedText(IPlayerEntity player, int textId, string formatString, params string[] stringParameter)
+        /// <summary>
+        /// Shows a defined text at the client.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="textId"></param>
+        public static void SendAddDefinedText(IPlayerEntity player, int textId)
         {
-            // See https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/User.cpp#L2209
-            // We either need to change the texts in textClient.txt.txt or we need to recreate _vsntprintf
-            // Maybe this could be used https://www.codeproject.com/Articles/19274/A-printf-implementation-in-C
-            // Replacing the formatters could work aswell but would be hacky
-            // I found the following formatters in the textClient.txt.txt
-            // %d %s %f %05d %.f %.2f %H %M %S %.2d %.1d %1.d %I64d %% %3.0f %2.0f %3.1f %dYR %dMON %dDD %02d %dH %dM %dS %.0f %c %d-M %d-H %dhours %dminutes %dseconds %.2I64d
-            /* This is how it would look like in C:
-               char buffer[1024];
-               va_list args;
-               va_start(args, formatString)
-               _vsntprintf(buffer, sizeof(buffer)-1, formatString, args);
-               va_end(args);
-             */
-            string buffer = String.Empty; // temp
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(player.Id, SnapshotType.DEFINEDTEXT1);
+                packet.Write(textId);
+                player.Connection.Send(packet);
+            }
+        }
 
+        /// <summary>
+        /// Shows a defined text at the client and replaces parameter in the string
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="textId"></param>
+        /// <param name="stringParameter"></param>
+        public static void SendAddDefinedText(IPlayerEntity player, int textId, params string[] stringParameter)
+        {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(player.Id, SnapshotType.DEFINEDTEXT);
                 packet.Write(textId);
-                packet.Write(buffer);
+                packet.Write(String.Join(" ", stringParameter));
+                player.Connection.Send(packet);
             }
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
+using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
@@ -16,6 +17,9 @@ namespace Rhisis.World.Systems.Mailbox
     public class MailboxSystem : ISystem
     {
         private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<MailboxSystem>>();
+
+        public static readonly int MAX_MAIL = 50;
+        public static readonly TextType TEXT_TYPE = TextType.TEXT_DIAG;
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player;
