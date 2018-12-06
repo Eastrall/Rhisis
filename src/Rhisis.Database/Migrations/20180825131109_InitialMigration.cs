@@ -107,7 +107,7 @@ namespace Rhisis.Database.Migrations
                     ItemQuantity = table.Column<short>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: false),
-                    Read = table.Column<bool>(nullable: false),
+                    HasBeenRead = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

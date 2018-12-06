@@ -1,5 +1,5 @@
 ﻿using System;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
@@ -15,7 +15,7 @@ namespace Rhisis.World.Systems.Mailbox
     [System(SystemType.Notifiable)]
     public class MailboxSystem : ISystem
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<MailboxSystem>>();
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player;
@@ -28,7 +28,7 @@ namespace Rhisis.World.Systems.Mailbox
 
             if (!e.CheckArguments())
             {
-                Logger.Error("Cannot execute mailbox action: {0} due to invalid arguments.", e.GetType());
+                Logger.LogError($"Cannot execute mailbox action: {e.GetType()} due to invalid arguments.");
                 return;
             }
 
@@ -69,6 +69,13 @@ namespace Rhisis.World.Systems.Mailbox
             Game.Structures.Item item = null;
             var neededGold = 500; // should be a config value
 
+            // error message: AddDiagText - https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/User.cpp#L693
+            // used here: https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPDatabaseClient.cpp#L2648
+            // or
+            // error message: AddDefinedText - https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/User.cpp#L2203
+            // used here: https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7380
+
+
             // Receiver is offline
             if (receiverEntity is null)
             {
@@ -94,7 +101,7 @@ namespace Rhisis.World.Systems.Mailbox
             }
             else // Itemslot is not a valid inventory slot
             {
-                Logger.Error($"ItemSlot {e.ItemSlot} is not a valid inventory slot.");
+                Logger.LogError($"ItemSlot {e.ItemSlot} is not a valid inventory slot.");
                 return; // Is there an error packet?
             }
             
@@ -143,7 +150,7 @@ namespace Rhisis.World.Systems.Mailbox
                     ItemQuantity = e.ItemQuantity,
                     Title = e.Title,
                     Text = e.Text,
-                    Read = false
+                    HasBeenRead = false
                 });
                 database.Complete();
             }

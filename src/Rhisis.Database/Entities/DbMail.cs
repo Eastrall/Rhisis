@@ -12,7 +12,7 @@ namespace Rhisis.Database.Entities
         public short ItemQuantity { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
-        public bool Read { get; set; }
+        public bool HasBeenRead { get; set; }
 
         public DbMail()
         {
@@ -38,7 +38,7 @@ namespace Rhisis.Database.Entities
         {
         }
 
-        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text, bool read)
+        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text, bool hasBeenRead)
         {
             this.Sender = sender;
             this.Receiver = receiver;
@@ -47,7 +47,7 @@ namespace Rhisis.Database.Entities
             this.ItemQuantity = itemQuantity;
             this.Title = title;
             this.Text = text;
-            this.Read = read;
+            this.HasBeenRead = hasBeenRead;
         }
     }
 }

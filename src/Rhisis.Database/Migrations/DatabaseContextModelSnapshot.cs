@@ -155,7 +155,7 @@ namespace Rhisis.Database.Migrations
 
                     b.Property<string>("Text");
 
-                    b.Property<bool>("Read");
+                    b.Property<bool>("HasBeenRead");
 
                     b.HasKey("Id");
 
