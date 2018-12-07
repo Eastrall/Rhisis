@@ -17,11 +17,5 @@ namespace Rhisis.World.Handlers
 
             client.Player.NotifySystem<FollowSystem>(followEvent);
         }
-
-        [PacketHandler(PacketType.SETTARGET)]
-        public static void SetTarget(WorldClient client, INetPacketStream packet)
-        {
-            var setTargetPacket = new SetTargetPacket(packet);
-        }
     }
 }
