@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
+using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
 using Rhisis.Network.Packets.World;
@@ -9,7 +10,6 @@ using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
-using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Mailbox.EventArgs;
 
 namespace Rhisis.World.Systems.Mailbox
@@ -69,8 +69,8 @@ namespace Rhisis.World.Systems.Mailbox
         {
             // TODO: If mailbox is too far away: return;
 
-            var neededGold = 500; // should be a config value
-            var receiverMailQuantity = 0;
+            var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
+            var neededGold = worldConfiguration.MailShippingCost;
             DbCharacter receiver = null;
             DbCharacter sender = null;
             DbItem item = null;
@@ -84,7 +84,6 @@ namespace Rhisis.World.Systems.Mailbox
                     return;
                 }
                 sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
-                receiverMailQuantity = database.Mails.Count(x => x.Receiver == receiver);
 
                 // Receiver and sender is same person
                 if (receiver == sender)
@@ -94,7 +93,7 @@ namespace Rhisis.World.Systems.Mailbox
                 }
 
                 // Mailbox is full
-                if (receiverMailQuantity >= MaxMails)
+                if (receiver.Mails.Count >= MaxMails)
                 {
                     WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
                     return;

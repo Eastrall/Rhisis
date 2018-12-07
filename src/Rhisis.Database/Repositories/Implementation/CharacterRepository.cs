@@ -23,7 +23,9 @@ namespace Rhisis.Database.Repositories.Implementation
         {
             return base.GetQueryable(context)
                 .Include(x => x.User)
-                .Include(x => x.Items);
+                .Include(x => x.Items)
+                .Include(x => x.Mails);
+                
         }
     }
 }

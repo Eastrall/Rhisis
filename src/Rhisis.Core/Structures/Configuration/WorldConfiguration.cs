@@ -55,7 +55,7 @@ namespace Rhisis.Core.Structures.Configuration
         [DataMember(Name = "isc")]
         public ISCConfiguration ISC { get; set; }
 
-        [DataMember(Name = "mailshippingcost")]
+        [DataMember(Name = "mailShippingCost")]
         public int MailShippingCost { get; set; }
 
         /// <summary>
