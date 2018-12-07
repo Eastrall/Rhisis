@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
@@ -18,8 +19,8 @@ namespace Rhisis.World.Systems.Mailbox
     {
         private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<MailboxSystem>>();
 
-        public static readonly int MAX_MAIL = 50;
-        public static readonly TextType TEXT_TYPE = TextType.TEXT_DIAG;
+        public static readonly int MaxMails = 50;
+        public static readonly TextType TextType = TextType.TEXT_DIAG;
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player;
@@ -51,7 +52,7 @@ namespace Rhisis.World.Systems.Mailbox
                     GetMailItem(playerEntity, queryGetMailItemEvent);
                     break;
                 case QueryGetMailGoldEventArgs queryGetMailGoldEvent:
-                    GetMailMoney(playerEntity, queryGetMailGoldEvent);
+                    GetMailGold(playerEntity, queryGetMailGoldEvent);
                     break;
                 case ReadMailEventArgs readMailEvent:
                     ReadMail(playerEntity, readMailEvent);
@@ -66,91 +67,111 @@ namespace Rhisis.World.Systems.Mailbox
 
         private void SendMail(IPlayerEntity player, QueryPostMailEventArgs e)
         {
-            var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();
-            var receiverEntity = worldServer.GetPlayerEntity(e.Receiver);
+            // TODO: If mailbox is too far away: return;
 
-            var receiverId = 0;
-            Game.Structures.Item item = null;
             var neededGold = 500; // should be a config value
-
-            // error message: AddDiagText - https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/User.cpp#L693
-            // used here: https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPDatabaseClient.cpp#L2648
-            // or
-            // error message: AddDefinedText - https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/User.cpp#L2203
-            // used here: https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7380
-
-
-            // Receiver is offline
-            if (receiverEntity is null)
-            {
-                using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-                {
-                    var dbCharacter = database.Characters.Get(x => x.Name == e.Receiver);
-                    if (dbCharacter is null)
-                        return; // Is there an error packet?
-                    receiverId = dbCharacter.Id;
-                }
-            }
-            else // Receiver is online
-            {
-                receiverId = receiverEntity.PlayerData.Id;
-            }
-
-            // Item slot is a valid inventory slot
-            if (e.ItemSlot < InventorySystem.InventorySize)
-            {
-                item = player.Inventory.Items[e.ItemSlot];
-                if (item.Id > -1 && e.ItemQuantity > item.Quantity)
-                    return; // Is there an error packet? 
-            }
-            else // Itemslot is not a valid inventory slot
-            {
-                Logger.LogError($"ItemSlot {e.ItemSlot} is not a valid inventory slot.");
-                return; // Is there an error packet?
-            }
-            
-
-            checked
-            {
-                try
-                {
-                    neededGold += e.Gold;
-                    if (neededGold >= player.PlayerData.Gold)
-                        return; // Is there an error packet?
-                }
-                catch (OverflowException) // Catch integer overflows to prevent exploits
-                {
-                    return; // Is there an error packet?
-                }
-            }
-
-            player.PlayerData.Gold -= neededGold;
-
-            if (item.Id > -1 && item.Data.IsStackable)
-            {
-                var futureQuantity = item.Quantity - e.ItemQuantity;
-                if (futureQuantity == 0)
-                    player.Inventory.Items.Remove(item);
-                item.Quantity = futureQuantity;
-            }
-            else if (item.Id > -1)
-            {
-                player.Inventory.Items.Remove(item);
-            }
-            item.ExtraUsed = 0;
+            var receiverMailQuantity = 0;
+            DbCharacter receiver = null;
+            DbCharacter sender = null;
+            DbItem item = null;
 
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                var sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
-                var receiver = database.Characters.Get(x => x.Id == receiverId);
-                //var mailItem = item.Id == -1 ? new DbItem() : database.Items.Get(x => x.Id == item.Id);
-                var mailItem = database.Items.Get(x => x.Id == 1);
+                receiver = database.Characters.Get(x => x.Name == e.Receiver);
+                if (receiver is null)
+                {
+                    WorldPacketFactory.SendAddDiagText(player, "TID_MAIL_UNKNOW"); // Get text of TID_MAIL_UNKNOW here
+                    return;
+                }
+                sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
+                receiverMailQuantity = database.Mails.Count(x => x.Receiver == receiver);
+
+                // Receiver and sender is same person
+                if (receiver == sender)
+                {
+                    WorldPacketFactory.SendAddDiagText(player, "TID_GAME_MSGSELFSENDERROR"); // Get text of TID_GAME_MSGSELFSENDERROR here
+                    return;
+                }
+
+                // Mailbox is full
+                if (receiverMailQuantity >= MaxMails)
+                {
+                    WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
+                    return;
+                }
+
+                // Calculate gold amount
+                if (e.Gold < 0)
+                {
+                    WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                    return;
+                }
+
+                checked
+                {
+                    try
+                    {
+                        neededGold += e.Gold;
+                        if (neededGold >= player.PlayerData.Gold)
+                        {
+                            WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                            return;
+                        }
+
+                    }
+                    catch (OverflowException) // Catch integer overflows to prevent exploits
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                        return;
+                    }
+                }
+
+
+                // Calculate item quantity and do all kinds of checks
+                var inventoryItem = player.Inventory.Items[e.ItemSlot];
+                if (inventoryItem.Id > -1)
+                {
+                    var quantity = e.ItemQuantity;
+                    if (e.ItemQuantity > inventoryItem.Quantity)
+                        quantity = (short)inventoryItem.Quantity;
+                    item = database.Items.Get(x => x.Id == inventoryItem.Id);
+
+                    // TODO: Add the following checks
+                    /* All AddDiagText
+                     IsUsableItem - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7387
+                     IsEquipped - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7392
+                     IsQuestItem - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7397
+                     IsBound - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7402
+                     IsUsing - TID_GAME_CANNOT_DO_USINGITEM  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7407
+                     ItemKind3 == IK3_CLOAK && ItemGuildId != 0 - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7413
+                     Parts == PARTS_RIDE && ItemJob == JOB_VAGRANT - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7424
+                     IsCharged() (is this v15? recheck) - TID_GAME_CANNOT_POST https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7434
+                     */
+
+                    if (inventoryItem.Data.IsStackable)
+                    {
+                        var futureQuantity = inventoryItem.Quantity - quantity;
+                        if (futureQuantity == 0)
+                            player.Inventory.Items.Remove(inventoryItem);
+                        inventoryItem.Quantity = futureQuantity;
+                    }
+                    else // Not stackable so always remove it
+                        player.Inventory.Items.Remove(inventoryItem);
+                }
+            }
+
+            // Remove gold now
+            player.PlayerData.Gold -= neededGold;
+
+            // Create mail
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
                 database.Mails.Create(new DbMail
                 {
                     Sender = sender,
                     Receiver = receiver,
                     Gold = e.Gold,
-                    Item = mailItem,
+                    Item = item,
                     ItemQuantity = e.ItemQuantity,
                     Title = e.Title,
                     Text = e.Text,
@@ -159,34 +180,45 @@ namespace Rhisis.World.Systems.Mailbox
                 database.Complete();
             }
 
+            WorldPacketFactory.SendMailbox(player);
+
             // Send message to receiver when he's online
+            var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();
+            var receiverEntity = worldServer.GetPlayerEntity(e.Receiver);
             if (receiverEntity != null)
             {
                 // set receive player flag newmail
-                // send flags packet // packet 0x00d3
+                // send flags packet
+                // packet 0x00d3
             }
-
-            WorldPacketFactory.SendMailbox(player);
         }
 
         private void RemoveMail(IPlayerEntity player, QueryRemoveMailEventArgs e)
         {
-            // Delete mail, no packet back needed
+            // Delete mail
+
+            // I think we need to send QueryRemoveMail back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7505
         }
 
         private void GetMailItem(IPlayerEntity player, QueryGetMailItemEventArgs e)
         {
-            // Remove item from mail, probably send got item packet back
+            // Remove item from mail
+
+            // I think we need to send QueryGetMailItem back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7563
         }
 
-        private void GetMailMoney(IPlayerEntity player, QueryGetMailGoldEventArgs e)
+        private void GetMailGold(IPlayerEntity player, QueryGetMailGoldEventArgs e)
         {
-            // Remove money from mail, probably send got money packet back
+            // Remove money from mail
+
+            // I think we need to send QueryGetMailGold back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7581
         }
 
         private void ReadMail(IPlayerEntity player, ReadMailEventArgs e)
         {
-            // Set mail to read, no packet back needed
+            // Set mail to read
+
+            // I think we need to send QueryReadMail packet back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7609
         }
     }
 }

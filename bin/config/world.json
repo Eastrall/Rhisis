@@ -12,6 +12,7 @@
     "host": "127.0.0.1",
     "port": 15000
   },
+  "mailshippingcost": 500,
   "host": "127.0.0.1",
   "port": 5400
 }

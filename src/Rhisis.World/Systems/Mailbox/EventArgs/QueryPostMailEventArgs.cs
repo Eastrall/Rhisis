@@ -1,4 +1,5 @@
 ﻿using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Systems.Inventory;
 
 namespace Rhisis.World.Systems.Mailbox.EventArgs
 {
@@ -47,7 +48,7 @@ namespace Rhisis.World.Systems.Mailbox.EventArgs
 
         public override bool CheckArguments()
         {
-            return true;
+            return this.ItemQuantity > 0 && this.ItemSlot < InventorySystem.InventorySize && this.Gold >= 0;
         }
     }
 }

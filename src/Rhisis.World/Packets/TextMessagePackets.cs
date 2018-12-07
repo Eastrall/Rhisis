@@ -1,4 +1,5 @@
 ﻿using System;
+using Rhisis.Core.Data;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
@@ -18,7 +19,7 @@ namespace Rhisis.World.Packets
         {
             using (var packet = new FFPacket())
             {
-                if (MailboxSystem.TEXT_TYPE == TextType.TEXT_DIAG)
+                if (MailboxSystem.TextType == TextType.TEXT_DIAG)
                 {
                     packet.StartNewMergedPacket(0, SnapshotType.TEXT);
                     packet.Write((byte)TextType.TEXT_DIAG);
@@ -36,12 +37,12 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="player"></param>
         /// <param name="textId"></param>
-        public static void SendAddDefinedText(IPlayerEntity player, int textId)
+        public static void SendAddDefinedText(IPlayerEntity player, DefineText textId)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(player.Id, SnapshotType.DEFINEDTEXT1);
-                packet.Write(textId);
+                packet.Write((int)textId);
                 player.Connection.Send(packet);
             }
         }
@@ -52,12 +53,12 @@ namespace Rhisis.World.Packets
         /// <param name="player"></param>
         /// <param name="textId"></param>
         /// <param name="stringParameter"></param>
-        public static void SendAddDefinedText(IPlayerEntity player, int textId, params string[] stringParameter)
+        public static void SendAddDefinedText(IPlayerEntity player, DefineText textId, params string[] stringParameter)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(player.Id, SnapshotType.DEFINEDTEXT);
-                packet.Write(textId);
+                packet.Write((int)textId);
                 packet.Write(String.Join(" ", stringParameter));
                 player.Connection.Send(packet);
             }

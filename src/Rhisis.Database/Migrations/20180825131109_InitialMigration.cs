@@ -103,7 +103,7 @@ namespace Rhisis.Database.Migrations
                     Sender = table.Column<int>(nullable: false),
                     Receiver = table.Column<int>(nullable: false),
                     Gold = table.Column<int>(nullable: false),
-                    Item = table.Column<int>(nullable: false),
+                    Item = table.Column<int>(nullable: true),
                     ItemQuantity = table.Column<short>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: false),
