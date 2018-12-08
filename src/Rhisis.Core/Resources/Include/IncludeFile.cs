@@ -12,9 +12,9 @@ namespace Rhisis.Core.Resources.Include
 
         public IReadOnlyCollection<IStatement> Statements => this._statements as IReadOnlyCollection<IStatement>;
 
-        public IncludeFile(string filePath)
+        public IncludeFile(string filePath, string regexPattern = @"([(){}=,;\n\r\t])")
         {
-            this._scanner = new FileTokenScanner(filePath, @"([(){}=,;\n\r\t])");
+            this._scanner = new FileTokenScanner(filePath, regexPattern);
             this._statements = new List<IStatement>();
 
             this.Read();

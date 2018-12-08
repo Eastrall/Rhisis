@@ -24,6 +24,7 @@ namespace Rhisis.Core.Resources
         public static readonly string ItemsPropPath = Path.Combine(DataSub2Path, "propItem.txt");
         public static readonly string WorldScriptPath = Path.Combine(DataSub0Path, "World.inc");
         public static readonly string JobPropPath = Path.Combine(DataSub1Path, "propJob.inc");
+        public static readonly string TextClientPath = Path.Combine(DataSub1Path, "textClient.inc");
 
         // Logs messages
         public const string UnableLoadMapMessage = "Unable to load map '{0}'. Reason: {1}.";

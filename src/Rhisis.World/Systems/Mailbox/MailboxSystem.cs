@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
+using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
@@ -69,18 +70,20 @@ namespace Rhisis.World.Systems.Mailbox
         {
             // TODO: If mailbox is too far away: return;
 
+            var textClient = DependencyContainer.Instance.Resolve<TextClientLoader>();
             var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
             var neededGold = worldConfiguration.MailShippingCost;
             DbCharacter receiver = null;
             DbCharacter sender = null;
             DbItem item = null;
 
+
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
                 receiver = database.Characters.Get(x => x.Name == e.Receiver);
                 if (receiver is null)
                 {
-                    WorldPacketFactory.SendAddDiagText(player, "TID_MAIL_UNKNOW"); // Get text of TID_MAIL_UNKNOW here
+                    WorldPacketFactory.SendAddDiagText(player, textClient["TID_MAIL_UNKNOW"]);
                     return;
                 }
                 sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
@@ -88,21 +91,21 @@ namespace Rhisis.World.Systems.Mailbox
                 // Receiver and sender is same person
                 if (receiver == sender)
                 {
-                    WorldPacketFactory.SendAddDiagText(player, "TID_GAME_MSGSELFSENDERROR"); // Get text of TID_GAME_MSGSELFSENDERROR here
+                    WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_MSGSELFSENDERROR"]);
                     return;
                 }
 
                 // Mailbox is full
-                if (receiver.Mails.Count >= MaxMails)
+                /*if (receiver.Mails.Count >= MaxMails)
                 {
                     WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
                     return;
-                }
+                }*/
 
                 // Calculate gold amount
                 if (e.Gold < 0)
                 {
-                    WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                    WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_LACKMONEY"]);
                     return;
                 }
 
@@ -113,14 +116,14 @@ namespace Rhisis.World.Systems.Mailbox
                         neededGold += e.Gold;
                         if (neededGold >= player.PlayerData.Gold)
                         {
-                            WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                            WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_LACKMONEY"]);
                             return;
                         }
 
                     }
                     catch (OverflowException) // Catch integer overflows to prevent exploits
                     {
-                        WorldPacketFactory.SendAddDiagText(player, "TID_GAME_LACKMONEY"); // Get text of TID_GAME_LACKMONEY here
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_LACKMONEY"]);
                         return;
                     }
                 }
