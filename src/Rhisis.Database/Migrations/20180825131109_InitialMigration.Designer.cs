@@ -142,13 +142,13 @@ namespace Rhisis.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Sender");
+                    b.Property<int>("SenderId");
 
-                    b.Property<int>("Receiver");
+                    b.Property<int>("ReceiverId");
 
                     b.Property<int>("Gold");
 
-                    b.Property<int>("Item");
+                    b.Property<int?>("ItemId");
 
                     b.Property<short>("ItemQuantity");
 
@@ -176,6 +176,13 @@ namespace Rhisis.Database.Migrations
                     b.HasOne("Rhisis.Database.Entities.DbCharacter", "Character")
                         .WithMany("Items")
                         .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+            modelBuilder.Entity("Rhisis.Database.Entities.DbMail", b =>
+                {
+                    b.HasOne("Rhisis.Database.Entities.DbCharacter", "Receiver")
+                        .WithMany("Mails")
+                        .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

@@ -66,11 +66,12 @@ namespace Rhisis.Database.Entities
 
         public ICollection<DbItem> Items { get; set; }
 
-        //public ICollection<DbMail> Mails { get; set; }
+        public ICollection<DbMail> Mails { get; set; }
         
         public DbCharacter()
         {
             this.Items = new HashSet<DbItem>();
+            this.Mails = new HashSet<DbMail>();
         }
     }
 }

@@ -87,6 +87,14 @@ namespace Rhisis.Database.Context
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<DbCharacter>().HasMany(x => x.Mails).WithOne(x => x.Receiver);
+            modelBuilder.Entity<DbMail>().HasKey(x => x.Id);
+            modelBuilder.Entity<DbMail>()
+                .HasOne(x => x.Receiver).WithMany(x => x.Mails);
+        }
+
         /// <summary>
         /// Migrates the database schema.
         /// </summary>
@@ -95,7 +103,7 @@ namespace Rhisis.Database.Context
         /// <summary>
         /// Migrates the database schema asynchronously.
         /// </summary>
-        public async Task MigrageAsync() => await this.Database.MigrateAsync();
+        public async Task MigrateAsync() => await this.Database.MigrateAsync();
 
         /// <summary>
         /// Check if the database exists.

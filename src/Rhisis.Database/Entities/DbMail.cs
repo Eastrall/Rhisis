@@ -5,9 +5,12 @@ namespace Rhisis.Database.Entities
     [Table("mails")]
     public sealed class DbMail : DbEntity
     {
+        public int SenderId { get; set; }
         public DbCharacter Sender { get; set; }
+        public int ReceiverId { get; set; }
         public DbCharacter Receiver { get; set; }
         public int Gold { get; set; }
+        public int? ItemId { get; set; }
         public DbItem Item { get; set; }
         public short ItemQuantity { get; set; }
         public string Title { get; set; }

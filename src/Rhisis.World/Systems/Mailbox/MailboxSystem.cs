@@ -63,7 +63,14 @@ namespace Rhisis.World.Systems.Mailbox
 
         private void GetMails(IPlayerEntity player, QueryMailboxEventArgs e)
         {
-            WorldPacketFactory.SendMailbox(player);
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var receiver = database.Characters.Get(x => x.Id == player.PlayerData.Id);
+                if (receiver != null)
+                {
+                    WorldPacketFactory.SendMailbox(player, receiver.Mails);
+                }
+            }
         }
 
         private void SendMail(IPlayerEntity player, QueryPostMailEventArgs e)
@@ -73,20 +80,19 @@ namespace Rhisis.World.Systems.Mailbox
             var textClient = DependencyContainer.Instance.Resolve<TextClientLoader>();
             var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
             var neededGold = worldConfiguration.MailShippingCost;
-            DbCharacter receiver = null;
-            DbCharacter sender = null;
-            DbItem item = null;
-
-
+            
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                receiver = database.Characters.Get(x => x.Name == e.Receiver);
+                var receiver = database.Characters.Get(x => x.Name == e.Receiver);
+
+                // Receiver doesn't exist
                 if (receiver is null)
                 {
                     WorldPacketFactory.SendAddDiagText(player, textClient["TID_MAIL_UNKNOW"]);
                     return;
                 }
-                sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
+
+                var sender = database.Characters.Get(x => x.Id == player.PlayerData.Id);
 
                 // Receiver and sender is same person
                 if (receiver == sender)
@@ -96,11 +102,11 @@ namespace Rhisis.World.Systems.Mailbox
                 }
 
                 // Mailbox is full
-                /*if (receiver.Mails.Count >= MaxMails)
+                if (receiver.Mails.Count >= MaxMails)
                 {
                     WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
                     return;
-                }*/
+                }
 
                 // Calculate gold amount
                 if (e.Gold < 0)
@@ -128,15 +134,15 @@ namespace Rhisis.World.Systems.Mailbox
                     }
                 }
 
-
                 // Calculate item quantity and do all kinds of checks
+                DbItem item = null;
                 var inventoryItem = player.Inventory.Items[e.ItemSlot];
                 if (inventoryItem.Id > -1)
                 {
                     var quantity = e.ItemQuantity;
                     if (e.ItemQuantity > inventoryItem.Quantity)
                         quantity = (short)inventoryItem.Quantity;
-                    item = database.Items.Get(x => x.Id == inventoryItem.Id);
+                    item = database.Items.Get(x => x.Id == inventoryItem.DbId);
 
                     // TODO: Add the following checks
                     /* All AddDiagText
@@ -160,29 +166,27 @@ namespace Rhisis.World.Systems.Mailbox
                     else // Not stackable so always remove it
                         player.Inventory.Items.Remove(inventoryItem);
                 }
-            }
 
-            // Remove gold now
-            player.PlayerData.Gold -= neededGold;
+                // Remove gold now
+                player.PlayerData.Gold -= neededGold;
 
-            // Create mail
-            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-            {
-                database.Mails.Create(new DbMail
+                // Create mail
+                var mail = new DbMail
                 {
                     Sender = sender,
                     Receiver = receiver,
                     Gold = e.Gold,
                     Item = item,
-                    ItemQuantity = e.ItemQuantity,
+                    ItemQuantity = item is null ? (short)0 : e.ItemQuantity,
                     Title = e.Title,
                     Text = e.Text,
                     HasBeenRead = false
-                });
+                };
+                database.Mails.Create(mail);
                 database.Complete();
-            }
 
-            WorldPacketFactory.SendMailbox(player);
+                WorldPacketFactory.SendQueryPostMail(player, mail);
+            }
 
             // Send message to receiver when he's online
             var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();

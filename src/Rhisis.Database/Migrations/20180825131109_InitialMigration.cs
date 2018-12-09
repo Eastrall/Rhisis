@@ -100,10 +100,10 @@ namespace Rhisis.Database.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Sender = table.Column<int>(nullable: false),
-                    Receiver = table.Column<int>(nullable: false),
+                    SenderId = table.Column<int>(nullable: false),
+                    ReceiverId = table.Column<int>(nullable: false),
                     Gold = table.Column<int>(nullable: false),
-                    Item = table.Column<int>(nullable: true),
+                    ItemId = table.Column<int?>(nullable: true),
                     ItemQuantity = table.Column<short>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: false),
@@ -114,19 +114,19 @@ namespace Rhisis.Database.Migrations
                     table.PrimaryKey("PK_mails", x => x.Id);
                     table.ForeignKey(
                         name: "FK_mails_characters_Sender",
-                        column: x => x.Sender,
+                        column: x => x.SenderId,
                         principalTable: "characters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_mails_characters_Receiver",
-                        column: x => x.Receiver,
+                        column: x => x.ReceiverId,
                         principalTable: "characters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_mails_items_Item",
-                        column: x => x.Item,
+                        column: x => x.ItemId,
                         principalTable: "items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -141,6 +141,11 @@ namespace Rhisis.Database.Migrations
                 name: "IX_items_CharacterId",
                 table: "items",
                 column: "CharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_mails_ReceiverId",
+                table: "mails",
+                column: "ReceiverId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
