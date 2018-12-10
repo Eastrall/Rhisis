@@ -158,6 +158,12 @@ namespace Rhisis.Database.Migrations
 
                     b.Property<bool>("HasBeenRead");
 
+                    b.Property<bool>("HasReceivedItem");
+
+                    b.Property<bool>("HasReceivedGold");
+
+                    b.Property<bool>("IsDeleted");
+
                     b.HasKey("Id");
 
                     b.ToTable("mails");

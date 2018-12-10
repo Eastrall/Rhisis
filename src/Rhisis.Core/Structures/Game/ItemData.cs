@@ -25,10 +25,10 @@ namespace Rhisis.Core.Structures.Game
         public ItemKind1 ItemKind1 { get; set; }
 
         [DataMember(Name = "dwItemKind2")]
-        public ItemKind1 ItemKind2 { get; set; }
+        public ItemKind2 ItemKind2 { get; set; }
 
         [DataMember(Name = "dwItemKind3")]
-        public ItemKind1 ItemKind3 { get; set; }
+        public ItemKind3 ItemKind3 { get; set; }
 
         [DataMember(Name = "dwItemSex")]
         public int ItemSex { get; set; }

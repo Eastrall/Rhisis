@@ -50,20 +50,6 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendDefinedText(IPlayerEntity entity, int textId)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.DEFINEDTEXT);
-                packet.Write(textId);
-                packet.Write(0);
-
-                entity.Connection.Send(packet);
-            }
-        }
-
-        public static void SendDefinedText(IPlayerEntity entity, DefineText text) => SendDefinedText(entity, (int)text);
-
         public static void SendUpdateAttributes(IPlayerEntity entity, DefineAttributes attribute, int newValue)
         {
             using (var packet = new FFPacket())

@@ -203,7 +203,7 @@ namespace Rhisis.World.Systems.Inventory
             if (availableSlot < 0)
             {
                 Logger.Debug("No available slots.");
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                 return;
             }
 
@@ -239,7 +239,7 @@ namespace Rhisis.World.Systems.Inventory
 
                     if (availableSlot < 0)
                     {
-                        WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                        WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                         break;
                     }
 

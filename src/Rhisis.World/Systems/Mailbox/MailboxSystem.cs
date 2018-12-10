@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
@@ -10,6 +11,7 @@ using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Mailbox.EventArgs;
 
@@ -67,9 +69,7 @@ namespace Rhisis.World.Systems.Mailbox
             {
                 var receiver = database.Characters.Get(x => x.Id == player.PlayerData.Id);
                 if (receiver != null)
-                {
-                    WorldPacketFactory.SendMailbox(player, receiver.Mails);
-                }
+                    WorldPacketFactory.SendMailbox(player, receiver.Mails.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -151,10 +151,15 @@ namespace Rhisis.World.Systems.Mailbox
                      IsQuestItem - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7397
                      IsBound - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7402
                      IsUsing - TID_GAME_CANNOT_DO_USINGITEM  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7407
-                     ItemKind3 == IK3_CLOAK && ItemGuildId != 0 - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7413
                      Parts == PARTS_RIDE && ItemJob == JOB_VAGRANT - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7424
                      IsCharged() (is this v15? recheck) - TID_GAME_CANNOT_POST https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7434
                      */
+
+                    if (inventoryItem.Data.ItemKind3 == ItemKind3.CLOAK /*&& inventoryItem.GuildId != 0*/)
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
+                        return;
+                    }
 
                     if (inventoryItem.Data.IsStackable)
                     {
@@ -184,7 +189,6 @@ namespace Rhisis.World.Systems.Mailbox
                 };
                 database.Mails.Create(mail);
                 database.Complete();
-
                 WorldPacketFactory.SendQueryPostMail(player, mail);
             }
 
@@ -201,30 +205,83 @@ namespace Rhisis.World.Systems.Mailbox
 
         private void RemoveMail(IPlayerEntity player, QueryRemoveMailEventArgs e)
         {
-            // Delete mail
-
-            // I think we need to send QueryRemoveMail back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7505
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var mail = database.Mails.Get(x => x.Id == e.MailId);
+                if (mail.Receiver.Id != player.PlayerData.Id)
+                    return;
+                mail.IsDeleted = true;
+                database.Complete();
+                WorldPacketFactory.SendQueryRemoveMail(player, mail);
+            }
         }
 
         private void GetMailItem(IPlayerEntity player, QueryGetMailItemEventArgs e)
         {
-            // Remove item from mail
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var mail = database.Mails.Get(x => x.Id == e.MailId);
+                if (mail.Receiver.Id == player.PlayerData.Id)
+                    return;
 
-            // I think we need to send QueryGetMailItem back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7563
+                if (mail.HasReceivedItem)
+                    return;
+
+                if (!player.Inventory.HasAvailableSlots())
+                {
+                    WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                    return;
+                }
+                
+                mail.HasReceivedItem = true;
+                int availableSlot = player.Inventory.GetAvailableSlot();
+                player.Inventory.Items[availableSlot] = new Item(mail.Item);
+                database.Complete();
+                WorldPacketFactory.SendQueryGetMailItem(player, mail); 
+            }
         }
 
         private void GetMailGold(IPlayerEntity player, QueryGetMailGoldEventArgs e)
         {
-            // Remove money from mail
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var mail = database.Mails.Get(x => x.Id == e.MailId);
+                if (mail.Receiver.Id == player.PlayerData.Id)
+                    return;
 
-            // I think we need to send QueryGetMailGold back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7581
+                if (mail.HasReceivedGold)
+                    return;
+
+                checked
+                {
+                    try
+                    {
+                        player.PlayerData.Gold += mail.Gold;
+                        mail.HasReceivedGold = true;
+                    }
+                    catch (OverflowException) // If it overflows, take the possible amount of gold and let the leftover amount in the mail
+                    {
+                        int goldLeft = int.MaxValue - player.PlayerData.Gold;
+                        player.PlayerData.Gold = int.MaxValue;
+                        mail.Gold = goldLeft;
+                    }
+                }
+                database.Complete();
+                WorldPacketFactory.SendQueryGetMailGold(player, mail); 
+            }
         }
 
         private void ReadMail(IPlayerEntity player, ReadMailEventArgs e)
         {
-            // Set mail to read
-
-            // I think we need to send QueryReadMail packet back to the client https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7609
+            using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+            {
+                var mail = database.Mails.Get(x => x.Id == e.MailId);
+                if (mail.Receiver.Id != player.PlayerData.Id)
+                    return;
+                mail.HasBeenRead = true;
+                database.Complete();
+                WorldPacketFactory.SendQueryReadMail(player, mail);
+            }
         }
     }
 }

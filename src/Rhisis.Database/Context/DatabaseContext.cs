@@ -89,7 +89,6 @@ namespace Rhisis.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<DbCharacter>().HasMany(x => x.Mails).WithOne(x => x.Receiver);
             modelBuilder.Entity<DbMail>().HasKey(x => x.Id);
             modelBuilder.Entity<DbMail>()
                 .HasOne(x => x.Receiver).WithMany(x => x.Mails);

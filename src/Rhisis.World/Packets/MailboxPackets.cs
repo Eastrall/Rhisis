@@ -18,21 +18,22 @@ namespace Rhisis.World.Packets
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.QUERYMAILBOX);
 
-                packet.Write(entity.PlayerData.Id); // character id
-                packet.Write(mails.Count); // number of mails
+                packet.Write(entity.PlayerData.Id);
+                packet.Write(mails.Count);
 
                 foreach (var mail in mails)
                 {
                     packet.Write(mail.Id);
                     packet.Write(mail.Sender.Id);
-                    if (mail.Item != null)
+                    if (mail.Item is null)
+                        packet.Write(CONTAINS_NO_ITEM);
+                    else
                     {
                         packet.Write(CONTAINS_ITEM);
                         var item = new Item(mail.Item);
                         item.Serialize(packet);
                     }
-                    else
-                        packet.Write(CONTAINS_NO_ITEM);
+                        
                     packet.Write(mail.Gold);
                     packet.Write(1); // time
                     packet.Write(mail.HasBeenRead);
@@ -52,16 +53,70 @@ namespace Rhisis.World.Packets
                 packet.Write(mail.Receiver.Id);
                 packet.Write(mail.Sender.Id);
                 if (mail.Item is null)
-                    packet.Write((byte)0);
+                    packet.Write(CONTAINS_NO_ITEM);
                 else
                 {
-                    packet.Write((byte)1);
+                    packet.Write(CONTAINS_ITEM);
                     var item = new Item(mail.Item);
                     item.Serialize(packet);
                 }
                 packet.Write(mail.Gold);
                 packet.Write(mail.Title);
                 packet.Write(mail.Text);
+
+                entity.Connection.Send(packet);
+            }
+        }
+
+        public static void SendQueryRemoveMail(IPlayerEntity entity, DbMail mail)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(PacketType.QUERYREMOVEMAIL);
+
+                packet.Write(mail.Receiver.Id);
+                packet.Write(mail.Id);
+
+                entity.Connection.Send(packet);
+            }
+        }
+
+        public static void SendQueryGetMailItem(IPlayerEntity entity, DbMail mail)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(PacketType.QUERYGETMAILITEM);
+
+                packet.Write(mail.Receiver.Id);
+                packet.Write(mail.Id);
+                packet.Write(0); // g_uIdofMulti
+
+                entity.Connection.Send(packet);
+            }
+        }
+
+        public static void SendQueryGetMailGold(IPlayerEntity entity, DbMail mail)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(PacketType.QUERYGETMAILGOLD);
+
+                packet.Write(mail.Receiver.Id);
+                packet.Write(mail.Id);
+                packet.Write(0); // g_uIdofMulti
+
+                entity.Connection.Send(packet);
+            }
+        }
+
+        public static void SendQueryReadMail(IPlayerEntity entity, DbMail mail)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(PacketType.READMAIL);
+
+                packet.Write(mail.Receiver.Id);
+                packet.Write(mail.Id);
 
                 entity.Connection.Send(packet);
             }
