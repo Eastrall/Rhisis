@@ -164,6 +164,8 @@ namespace Rhisis.Database.Migrations
 
                     b.Property<bool>("IsDeleted");
 
+                    b.Property<DateTime>("CreateTime");
+
                     b.HasKey("Id");
 
                     b.ToTable("mails");

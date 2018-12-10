@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace Rhisis.Database.Entities
@@ -7,7 +8,7 @@ namespace Rhisis.Database.Entities
     public sealed class DbMail : DbEntity
     {
         public int SenderId { get; set; }
-        public DbCharacter Sender { get; set; }
+        public DbCharacter Sender { get; set; } 
         public int ReceiverId { get; set; }
         public DbCharacter Receiver { get; set; }
         public int Gold { get; set; }
@@ -20,32 +21,38 @@ namespace Rhisis.Database.Entities
         public bool HasReceivedItem { get; set; }
         public bool HasReceivedGold { get; set; }
         public bool IsDeleted { get; set; }
+        public DateTime CreateTime { get; set; }
 
         public DbMail()
         {
+            HasBeenRead = false;
+            HasReceivedGold = false;
+            HasReceivedItem = false;
+            IsDeleted = false;
+            CreateTime = DateTime.UtcNow;
         }
 
         public DbMail(DbCharacter sender, DbCharacter receiver, string title, string text)
-            : this(sender, receiver, 0, null, 0, title, text, false, false, false, false)
+            : this(sender, receiver, 0, null, 0, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
         public DbMail(DbCharacter sender, DbCharacter receiver, DbItem item, short itemQuantity, string title, string text)
-            : this(sender, receiver, 0, item, itemQuantity, title, text, false, false, false, false)
+            : this(sender, receiver, 0, item, itemQuantity, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
         public DbMail(DbCharacter sender, DbCharacter receiver, int gold, string title, string text)
-            : this(sender, receiver, gold, null, 0, title, text, false, false, false, false)
+            : this(sender, receiver, gold, null, 0, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
         public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text)
-            : this(sender, receiver, gold, item, itemQuantity, title, text, false, false, false, false)
+            : this(sender, receiver, gold, item, itemQuantity, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
-        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text, bool hasBeenRead, bool hasReceivedItem, bool hasReceivedGold, bool isDeleted)
+        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text, bool hasBeenRead, bool hasReceivedItem, bool hasReceivedGold, bool isDeleted, DateTime createTime)
         {
             this.Sender = sender;
             this.Receiver = receiver;
@@ -58,6 +65,7 @@ namespace Rhisis.Database.Entities
             this.IsDeleted = isDeleted;
             this.HasReceivedItem = hasReceivedItem;
             this.HasReceivedGold = hasReceivedGold;
+            this.CreateTime = createTime;
         }
     }
 }

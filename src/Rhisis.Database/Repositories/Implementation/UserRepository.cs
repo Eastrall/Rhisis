@@ -25,7 +25,9 @@ namespace Rhisis.Database.Repositories.Implementation
                 .Include(x => x.Characters)
                 .ThenInclude(x => x.Items)
                 .Include(x => x.Characters)
-                .ThenInclude(x => x.Mails);
+                .ThenInclude(x => x.ReceivedMails)
+                .Include(x => x.Characters)
+                .ThenInclude(x => x.SentMails);
         }
     }
 }

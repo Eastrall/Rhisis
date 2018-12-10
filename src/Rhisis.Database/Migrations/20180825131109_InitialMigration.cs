@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace Rhisis.Database.Migrations
 {
@@ -110,7 +111,8 @@ namespace Rhisis.Database.Migrations
                     HasBeenRead = table.Column<bool>(nullable: false),
                     HasReceivedItem = table.Column<bool>(nullable: false),
                     HasReceivedGold = table.Column<bool>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false)
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreateTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

@@ -3,6 +3,7 @@ using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
+using System;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Packets
@@ -35,7 +36,7 @@ namespace Rhisis.World.Packets
                     }
                         
                     packet.Write(mail.Gold);
-                    packet.Write(1); // time
+                    packet.Write(DateTime.UtcNow - mail.CreateTime);
                     packet.Write(mail.HasBeenRead);
                     packet.Write(mail.Title);
                     packet.Write(mail.Text);
@@ -44,7 +45,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendQueryPostMail(IPlayerEntity entity, DbMail mail)
+        public static void SendPostMail(IPlayerEntity entity, DbMail mail)
         {
             using (var packet = new FFPacket())
             {
@@ -68,7 +69,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendQueryRemoveMail(IPlayerEntity entity, DbMail mail)
+        public static void SendRemoveMail(IPlayerEntity entity, DbMail mail)
         {
             using (var packet = new FFPacket())
             {
@@ -81,7 +82,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendQueryGetMailItem(IPlayerEntity entity, DbMail mail)
+        public static void SendGetMailItem(IPlayerEntity entity, DbMail mail, int channelId)
         {
             using (var packet = new FFPacket())
             {
@@ -89,13 +90,13 @@ namespace Rhisis.World.Packets
 
                 packet.Write(mail.Receiver.Id);
                 packet.Write(mail.Id);
-                packet.Write(0); // g_uIdofMulti
+                packet.Write(channelId);
 
                 entity.Connection.Send(packet);
             }
         }
 
-        public static void SendQueryGetMailGold(IPlayerEntity entity, DbMail mail)
+        public static void SendGetMailGold(IPlayerEntity entity, DbMail mail, int channelId)
         {
             using (var packet = new FFPacket())
             {
@@ -103,13 +104,13 @@ namespace Rhisis.World.Packets
 
                 packet.Write(mail.Receiver.Id);
                 packet.Write(mail.Id);
-                packet.Write(0); // g_uIdofMulti
+                packet.Write(channelId);
 
                 entity.Connection.Send(packet);
             }
         }
 
-        public static void SendQueryReadMail(IPlayerEntity entity, DbMail mail)
+        public static void SendReadMail(IPlayerEntity entity, DbMail mail)
         {
             using (var packet = new FFPacket())
             {

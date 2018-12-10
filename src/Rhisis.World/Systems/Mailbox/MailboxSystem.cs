@@ -68,8 +68,9 @@ namespace Rhisis.World.Systems.Mailbox
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
                 var receiver = database.Characters.Get(x => x.Id == player.PlayerData.Id);
+                var sender = database.Characters.Get(x => x.Id == 2);
                 if (receiver != null)
-                    WorldPacketFactory.SendMailbox(player, receiver.Mails.Where(x => !x.IsDeleted).ToList());
+                    WorldPacketFactory.SendMailbox(player, receiver.ReceivedMails.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -102,7 +103,7 @@ namespace Rhisis.World.Systems.Mailbox
                 }
 
                 // Mailbox is full
-                if (receiver.Mails.Count >= MaxMails)
+                if (receiver.ReceivedMails.Count(x => !x.IsDeleted) >= MaxMails)
                 {
                     WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
                     return;
@@ -189,7 +190,7 @@ namespace Rhisis.World.Systems.Mailbox
                 };
                 database.Mails.Create(mail);
                 database.Complete();
-                WorldPacketFactory.SendQueryPostMail(player, mail);
+                WorldPacketFactory.SendPostMail(player, mail);
             }
 
             // Send message to receiver when he's online
@@ -212,7 +213,7 @@ namespace Rhisis.World.Systems.Mailbox
                     return;
                 mail.IsDeleted = true;
                 database.Complete();
-                WorldPacketFactory.SendQueryRemoveMail(player, mail);
+                WorldPacketFactory.SendRemoveMail(player, mail);
             }
         }
 
@@ -237,7 +238,8 @@ namespace Rhisis.World.Systems.Mailbox
                 int availableSlot = player.Inventory.GetAvailableSlot();
                 player.Inventory.Items[availableSlot] = new Item(mail.Item);
                 database.Complete();
-                WorldPacketFactory.SendQueryGetMailItem(player, mail); 
+                var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
+                WorldPacketFactory.SendGetMailItem(player, mail, worldConfiguration.Id); 
             }
         }
 
@@ -246,7 +248,7 @@ namespace Rhisis.World.Systems.Mailbox
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
                 var mail = database.Mails.Get(x => x.Id == e.MailId);
-                if (mail.Receiver.Id == player.PlayerData.Id)
+                if (mail.Receiver.Id != player.PlayerData.Id)
                     return;
 
                 if (mail.HasReceivedGold)
@@ -259,15 +261,14 @@ namespace Rhisis.World.Systems.Mailbox
                         player.PlayerData.Gold += mail.Gold;
                         mail.HasReceivedGold = true;
                     }
-                    catch (OverflowException) // If it overflows, take the possible amount of gold and let the leftover amount in the mail
+                    catch (OverflowException)
                     {
-                        int goldLeft = int.MaxValue - player.PlayerData.Gold;
-                        player.PlayerData.Gold = int.MaxValue;
-                        mail.Gold = goldLeft;
+                        return;
                     }
                 }
                 database.Complete();
-                WorldPacketFactory.SendQueryGetMailGold(player, mail); 
+                var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
+                WorldPacketFactory.SendGetMailGold(player, mail, worldConfiguration.Id); 
             }
         }
 
@@ -280,7 +281,7 @@ namespace Rhisis.World.Systems.Mailbox
                     return;
                 mail.HasBeenRead = true;
                 database.Complete();
-                WorldPacketFactory.SendQueryReadMail(player, mail);
+                WorldPacketFactory.SendReadMail(player, mail);
             }
         }
     }

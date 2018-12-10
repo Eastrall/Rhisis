@@ -22,6 +22,14 @@ namespace Rhisis.Database.Repositories.Implementation
         protected override IQueryable<DbMail> GetQueryable(DbContext context)
         {
             return base.GetQueryable(context)
+                .Include(x => x.Receiver)
+                    .ThenInclude(x => x.ReceivedMails)
+                .Include(x => x.Receiver)
+                    .ThenInclude(x => x.SentMails)
+                .Include(x => x.Sender)
+                    .ThenInclude(x => x.ReceivedMails)
+                .Include(x => x.Sender)
+                    .ThenInclude(x => x.SentMails)
                 .Include(x => x.Sender)
                 .Include(x => x.Receiver)
                 .Include(x => x.Item);
