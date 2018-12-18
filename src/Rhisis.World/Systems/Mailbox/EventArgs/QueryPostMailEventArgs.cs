@@ -24,7 +24,7 @@ namespace Rhisis.World.Systems.Mailbox.EventArgs
         /// <summary>
         /// Gets the amount of gold.
         /// </summary>
-        public int Gold { get; }
+        public uint Gold { get; }
 
         /// <summary>
         /// Gets the title of the mail.
@@ -36,7 +36,7 @@ namespace Rhisis.World.Systems.Mailbox.EventArgs
         /// </summary>
         public string Text { get; }
 
-        public QueryPostMailEventArgs(byte itemSlot, short itemQuantity, string receiver, int gold, string title, string text)
+        public QueryPostMailEventArgs(byte itemSlot, short itemQuantity, string receiver, uint gold, string title, string text)
         {
             this.ItemSlot = ItemSlot;
             this.ItemQuantity = itemQuantity;

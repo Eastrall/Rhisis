@@ -56,7 +56,7 @@ namespace Rhisis.Core.Structures.Configuration
         public ISCConfiguration ISC { get; set; }
 
         [DataMember(Name = "mailShippingCost")]
-        public int MailShippingCost { get; set; }
+        public uint MailShippingCost { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="WorldConfiguration"/> instance.

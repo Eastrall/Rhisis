@@ -145,7 +145,7 @@ namespace Rhisis.Database.Migrations
 
                     b.Property<int>("ReceiverId");
 
-                    b.Property<int>("Gold");
+                    b.Property<uint>("Gold");
 
                     b.Property<int?>("ItemId");
 

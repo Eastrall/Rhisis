@@ -24,8 +24,20 @@ namespace Rhisis.Database.Repositories.Implementation
             return base.GetQueryable(context)
                 .Include(x => x.User)
                 .Include(x => x.Items)
+                .Include(x => x.Items)
+                    .ThenInclude(x => x.Character)
                 .Include(x => x.ReceivedMails)
-                .Include(x => x.SentMails);
+                    .ThenInclude(x => x.Receiver)
+                .Include(x => x.ReceivedMails)
+                    .ThenInclude(x => x.Sender)
+                .Include(x => x.ReceivedMails)
+                    .ThenInclude(x => x.Item)
+                .Include(x => x.SentMails)
+                    .ThenInclude(x => x.Receiver)
+                .Include(x => x.SentMails)
+                    .ThenInclude(x => x.Sender)
+                .Include(x => x.SentMails)
+                    .ThenInclude(x => x.Item);
         }
     }
 }

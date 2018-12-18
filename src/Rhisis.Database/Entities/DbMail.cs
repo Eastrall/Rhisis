@@ -11,7 +11,7 @@ namespace Rhisis.Database.Entities
         public DbCharacter Sender { get; set; } 
         public int ReceiverId { get; set; }
         public DbCharacter Receiver { get; set; }
-        public int Gold { get; set; }
+        public uint Gold { get; set; }
         public int? ItemId { get; set; }
         public DbItem Item { get; set; }
         public short ItemQuantity { get; set; }
@@ -42,17 +42,17 @@ namespace Rhisis.Database.Entities
         {
         }
 
-        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, string title, string text)
+        public DbMail(DbCharacter sender, DbCharacter receiver, uint gold, string title, string text)
             : this(sender, receiver, gold, null, 0, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
-        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text)
+        public DbMail(DbCharacter sender, DbCharacter receiver, uint gold, DbItem item, short itemQuantity, string title, string text)
             : this(sender, receiver, gold, item, itemQuantity, title, text, false, false, false, false, DateTime.UtcNow)
         {
         }
 
-        public DbMail(DbCharacter sender, DbCharacter receiver, int gold, DbItem item, short itemQuantity, string title, string text, bool hasBeenRead, bool hasReceivedItem, bool hasReceivedGold, bool isDeleted, DateTime createTime)
+        public DbMail(DbCharacter sender, DbCharacter receiver, uint gold, DbItem item, short itemQuantity, string title, string text, bool hasBeenRead, bool hasReceivedItem, bool hasReceivedGold, bool isDeleted, DateTime createTime)
         {
             this.Sender = sender;
             this.Receiver = receiver;

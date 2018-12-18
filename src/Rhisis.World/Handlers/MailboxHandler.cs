@@ -31,7 +31,7 @@ namespace Rhisis.World.Handlers
         public static void OnQueryPostMail(WorldClient client, INetPacketStream packet)
         {
             var onQueryPostMailPacket = new QueryPostMailPacket(packet);
-            var queryPostMailEvent = new QueryPostMailEventArgs(onQueryPostMailPacket.ItemSlot, onQueryPostMailPacket.ItemQuantity, onQueryPostMailPacket.Receiver, onQueryPostMailPacket.Gold, onQueryPostMailPacket.Title, onQueryPostMailPacket.Text);
+            var queryPostMailEvent = new QueryPostMailEventArgs(onQueryPostMailPacket.ItemSlot, onQueryPostMailPacket.ItemQuantity, onQueryPostMailPacket.Receiver, (uint)onQueryPostMailPacket.Gold, onQueryPostMailPacket.Title, onQueryPostMailPacket.Text);
             client.Player.NotifySystem<MailboxSystem>(queryPostMailEvent);
         }
 

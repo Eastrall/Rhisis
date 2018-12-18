@@ -103,7 +103,7 @@ namespace Rhisis.Database.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     SenderId = table.Column<int>(nullable: false),
                     ReceiverId = table.Column<int>(nullable: false),
-                    Gold = table.Column<int>(nullable: false),
+                    Gold = table.Column<uint>(nullable: false),
                     ItemId = table.Column<int?>(nullable: true),
                     ItemQuantity = table.Column<short>(nullable: false),
                     Title = table.Column<string>(nullable: false),

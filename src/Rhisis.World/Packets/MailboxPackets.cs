@@ -19,13 +19,13 @@ namespace Rhisis.World.Packets
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.QUERYMAILBOX);
 
-                packet.Write(entity.PlayerData.Id);
+                packet.Write((uint)entity.PlayerData.Id);
                 packet.Write(mails.Count);
 
                 foreach (var mail in mails)
                 {
-                    packet.Write(mail.Id);
-                    packet.Write(mail.Sender.Id);
+                    packet.Write((uint)mail.Id);
+                    packet.Write((uint)mail.Sender.Id);
                     if (mail.Item is null)
                         packet.Write(CONTAINS_NO_ITEM);
                     else
@@ -34,10 +34,10 @@ namespace Rhisis.World.Packets
                         var item = new Item(mail.Item);
                         item.Serialize(packet);
                     }
-                        
                     packet.Write(mail.Gold);
-                    packet.Write(DateTime.UtcNow - mail.CreateTime);
-                    packet.Write(mail.HasBeenRead);
+                    int time = (int)(DateTime.UtcNow - mail.CreateTime).TotalSeconds;
+                    packet.Write(time);
+                    packet.Write(Convert.ToByte(mail.HasBeenRead));
                     packet.Write(mail.Title);
                     packet.Write(mail.Text);
                 }

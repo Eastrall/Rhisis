@@ -68,7 +68,6 @@ namespace Rhisis.World.Systems.Mailbox
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
                 var receiver = database.Characters.Get(x => x.Id == player.PlayerData.Id);
-                var sender = database.Characters.Get(x => x.Id == 2);
                 if (receiver != null)
                     WorldPacketFactory.SendMailbox(player, receiver.ReceivedMails.Where(x => !x.IsDeleted).ToList());
             }
@@ -174,7 +173,7 @@ namespace Rhisis.World.Systems.Mailbox
                 }
 
                 // Remove gold now
-                player.PlayerData.Gold -= neededGold;
+                player.PlayerData.Gold -= (int)neededGold;
 
                 // Create mail
                 var mail = new DbMail
@@ -258,7 +257,7 @@ namespace Rhisis.World.Systems.Mailbox
                 {
                     try
                     {
-                        player.PlayerData.Gold += mail.Gold;
+                        player.PlayerData.Gold += (int)mail.Gold;
                         mail.HasReceivedGold = true;
                     }
                     catch (OverflowException)
