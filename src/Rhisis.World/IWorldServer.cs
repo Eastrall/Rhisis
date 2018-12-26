@@ -7,5 +7,6 @@ namespace Rhisis.World
     {
         IPlayerEntity GetPlayerEntity(uint id);
         IPlayerEntity GetPlayerEntity(string name);
+        IPlayerEntity GetPlayerEntityByCharacterId(uint id);
     }
 }

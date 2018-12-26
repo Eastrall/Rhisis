@@ -43,7 +43,7 @@ namespace Rhisis.World.Systems.PlayerData
         private void GetPlayerData(IPlayerEntity player, QueryPlayerDataEventArgs e, bool send = true)
         {
             var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();
-            var playerEntity = worldServer.GetPlayerEntity(e.PlayerId);
+            var playerEntity = worldServer.GetPlayerEntityByCharacterId(e.PlayerId);
 
             // Player is offline
             if (playerEntity is null)
