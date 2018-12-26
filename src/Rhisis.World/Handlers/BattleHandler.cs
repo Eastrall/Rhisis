@@ -20,7 +20,7 @@ namespace Rhisis.World.Handlers
         public static void OnMeleeAttack(WorldClient client, INetPacketStream packet)
         {
             var meleePacket = new MeleeAttackPacket(packet);
-            var target = client.Player.Object.CurrentLayer.FindEntity<IMonsterEntity>((int)meleePacket.ObjectId);
+            var target = client.Player.Object.CurrentLayer.FindEntity<IMonsterEntity>(meleePacket.ObjectId);
 
             if (target == null)
             {
