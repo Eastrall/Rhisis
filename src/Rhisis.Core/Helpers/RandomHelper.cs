@@ -8,7 +8,7 @@ namespace Rhisis.Core.Helpers
     /// </summary>
     public static class RandomHelper
     {
-        private static int _id;
+        private static uint _id;
 
         /// <summary>
         /// Do a random between integers
@@ -56,7 +56,7 @@ namespace Rhisis.Core.Helpers
         /// Generates a unique id. 
         /// </summary>
         /// <returns></returns>
-        public static int GenerateUniqueId()
+        public static uint GenerateUniqueId()
         {
             return ++_id;
         }

@@ -24,8 +24,8 @@ namespace Rhisis.World.Packets
 
                 foreach (var mail in mails)
                 {
-                    packet.Write((uint)mail.Id);
-                    packet.Write((uint)mail.Sender.Id);
+                    packet.Write(mail.Id);
+                    packet.Write(mail.Sender.Id);
                     if (mail.Item is null)
                         packet.Write(CONTAINS_NO_ITEM);
                     else

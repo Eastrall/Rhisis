@@ -7,7 +7,7 @@ namespace Rhisis.World.Systems.NpcDialog
         /// <summary>
         /// Gets the NPC object id.
         /// </summary>
-        public int NpcObjectId { get; }
+        public uint NpcObjectId { get; }
 
         /// <summary>
         /// Gets the dialog key.
@@ -15,7 +15,7 @@ namespace Rhisis.World.Systems.NpcDialog
         public string DialogKey { get; }
 
         /// <inheritdoc />
-        public NpcDialogOpenEventArgs(int objectId, string dialogKey)
+        public NpcDialogOpenEventArgs(uint objectId, string dialogKey)
         {
             this.NpcObjectId = objectId;
             this.DialogKey = dialogKey;

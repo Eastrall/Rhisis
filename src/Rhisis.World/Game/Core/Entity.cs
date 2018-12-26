@@ -15,7 +15,7 @@ namespace Rhisis.World.Game.Core
         private bool _disposedValue;
 
         /// <inheritdoc />
-        public int Id { get; }
+        public uint Id { get; }
 
         /// <inheritdoc />
         public IContext Context { get; }
@@ -42,7 +42,7 @@ namespace Rhisis.World.Game.Core
             where TSystem : ISystem => SystemManager.Instance.Execute<TSystem>(this, e);
 
         /// <inheritdoc />
-        public TEntity FindEntity<TEntity>(int id)
+        public TEntity FindEntity<TEntity>(uint id)
             where TEntity : IEntity => (TEntity)this.Object.Entities.FirstOrDefault(x => x is TEntity && x.Id == id);
 
         /// <inheritdoc />

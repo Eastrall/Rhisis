@@ -11,7 +11,7 @@ namespace Rhisis.Network.Packets.World
         /// <summary>
         /// Gets the target id.
         /// </summary>
-        public int TargetId { get; }
+        public uint TargetId { get; }
 
         /// <summary>
         /// Gets a value indicating whether target should be cleared or not.
@@ -24,7 +24,7 @@ namespace Rhisis.Network.Packets.World
         /// <param name="packet">Incoming packet</param>
         public SetTargetPacket(INetPacketStream packet)
         {
-            this.TargetId = packet.Read<int>();
+            this.TargetId = packet.Read<uint>();
             this.Clear = packet.Read<byte>();
         }
 

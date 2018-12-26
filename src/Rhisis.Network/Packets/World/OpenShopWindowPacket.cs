@@ -11,7 +11,7 @@ namespace Rhisis.Network.Packets.World
         /// <summary>
         /// Gets the selected object id.
         /// </summary>
-        public int ObjectId { get; }
+        public uint ObjectId { get; }
 
         /// <summary>
         /// Creates a new <see cref="OpenShopWindowPacket"/> instance.
@@ -19,7 +19,7 @@ namespace Rhisis.Network.Packets.World
         /// <param name="packet">Incoming packet</param>
         public OpenShopWindowPacket(INetPacketStream packet)
         {
-            this.ObjectId = packet.Read<int>();
+            this.ObjectId = packet.Read<uint>();
         }
 
         /// <summary>

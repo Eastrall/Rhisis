@@ -7,11 +7,11 @@ namespace Rhisis.Network.Packets.World.Trade
 {
     public class TradeRequestPacket
     {
-        public int Target { get; }
+        public uint Target { get; }
 
         public TradeRequestPacket(INetPacketStream packet)
         {
-            this.Target = packet.Read<int>();
+            this.Target = packet.Read<uint>();
         }
     }
 }

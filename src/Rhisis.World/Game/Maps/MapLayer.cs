@@ -72,7 +72,7 @@ namespace Rhisis.World.Game.Maps
         }
 
         /// <inheritdoc />
-        public override TEntity FindEntity<TEntity>(int id)
+        public override TEntity FindEntity<TEntity>(uint id)
         {
             var entity = base.FindEntity<TEntity>(id);
 

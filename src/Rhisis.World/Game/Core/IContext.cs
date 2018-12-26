@@ -31,7 +31,7 @@ namespace Rhisis.World.Game.Core
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="id">Entity id</param>
         /// <returns></returns>
-        TEntity FindEntity<TEntity>(int id) where TEntity : IEntity;
+        TEntity FindEntity<TEntity>(uint id) where TEntity : IEntity;
 
         /// <summary>
         /// Deletes the entity from this context.
@@ -39,7 +39,7 @@ namespace Rhisis.World.Game.Core
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="id">Entity id</param>
         /// <returns></returns>
-        bool DeleteEntity(int id);
+        bool DeleteEntity(uint id);
 
         /// <summary>
         /// Deletes the entity from this context.

@@ -8,7 +8,7 @@ namespace Rhisis.Network.Packets.World
         /// <summary>
         /// Gets the dialog owner object id.
         /// </summary>
-        public int ObjectId { get; }
+        public uint ObjectId { get; }
 
         /// <summary>
         /// Gets the dialog key.
@@ -31,12 +31,12 @@ namespace Rhisis.Network.Packets.World
         /// <summary>
         /// Gets the quest mover id.
         /// </summary>
-        public int MoverId { get; }
+        public uint MoverId { get; }
 
         /// <summary>
         /// Gets the quest player id.
         /// </summary>
-        public int PlayerId { get; }
+        public uint PlayerId { get; }
 
         /// <summary>
         /// Creates a new <see cref="DialogPacket"/> instance.
@@ -44,12 +44,12 @@ namespace Rhisis.Network.Packets.World
         /// <param name="packet"></param>
         public DialogPacket(INetPacketStream packet)
         {
-            this.ObjectId = packet.Read<int>();
+            this.ObjectId = packet.Read<uint>();
             this.Key = packet.Read<string>();
             this.Param = packet.Read<int>();
             this.QuestId = packet.Read<int>();
-            this.MoverId = packet.Read<int>();
-            this.PlayerId = packet.Read<int>();
+            this.MoverId = packet.Read<uint>();
+            this.PlayerId = packet.Read<uint>();
         }
 
         /// <inheritdoc />

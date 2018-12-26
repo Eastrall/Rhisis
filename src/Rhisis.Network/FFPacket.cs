@@ -1,7 +1,4 @@
 ﻿using Ether.Network.Packets;
-using Rhisis.Core.IO;
-using Rhisis.Network.Packets;
-using System;
 using System.IO;
 using System.Text;
 
@@ -13,6 +10,7 @@ namespace Rhisis.Network
     public class FFPacket : NetPacketStream
     {
         public const byte Header = 0x5E;
+        public const uint NullId = 0xFFFFFFFF;
         
         private short _mergedPacketCount;
 
@@ -133,7 +131,7 @@ namespace Rhisis.Network
         /// <param name="moverId"></param>
         /// <param name="command"></param>
         /// <param name="mainCommand"></param>
-        public void StartNewMergedPacket(int moverId, object command, uint mainCommand)
+        public void StartNewMergedPacket(uint moverId, object command, uint mainCommand)
         {
             var packet = (uint)command;
 
@@ -159,6 +157,6 @@ namespace Rhisis.Network
         /// </summary>
         /// <param name="moverId"></param>
         /// <param name="command"></param>
-        public void StartNewMergedPacket(int moverId, object command) => this.StartNewMergedPacket(moverId, command, 0xFFFFFF00);
+        public void StartNewMergedPacket(uint moverId, object command) => this.StartNewMergedPacket(moverId, command, 0xFFFFFF00);
     }
 }

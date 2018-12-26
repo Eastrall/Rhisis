@@ -4,11 +4,11 @@ namespace Rhisis.World.Systems.Follow
 {
     public class FollowEventArgs : SystemEventArgs
     {
-        public int TargetId { get; }
+        public uint TargetId { get; }
 
         public float Distance { get; }
 
-        public FollowEventArgs(int targetId, float distance)
+        public FollowEventArgs(uint targetId, float distance)
         {
             this.TargetId = targetId;
             this.Distance = distance;

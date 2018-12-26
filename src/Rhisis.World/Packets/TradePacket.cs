@@ -6,7 +6,7 @@ namespace Rhisis.World.Packets
 {
     public static partial class WorldPacketFactory
     {
-        public static void SendTradeRequest(IPlayerEntity player, int traderId)
+        public static void SendTradeRequest(IPlayerEntity player, uint traderId)
         {
             using (var packet = new FFPacket())
             {
@@ -16,7 +16,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradeRequestCancel(IPlayerEntity player, int traderId)
+        public static void SendTradeRequestCancel(IPlayerEntity player, uint traderId)
         {
             using (var packet = new FFPacket())
             {
@@ -26,7 +26,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTrade(IPlayerEntity player, IPlayerEntity target, int playerId)
+        public static void SendTrade(IPlayerEntity player, IPlayerEntity target, uint playerId)
         {
             using (var packet = new FFPacket())
             {
@@ -40,7 +40,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradePut(IPlayerEntity player, int traderId, byte slot, byte itemType, byte id, short count)
+        public static void SendTradePut(IPlayerEntity player, uint traderId, byte slot, byte itemType, byte id, short count)
         {
             using (var packet = new FFPacket())
             {
@@ -55,7 +55,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradePutGold(IPlayerEntity player, int traderId, int gold)
+        public static void SendTradePutGold(IPlayerEntity player, uint traderId, int gold)
         {
             using (var packet = new FFPacket())
             {
@@ -67,7 +67,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradeCancel(IPlayerEntity player, int traderId, int mode)
+        public static void SendTradeCancel(IPlayerEntity player, uint traderId, int mode)
         {
             using (var packet = new FFPacket())
             {
@@ -80,7 +80,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradeOk(IPlayerEntity player, int traderId)
+        public static void SendTradeOk(IPlayerEntity player, uint traderId)
         {
             using (var packet = new FFPacket())
             {
@@ -100,7 +100,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendTradeLastConfirmOk(IPlayerEntity player, int traderId)
+        public static void SendTradeLastConfirmOk(IPlayerEntity player, uint traderId)
         {
             using (var packet = new FFPacket())
             {

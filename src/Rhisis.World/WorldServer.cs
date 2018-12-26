@@ -82,10 +82,9 @@ namespace Rhisis.World
         /// </summary>
         /// <param name="id">Player id</param>
         /// <returns></returns>
-        public IPlayerEntity GetPlayerEntity(int id)
+        public IPlayerEntity GetPlayerEntity(uint id)
         {
             WorldClient client =  this.Clients.FirstOrDefault(x => x.Player.Id == id);
-
             return client?.Player;
         }
 

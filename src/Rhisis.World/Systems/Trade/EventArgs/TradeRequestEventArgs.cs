@@ -4,9 +4,9 @@ namespace Rhisis.World.Systems.Trade.EventArgs
 {
     public class TradeRequestEventArgs : SystemEventArgs
     {
-        public int TargetId { get; }
+        public uint TargetId { get; }
 
-        public TradeRequestEventArgs(int targetId)
+        public TradeRequestEventArgs(uint targetId)
         {
             TargetId = targetId;
         }

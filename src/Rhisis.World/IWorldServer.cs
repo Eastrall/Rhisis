@@ -5,7 +5,7 @@ namespace Rhisis.World
 {
     public interface IWorldServer : INetServer
     {
-        IPlayerEntity GetPlayerEntity(int id);
+        IPlayerEntity GetPlayerEntity(uint id);
         IPlayerEntity GetPlayerEntity(string name);
     }
 }

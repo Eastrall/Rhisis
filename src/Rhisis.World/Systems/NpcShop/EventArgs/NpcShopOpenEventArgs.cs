@@ -7,13 +7,13 @@ namespace Rhisis.World.Systems.NpcShop.EventArgs
         /// <summary>
         /// Gets the NPC Object id.
         /// </summary>
-        public int NpcObjectId { get; }
+        public uint NpcObjectId { get; }
 
         /// <summary>
         /// Creates a new <see cref="NpcShopOpenEventArgs"/> instance.
         /// </summary>
         /// <param name="npcObjectId"></param>
-        public NpcShopOpenEventArgs(int npcObjectId)
+        public NpcShopOpenEventArgs(uint npcObjectId)
         {
             this.NpcObjectId = npcObjectId;
         }

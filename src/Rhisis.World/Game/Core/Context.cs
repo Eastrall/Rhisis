@@ -8,7 +8,7 @@ namespace Rhisis.World.Game.Core
     {
         protected static readonly object SyncRoot = new object();
 
-        private readonly IDictionary<int, IEntity> _entities;
+        private readonly IDictionary<uint, IEntity> _entities;
         private bool _disposedValue;
 
         /// <inheritdoc />
@@ -22,7 +22,7 @@ namespace Rhisis.World.Game.Core
         /// </summary>
         public Context()
         {
-            this._entities = new Dictionary<int, IEntity>();
+            this._entities = new Dictionary<uint, IEntity>();
         }
 
         /// <inheritdoc />
@@ -43,7 +43,7 @@ namespace Rhisis.World.Game.Core
         }
 
         /// <inheritdoc />
-        public bool DeleteEntity(int id)
+        public bool DeleteEntity(uint id)
         {
             bool removed = false;
 
@@ -59,7 +59,7 @@ namespace Rhisis.World.Game.Core
         public bool DeleteEntity(IEntity entity) => this.DeleteEntity(entity.Id);
 
         /// <inheritdoc />
-        public virtual TEntity FindEntity<TEntity>(int id) where TEntity : IEntity 
+        public virtual TEntity FindEntity<TEntity>(uint id) where TEntity : IEntity 
             => this._entities.TryGetValue(id, out IEntity entity) ? (TEntity)entity : default(TEntity);
 
         /// <inheritdoc />

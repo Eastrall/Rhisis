@@ -8,7 +8,7 @@ namespace Rhisis.World.Game.Components
 
         public enum TradeState { Item, Ok, Confirm }
 
-        public int TargetId { get; set; }
+        public uint TargetId { get; set; }
 
         public ItemContainerComponent Items { get; private set; }
 

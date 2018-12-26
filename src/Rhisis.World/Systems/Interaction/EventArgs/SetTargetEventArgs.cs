@@ -7,7 +7,7 @@ namespace Rhisis.World.Systems.Interaction.EventArgs
         /// <summary>
         /// Gets the target id.
         /// </summary>
-        public int TargetId { get; }
+        public uint TargetId { get; }
 
         /// <summary>
         /// Gets a value indicating whether target should be cleared or not.
@@ -19,7 +19,7 @@ namespace Rhisis.World.Systems.Interaction.EventArgs
         /// </summary>
         /// <param name="targetId">Target Id</param>
         /// <param name="bTargetingMode">Targeting Mode</param>
-        public SetTargetEventArgs(int targetId, byte bTargetingMode)
+        public SetTargetEventArgs(uint targetId, byte bTargetingMode)
         {
             this.TargetId = targetId;
             this.TargetingMode = bTargetingMode;

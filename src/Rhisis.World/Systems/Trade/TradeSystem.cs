@@ -327,7 +327,7 @@ namespace Rhisis.World.Systems.Trade
         /// <param name="player"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static IPlayerEntity GetEntityFromContextOf(IEntity player, int id) =>
+        private static IPlayerEntity GetEntityFromContextOf(IEntity player, uint id) =>
             player.Context.FindEntity<IPlayerEntity>(id) ??
             throw new RhisisSystemException($"Can't find entity of id {id}");
 

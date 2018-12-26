@@ -13,7 +13,7 @@ namespace Rhisis.World.Game.Core
         /// <summary>
         /// Gets the entity id.
         /// </summary>
-        int Id { get; }
+        uint Id { get; }
 
         /// <summary>
         /// Gets the entity context.
@@ -43,6 +43,6 @@ namespace Rhisis.World.Game.Core
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="id">Entity id</param>
         /// <returns>Entity</returns>
-        TEntity FindEntity<TEntity>(int id) where TEntity : IEntity;
+        TEntity FindEntity<TEntity>(uint id) where TEntity : IEntity;
     }
 }
