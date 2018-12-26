@@ -7,6 +7,9 @@ namespace Rhisis.World.Game.Components
 {
     public class PlayerDataComponent
     {
+        public static int StartVersion = 1;
+
+
         /// <summary>
         /// Gets or sets the player's id.
         /// </summary>
@@ -55,5 +58,11 @@ namespace Rhisis.World.Game.Components
         /// Gets the job's data.
         /// </summary>
         public JobData JobData { get; private set; }
+
+        /// <summary>
+        /// Gets the current version of the player data.
+        /// Has to be updated (Version += 1) everytime one of these things changes: Job, Level, Gender, Online/Offline status
+        /// </summary>
+        public int Version { get; set; } = this.StartVersion;
     }
 }
