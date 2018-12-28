@@ -7,6 +7,7 @@ using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
+using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
@@ -146,14 +147,35 @@ namespace Rhisis.World.Systems.Mailbox
 
                     // TODO: Add the following checks
                     /* All AddDiagText
-                     IsUsableItem - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7387
-                     IsEquipped - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7392
-                     IsQuestItem - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7397
                      IsBound - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7402
                      IsUsing - TID_GAME_CANNOT_DO_USINGITEM  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7407
-                     Parts == PARTS_RIDE && ItemJob == JOB_VAGRANT - TID_GAME_CANNOT_POST  https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7424
-                     IsCharged() (is this v15? recheck) - TID_GAME_CANNOT_POST https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7434
+                     IsCharged()- TID_GAME_CANNOT_POST https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7434
                      */
+
+                    if (inventoryItem.IsEquipped())
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
+                        return;
+                    }
+
+                    if (inventoryItem.ExtraUsed != 0)
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
+                        return;
+                    }
+
+                    if (inventoryItem.Data.ItemKind3 == ItemKind3.QUEST)
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
+                        return;
+                    }
+
+                    // TODO: Not yet implemented
+                    /*if (inventoryItem.Data.Parts == Parts.PARTS_RIDE && inventoryItem.Data.ItemJob == DefineJob.JOB_VAGRANT)
+                    {
+                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
+                        return;
+                    }*/
 
                     if (inventoryItem.Data.ItemKind3 == ItemKind3.CLOAK /*&& inventoryItem.GuildId != 0*/)
                     {
@@ -174,6 +196,7 @@ namespace Rhisis.World.Systems.Mailbox
 
                 // Remove gold now
                 player.PlayerData.Gold -= (int)neededGold;
+                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
 
                 // Create mail
                 var mail = new DbMail
@@ -190,16 +213,18 @@ namespace Rhisis.World.Systems.Mailbox
                 database.Mails.Create(mail);
                 database.Complete();
                 WorldPacketFactory.SendPostMail(player, mail);
-            }
+                WorldPacketFactory.SendAddDiagText(player, textClient["TID_MAIL_SEND_OK"]);
 
-            // Send message to receiver when he's online
-            var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();
-            var receiverEntity = worldServer.GetPlayerEntity(e.Receiver);
-            if (receiverEntity != null)
-            {
-                // set receive player flag newmail
-                // send flags packet
-                // packet 0x00d3
+                // Send message to receiver when he's online
+                var worldServer = DependencyContainer.Instance.Resolve<IWorldServer>();
+                var receiverEntity = worldServer.GetPlayerEntity(e.Receiver);
+                if (receiverEntity != null)
+                {
+                    // send mail to user when he is at a postbox - official has this check and packet but never sends it because m_bPosting is never set (User class)
+                    // WorldPacketFactory.SendPostMail(receiverEntity, mail);
+                    receiverEntity.PlayerData.Mode |= ModeType.MODE_MAILBOX;
+                    WorldPacketFactory.SendModifyMode(receiverEntity);
+                }
             }
         }
 
@@ -212,7 +237,7 @@ namespace Rhisis.World.Systems.Mailbox
                     return;
                 mail.IsDeleted = true;
                 database.Complete();
-                WorldPacketFactory.SendRemoveMail(player, mail);
+                WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Mail);
             }
         }
 
@@ -237,8 +262,7 @@ namespace Rhisis.World.Systems.Mailbox
                 int availableSlot = player.Inventory.GetAvailableSlot();
                 player.Inventory.Items[availableSlot] = new Item(mail.Item);
                 database.Complete();
-                var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
-                WorldPacketFactory.SendGetMailItem(player, mail, worldConfiguration.Id); 
+                WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Item); 
             }
         }
 
@@ -267,7 +291,8 @@ namespace Rhisis.World.Systems.Mailbox
                 }
                 database.Complete();
                 var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
-                WorldPacketFactory.SendGetMailGold(player, mail, worldConfiguration.Id); 
+                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+                WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Gold);
             }
         }
 
@@ -280,7 +305,12 @@ namespace Rhisis.World.Systems.Mailbox
                     return;
                 mail.HasBeenRead = true;
                 database.Complete();
-                WorldPacketFactory.SendReadMail(player, mail);
+                WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Read);
+                if (player.PlayerData.Mode.HasFlag(ModeType.MODE_MAILBOX))
+                {
+                    player.PlayerData.Mode &= ~ModeType.MODE_MAILBOX;
+                    WorldPacketFactory.SendModifyMode(player);
+                }
             }
         }
     }

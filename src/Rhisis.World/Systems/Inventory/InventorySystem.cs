@@ -207,7 +207,7 @@ namespace Rhisis.World.Systems.Inventory
                 return;
             }
 
-            if (item.Id > 0 && item.Slot > EquipOffset)
+            if (item.Id > 0 && item.IsEquipped())
             {
                 int parts = Math.Abs(sourceSlot - EquipOffset);
 

@@ -1,6 +1,7 @@
 ﻿using Ether.Network.Packets;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Game;
+using Rhisis.World.Systems.Inventory;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Game.Structures
@@ -232,6 +233,8 @@ namespace Rhisis.World.Game.Structures
             return new Item(this.Id, this.Quantity, this.CreatorId, this.Slot, this.UniqueId, this.Refine, this.Element,
                 this.ElementRefine, this.ExtraUsed);
         }
+
+        public bool IsEquipped() => this.Slot > InventorySystem.EquipOffset;
 
         /// <summary>
         /// Reset the item.

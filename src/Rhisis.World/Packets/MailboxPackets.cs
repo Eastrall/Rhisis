@@ -3,6 +3,7 @@ using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
+using Rhisis.World.Systems.Mailbox;
 using System;
 using System.Collections.Generic;
 
@@ -26,7 +27,7 @@ namespace Rhisis.World.Packets
                 {
                     packet.Write(mail.Id);
                     packet.Write(mail.Sender.Id);
-                    if (mail.Item is null)
+                    if (mail.Item is null || mail.HasReceivedItem)
                         packet.Write(CONTAINS_NO_ITEM);
                     else
                     {
@@ -34,7 +35,7 @@ namespace Rhisis.World.Packets
                         var item = new Item(mail.Item);
                         item.Serialize(packet);
                     }
-                    packet.Write(mail.Gold);
+                    packet.Write(mail.HasReceivedGold ? 0 : mail.Gold);
                     int time = (int)(DateTime.UtcNow - mail.CreateTime).TotalSeconds;
                     packet.Write(time);
                     packet.Write(Convert.ToByte(mail.HasBeenRead));
@@ -49,7 +50,7 @@ namespace Rhisis.World.Packets
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(PacketType.QUERYPOSTMAIL);
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.POSTMAIL);
 
                 packet.Write(mail.Receiver.Id);
                 packet.Write(mail.Sender.Id);
@@ -62,6 +63,9 @@ namespace Rhisis.World.Packets
                     item.Serialize(packet);
                 }
                 packet.Write(mail.Gold);
+                int time = (int)(DateTime.UtcNow - mail.CreateTime).TotalSeconds;
+                packet.Write(time);
+                packet.Write(Convert.ToByte(mail.HasBeenRead));
                 packet.Write(mail.Title);
                 packet.Write(mail.Text);
 
@@ -69,55 +73,14 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendRemoveMail(IPlayerEntity entity, DbMail mail)
+        public static void SendRemoveMail(IPlayerEntity entity, DbMail mail, RemovedFromMail obj)
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(PacketType.QUERYREMOVEMAIL);
+                packet.WriteHeader(SnapshotType.REMOVEMAIL);
 
-                packet.Write(mail.Receiver.Id);
                 packet.Write(mail.Id);
-
-                entity.Connection.Send(packet);
-            }
-        }
-
-        public static void SendGetMailItem(IPlayerEntity entity, DbMail mail, int channelId)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.WriteHeader(PacketType.QUERYGETMAILITEM);
-
-                packet.Write(mail.Receiver.Id);
-                packet.Write(mail.Id);
-                packet.Write(channelId);
-
-                entity.Connection.Send(packet);
-            }
-        }
-
-        public static void SendGetMailGold(IPlayerEntity entity, DbMail mail, int channelId)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.WriteHeader(PacketType.QUERYGETMAILGOLD);
-
-                packet.Write(mail.Receiver.Id);
-                packet.Write(mail.Id);
-                packet.Write(channelId);
-
-                entity.Connection.Send(packet);
-            }
-        }
-
-        public static void SendReadMail(IPlayerEntity entity, DbMail mail)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.WriteHeader(PacketType.READMAIL);
-
-                packet.Write(mail.Receiver.Id);
-                packet.Write(mail.Id);
+                packet.Write(obj);
 
                 entity.Connection.Send(packet);
             }

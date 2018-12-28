@@ -39,5 +39,17 @@ namespace Rhisis.World.Packets
                     entity.Connection.Send(packet);
             }
         }
+
+        public static void SendModifyMode(IPlayerEntity entity)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.MODIFYMODE);
+
+                packet.Write(entity.PlayerData.Mode);
+
+                SendToVisible(packet, entity, true);
+            }
+        }
     }
 }

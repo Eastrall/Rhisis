@@ -2,13 +2,16 @@
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Game;
+using Rhisis.Network.Packets;
 
 namespace Rhisis.World.Game.Components
 {
     public class PlayerDataComponent
     {
-        public static int StartVersion = 1;
-
+        /// <summary>
+        /// The version
+        /// </summary>
+        public const int StartVersion = 1;
 
         /// <summary>
         /// Gets or sets the player's id.
@@ -63,6 +66,8 @@ namespace Rhisis.World.Game.Components
         /// Gets the current version of the player data.
         /// Has to be updated (Version += 1) everytime one of these things changes: Job, Level, Gender, Online/Offline status
         /// </summary>
-        public int Version { get; set; } = this.StartVersion;
+        public int Version { get; set; } = StartVersion;
+
+        public ModeType Mode { get; set; }
     }
 }

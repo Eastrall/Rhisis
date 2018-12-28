@@ -11,7 +11,7 @@ namespace Rhisis.World.Systems.PlayerData.EventArgs
         public uint Size { get; }
 
         /// <summary>
-        /// Gets the player id.
+        /// Gets the player id and version.
         /// </summary>
         public Dictionary<uint, int> PlayerDictionary { get; }
 
@@ -23,7 +23,7 @@ namespace Rhisis.World.Systems.PlayerData.EventArgs
 
         public override bool CheckArguments()
         {
-            return Size <= 1024;
+            return Size <= 1024 && Size > 0;
         }
     }
 }
