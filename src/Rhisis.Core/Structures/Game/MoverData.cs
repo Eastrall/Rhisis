@@ -75,6 +75,12 @@ namespace Rhisis.Core.Structures.Game
         [DataMember(Name = "dwAttackSpeed")]
         public int AttackSpeed { get; set; }
 
+        [IgnoreDataMember]
+        public int DropGoldMin { get; set; }
+
+        [IgnoreDataMember]
+        public int DropGoldMax { get; set; }
+
         public override string ToString() => this.Name;
     }
 }

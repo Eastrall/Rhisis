@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.Resources.Include;
 using Rhisis.Core.Structures.Game;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Rhisis.Core.Resources.Loaders
 {
@@ -58,7 +60,66 @@ namespace Rhisis.Core.Resources.Loaders
                 }
             }
 
+            using (var moversPropExFile = new IncludeFile(GameResources.MoversPropExPath))
+            {
+                foreach (Block moverBlock in moversPropExFile.Statements)
+                {
+                    if (this._definesLoader.Defines.TryGetValue(moverBlock.Name, out int moverId) && 
+                        this._moversData.TryGetValue(moverId, out MoverData mover))
+                    {
+                        this.LoadDropGold(mover, moverBlock.GetInstruction("DropGold"));
+                        this.LoadDropItems(mover, moverBlock.GetInstructions("DropItem"));
+                    }
+                }
+            }
+
             this._logger.LogInformation("-> {0} movers loaded.", this._moversData.Count);
+        }
+
+        /// <summary>
+        /// Loads the DropGold instruction for a given mover.
+        /// </summary>
+        /// <param name="mover">Mover</param>
+        /// <param name="dropGoldInstruction">DropGold instruction</param>
+        private void LoadDropGold(MoverData mover, Instruction dropGoldInstruction)
+        {
+            if (dropGoldInstruction == null)
+                return;
+
+            if (dropGoldInstruction.Parameters.Count < 2)
+            {
+                this._logger.LogWarning($"Cannot load 'DropGold' instruction for mover {mover.Name}. Reason: Missing parameters.");
+                return;
+            }
+
+            if (!int.TryParse(dropGoldInstruction.Parameters.ElementAt(0).ToString(), out int minGold))
+            {
+                this._logger.LogWarning($"Cannot load min gold amount for mover {mover.Name}.");
+            }
+
+            if (!int.TryParse(dropGoldInstruction.Parameters.ElementAt(1).ToString(), out int maxGold))
+            {
+                this._logger.LogWarning($"Cannot load max gold amount for mover {mover.Name}.");
+            }
+
+            mover.DropGoldMin = minGold;
+            mover.DropGoldMax = maxGold;
+        }
+
+        /// <summary>
+        /// Loads a collection of DropItem instruction for a given mover.
+        /// </summary>
+        /// <param name="mover">Mover</param>
+        /// <param name="dropItemInstructions">Collection of DropItem instructions</param>
+        private void LoadDropItems(MoverData mover, IEnumerable<Instruction> dropItemInstructions)
+        {
+            if (dropItemInstructions == null)
+                return;
+
+            foreach (var dropItemInstruction in dropItemInstructions)
+            {
+                // TODO: load items drop data
+            }
         }
 
         /// <summary>

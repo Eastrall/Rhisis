@@ -31,13 +31,19 @@ namespace Rhisis.Core.Resources.Include
             this._unknownStatements = new List<string>();
         }
 
-        public Block GetBlockByName(string name) => this.GetStatement(name, StatementType.Block) as Block;
+        public Block GetBlockByName(string name) => this.GetStatement<Block>(name, StatementType.Block);
 
-        public Instruction GetInstruction(string name) => this.GetStatement(name, StatementType.Instruction) as Instruction;
+        public Instruction GetInstruction(string name) => this.GetStatement<Instruction>(name, StatementType.Instruction);
 
-        public Variable GetVariable(string name) => this.GetStatement(name, StatementType.Variable) as Variable;
+        public IEnumerable<Instruction> GetInstructions(string name) => this.GetStatements<Instruction>(name, StatementType.Instruction);
 
-        private IStatement GetStatement(string name, StatementType type) => this._statements.FirstOrDefault(x => x.Name == name && x.Type == type);
+        public Variable GetVariable(string name) => this.GetStatement<Variable>(name, StatementType.Variable);
+
+        private T GetStatement<T>(string name, StatementType type) where T : IStatement
+            => (T)this._statements.FirstOrDefault(x => x.Name == name && x.Type == type);
+
+        private IEnumerable<T> GetStatements<T>(string name, StatementType type) where T : IStatement
+            => this._statements.Where(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).Cast<T>();
 
         internal void AddStatement(IStatement statement) => this._statements.Add(statement);
 
@@ -48,5 +54,7 @@ namespace Rhisis.Core.Resources.Include
             if (this._statements.Any())
                 this._statements.Clear();
         }
+
+        public override string ToString() => $"{this.Name}";
     }
 }

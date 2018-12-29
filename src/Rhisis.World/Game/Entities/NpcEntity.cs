@@ -1,4 +1,5 @@
-﻿using Rhisis.Core.Structures.Game;
+﻿using Rhisis.Core.Common;
+using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Core;
@@ -29,6 +30,7 @@ namespace Rhisis.World.Game.Entities
         public NpcEntity(IContext context)
             : base(context)
         {
+            this.Object.Type = WorldObjectType.Mover;
             this.Timers = new NpcTimerComponent();
         }
     }

@@ -197,7 +197,6 @@ namespace Rhisis.World.Game.Maps
                 ModelId = element.Index,
                 Name = element.Name,
                 Angle = element.Angle,
-                Type = WorldObjectType.Mover,
                 Position = element.Position.Clone(),
                 Size = (short)(ObjectComponent.DefaultObjectSize * element.Scale.X),
                 Spawned = true,

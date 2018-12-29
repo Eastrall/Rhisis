@@ -6,6 +6,7 @@ using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
+using Rhisis.World.Systems.Drop;
 
 namespace Rhisis.World.Systems.Battle
 {
@@ -83,7 +84,10 @@ namespace Rhisis.World.Systems.Battle
                 if (defender is IMonsterEntity deadMonster)
                 {
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5;
-                    // TODO: give exp and drop items.
+                    deadMonster.NotifySystem<DropSystem>(null); // Items
+                    deadMonster.NotifySystem<DropSystem>(null); // Gold
+
+                    // TODO: give exp
                 }
             }
         }
