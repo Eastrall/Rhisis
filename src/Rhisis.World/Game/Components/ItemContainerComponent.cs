@@ -148,8 +148,7 @@ namespace Rhisis.World.Game.Components
             {
                 if (this.Items[i].Id > 0)
                 {
-                    packet.Write((byte)this.Items[i].UniqueId);
-                    packet.Write(this.Items[i].UniqueId);
+                    packet.Write((byte)this.Items[i].Slot);
                     this.Items[i].Serialize(packet);
                 }
             }

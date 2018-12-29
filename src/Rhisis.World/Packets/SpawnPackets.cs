@@ -80,7 +80,7 @@ namespace Rhisis.World.Packets
                 packet.Write<byte>(0); // have party or not
 
                 packet.Write((byte)player.PlayerData.Authority); // authority
-                packet.Write(0); // mode
+                packet.Write((uint)player.PlayerData.Mode); // mode
                 packet.Write(0); // state mode
                 packet.Write(0x000001F6); // item used ??
                 packet.Write(0); // last pk time.
@@ -92,9 +92,9 @@ namespace Rhisis.World.Packets
                 packet.Write(-1); // titles
                 
                 // Serialize visible effects
-                IEnumerable<Item> equipedItems = player.Inventory.Items.GetRange(InventorySystem.EquipOffset, InventorySystem.MaxItems - InventorySystem.EquipOffset);
+                IEnumerable<Item> equippedItems = player.Inventory.Items.GetRange(InventorySystem.EquipOffset, InventorySystem.MaxItems - InventorySystem.EquipOffset);
 
-                foreach (var item in equipedItems)
+                foreach (var item in equippedItems)
                     packet.Write(item.Refines);
 
                 packet.Write(0); // guild war state
@@ -131,7 +131,7 @@ namespace Rhisis.World.Packets
                 packet.Write<short>(0); // always 0
 
                 // item mask
-                foreach (var item in equipedItems)
+                foreach (var item in equippedItems)
                     packet.Write(item.Id);
 
                 // skills

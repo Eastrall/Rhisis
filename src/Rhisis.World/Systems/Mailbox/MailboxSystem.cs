@@ -137,8 +137,8 @@ namespace Rhisis.World.Systems.Mailbox
 
                 // Calculate item quantity and do all kinds of checks
                 DbItem item = null;
-                var inventoryItem = player.Inventory.Items[e.ItemSlot];
-                if (inventoryItem.Id > -1)
+                var inventoryItem = player.Inventory.Items.FirstOrDefault(x => x.Slot == e.ItemSlot);
+                if (inventoryItem != null && inventoryItem.Id > -1)
                 {
                     var quantity = e.ItemQuantity;
                     if (e.ItemQuantity > inventoryItem.Quantity)
@@ -189,9 +189,13 @@ namespace Rhisis.World.Systems.Mailbox
                         if (futureQuantity == 0)
                             player.Inventory.Items.Remove(inventoryItem);
                         inventoryItem.Quantity = futureQuantity;
+                        WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, futureQuantity);
                     }
                     else // Not stackable so always remove it
+                    {
                         player.Inventory.Items.Remove(inventoryItem);
+                        WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, 0);
+                    }
                 }
 
                 // Remove gold now
@@ -212,7 +216,6 @@ namespace Rhisis.World.Systems.Mailbox
                 };
                 database.Mails.Create(mail);
                 database.Complete();
-                WorldPacketFactory.SendPostMail(player, mail);
                 WorldPacketFactory.SendAddDiagText(player, textClient["TID_MAIL_SEND_OK"]);
 
                 // Send message to receiver when he's online

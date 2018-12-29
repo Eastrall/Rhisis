@@ -47,7 +47,6 @@ namespace Rhisis.World.Packets
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.CREATEITEM);
                 packet.Write<byte>(0);
-                packet.Write(-1); // object id
                 item.Serialize(packet);
                 packet.Write<byte>(1);
                 packet.Write((byte)item.UniqueId);

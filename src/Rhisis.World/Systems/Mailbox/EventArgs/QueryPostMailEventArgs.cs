@@ -38,7 +38,7 @@ namespace Rhisis.World.Systems.Mailbox.EventArgs
 
         public QueryPostMailEventArgs(byte itemSlot, short itemQuantity, string receiver, uint gold, string title, string text)
         {
-            this.ItemSlot = ItemSlot;
+            this.ItemSlot = itemSlot;
             this.ItemQuantity = itemQuantity;
             this.Receiver = receiver;
             this.Gold = gold;
@@ -48,7 +48,7 @@ namespace Rhisis.World.Systems.Mailbox.EventArgs
 
         public override bool CheckArguments()
         {
-            return this.ItemQuantity >= 0 && this.ItemSlot < InventorySystem.InventorySize && this.Gold >= 0;
+            return this.ItemQuantity >= 0 && this.Gold >= 0;
         }
     }
 }

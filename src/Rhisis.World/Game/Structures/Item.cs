@@ -196,7 +196,9 @@ namespace Rhisis.World.Game.Structures
         /// <param name="packet"></param>
         public void Serialize(INetPacketStream packet)
         {
+            packet.Write(this.UniqueId);
             packet.Write(this.Id);
+            
             packet.Write(0); // Serial number
 
             if (this.Data != null)
