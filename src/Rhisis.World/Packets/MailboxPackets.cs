@@ -46,14 +46,14 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendRemoveMail(IPlayerEntity entity, DbMail mail, RemovedFromMail obj)
+        public static void SendRemoveMail(IPlayerEntity entity, DbMail mail, RemovedFromMail removeType)
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(SnapshotType.REMOVEMAIL);
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.REMOVEMAIL);
 
                 packet.Write(mail.Id);
-                packet.Write(obj);
+                packet.Write((int)removeType);
 
                 entity.Connection.Send(packet);
             }

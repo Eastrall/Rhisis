@@ -46,7 +46,7 @@ namespace Rhisis.World.Packets
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.MODIFYMODE);
 
-                packet.Write(entity.PlayerData.Mode);
+                packet.Write((uint)entity.PlayerData.Mode);
 
                 SendToVisible(packet, entity, true);
             }

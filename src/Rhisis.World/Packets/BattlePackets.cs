@@ -29,7 +29,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMeleeAttack(ILivingEntity attacker, ObjectMessageType motion, int targetId, int unknwonParam, AttackFlags attackFlags)
+        public static void SendMeleeAttack(ILivingEntity attacker, ObjectMessageType motion, uint targetId, int unknwonParam, AttackFlags attackFlags)
         {
             using (var packet = new FFPacket())
             {

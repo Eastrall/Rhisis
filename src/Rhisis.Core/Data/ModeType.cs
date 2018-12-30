@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rhisis.Network.Packets
+namespace Rhisis.Core.Data
 {
     [Flags]
     public enum ModeType : uint

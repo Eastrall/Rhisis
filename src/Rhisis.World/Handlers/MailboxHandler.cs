@@ -17,7 +17,6 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.QUERYMAILBOX)]
         public static void OnQueryMailbox(WorldClient client, INetPacketStream packet)
         {
-            var onQueryMailboxPacket = new QueryMailboxPacket(packet);
             var queryMailboxEvent = new QueryMailboxEventArgs();
             client.Player.NotifySystem<MailboxSystem>(queryMailboxEvent);
         }

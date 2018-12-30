@@ -37,7 +37,7 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="player"></param>
         /// <param name="textId"></param>
-        public static void SendAddDefinedText(IPlayerEntity player, DefineText textId)
+        public static void SendDefinedText(IPlayerEntity player, DefineText textId)
         {
             using (var packet = new FFPacket())
             {
@@ -53,7 +53,7 @@ namespace Rhisis.World.Packets
         /// <param name="player"></param>
         /// <param name="textId"></param>
         /// <param name="stringParameter"></param>
-        public static void SendAddDefinedText(IPlayerEntity player, DefineText textId, params string[] stringParameter)
+        public static void SendDefinedText(IPlayerEntity player, DefineText textId, params string[] stringParameter)
         {
             using (var packet = new FFPacket())
             {

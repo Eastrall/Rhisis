@@ -105,7 +105,7 @@ namespace Rhisis.World.Systems.Mailbox
                 // Mailbox is full
                 if (receiver.ReceivedMails.Count(x => !x.IsDeleted) >= MaxMails)
                 {
-                    WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
+                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_MAILBOX_FULL, receiver.Name);
                     return;
                 }
 
@@ -121,7 +121,7 @@ namespace Rhisis.World.Systems.Mailbox
                     try
                     {
                         neededGold += e.Gold;
-                        if (neededGold >= player.PlayerData.Gold)
+                        if (neededGold > player.PlayerData.Gold)
                         {
                             WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_LACKMONEY"]);
                             return;
@@ -130,6 +130,7 @@ namespace Rhisis.World.Systems.Mailbox
                     }
                     catch (OverflowException) // Catch integer overflows to prevent exploits
                     {
+                        Logger.LogError($"{player.Object.Name} caused an OverflowException by placing {e.Gold} into a mail.");
                         WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_LACKMONEY"]);
                         return;
                     }
@@ -152,19 +153,11 @@ namespace Rhisis.World.Systems.Mailbox
                      IsCharged()- TID_GAME_CANNOT_POST https://github.com/domz1/SourceFlyFF/blob/ce4897376fb9949fea768165c898c3e17c84607c/Program/WORLDSERVER/DPSrvr.cpp#L7434
                      */
 
-                    if (inventoryItem.IsEquipped())
-                    {
-                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
-                        return;
-                    }
-
-                    if (inventoryItem.ExtraUsed != 0)
-                    {
-                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
-                        return;
-                    }
-
-                    if (inventoryItem.Data.ItemKind3 == ItemKind3.QUEST)
+                    if (inventoryItem.IsEquipped() ||
+                        inventoryItem.ExtraUsed != 0 ||
+                        inventoryItem.Data.ItemKind3 == ItemKind3.QUEST ||
+                        (inventoryItem.Data.ItemKind3 == ItemKind3.CLOAK /*&& inventoryItem.GuildId != 0*/) // || GuildId on items is not yet implemented
+                      /*(inventoryItem.Data.Parts == Parts.PARTS_RIDE && inventoryItem.Data.ItemJob == DefineJob.JOB_VAGRANT)*/)
                     {
                         WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
                         return;
@@ -176,12 +169,6 @@ namespace Rhisis.World.Systems.Mailbox
                         WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
                         return;
                     }*/
-
-                    if (inventoryItem.Data.ItemKind3 == ItemKind3.CLOAK /*&& inventoryItem.GuildId != 0*/)
-                    {
-                        WorldPacketFactory.SendAddDiagText(player, textClient["TID_GAME_CANNOT_POST"]);
-                        return;
-                    }
 
                     if (inventoryItem.Data.IsStackable)
                     {
@@ -223,8 +210,6 @@ namespace Rhisis.World.Systems.Mailbox
                 var receiverEntity = worldServer.GetPlayerEntity(e.Receiver);
                 if (receiverEntity != null)
                 {
-                    // send mail to user when he is at a postbox - official has this check and packet but never sends it because m_bPosting is never set (User class)
-                    // WorldPacketFactory.SendPostMail(receiverEntity, mail);
                     receiverEntity.PlayerData.Mode |= ModeType.MODE_MAILBOX;
                     WorldPacketFactory.SendModifyMode(receiverEntity);
                 }
@@ -235,9 +220,11 @@ namespace Rhisis.World.Systems.Mailbox
         {
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                var mail = database.Mails.Get(x => x.Id == e.MailId);
-                if (mail.Receiver.Id != player.PlayerData.Id)
+                var mail = database.Mails.Get(x => x.Id == e.MailId && x.ReceiverId == player.PlayerData.Id);
+
+                if (mail is null)
                     return;
+
                 mail.IsDeleted = true;
                 database.Complete();
                 WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Mail);
@@ -248,8 +235,9 @@ namespace Rhisis.World.Systems.Mailbox
         {
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                var mail = database.Mails.Get(x => x.Id == e.MailId);
-                if (mail.Receiver.Id == player.PlayerData.Id)
+                var mail = database.Mails.Get(x => x.Id == e.MailId && x.ReceiverId == player.PlayerData.Id);
+
+                if (mail is null)
                     return;
 
                 if (mail.HasReceivedItem)
@@ -257,7 +245,7 @@ namespace Rhisis.World.Systems.Mailbox
 
                 if (!player.Inventory.HasAvailableSlots())
                 {
-                    WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                     return;
                 }
                 
@@ -273,8 +261,9 @@ namespace Rhisis.World.Systems.Mailbox
         {
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                var mail = database.Mails.Get(x => x.Id == e.MailId);
-                if (mail.Receiver.Id != player.PlayerData.Id)
+                var mail = database.Mails.Get(x => x.Id == e.MailId && x.ReceiverId == player.PlayerData.Id);
+
+                if (mail is null)
                     return;
 
                 if (mail.HasReceivedGold)
@@ -289,11 +278,11 @@ namespace Rhisis.World.Systems.Mailbox
                     }
                     catch (OverflowException)
                     {
+                        Logger.LogError($"{player.Object.Name} caused an OverflowException by taking {mail.Gold} out of mail {mail.Id}.");
                         return;
                     }
                 }
                 database.Complete();
-                var worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
                 WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
                 WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Gold);
             }
@@ -303,13 +292,16 @@ namespace Rhisis.World.Systems.Mailbox
         {
             using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
             {
-                var mail = database.Mails.Get(x => x.Id == e.MailId);
-                if (mail.Receiver.Id != player.PlayerData.Id)
+                var mail = database.Mails.Get(x => x.Id == e.MailId && x.ReceiverId == player.PlayerData.Id);
+
+                if (mail is null)
                     return;
+
+                var unreadMails = database.Mails.Count(x => !x.HasBeenRead && x.ReceiverId == player.PlayerData.Id) - 1;
                 mail.HasBeenRead = true;
                 database.Complete();
                 WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Read);
-                if (player.PlayerData.Mode.HasFlag(ModeType.MODE_MAILBOX))
+                if (unreadMails == 0 && player.PlayerData.Mode.HasFlag(ModeType.MODE_MAILBOX))
                 {
                     player.PlayerData.Mode &= ~ModeType.MODE_MAILBOX;
                     WorldPacketFactory.SendModifyMode(player);

@@ -106,8 +106,7 @@ namespace Rhisis.Network
         /// <param name="value"></param>
         private void WriteString(string value)
         {
-            if (value.Length > 0)
-                base.Write(Encoding.GetEncoding(0).GetBytes(value));
+            base.Write(Encoding.GetEncoding(0).GetBytes(value));
         }
 
         /// <summary>

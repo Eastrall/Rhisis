@@ -1,8 +1,8 @@
 ﻿using Rhisis.Core.Common;
+using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Game;
-using Rhisis.Network.Packets;
 
 namespace Rhisis.World.Game.Components
 {

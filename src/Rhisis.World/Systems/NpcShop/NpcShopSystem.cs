@@ -126,7 +126,7 @@ namespace Rhisis.World.Systems.NpcShop
             if (player.PlayerData.Gold < e.ItemData.Cost)
             {
                 Logger.Info($"ShopSystem: {player.Object.Name} doens't have enough gold to buy item {e.ItemData.Name} at {e.ItemData.Cost}.");
-                WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKMONEY);
+                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
                 return;
             }
 
@@ -165,7 +165,7 @@ namespace Rhisis.World.Systems.NpcShop
                 {
                     if (!player.Inventory.HasAvailableSlots())
                     {
-                        WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                        WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                     }
                     else
                     {
@@ -190,7 +190,7 @@ namespace Rhisis.World.Systems.NpcShop
                 {
                     if (!player.Inventory.HasAvailableSlots())
                     {
-                        WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                        WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                         break;   
                     }
 

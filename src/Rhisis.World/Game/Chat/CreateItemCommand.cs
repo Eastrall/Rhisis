@@ -29,7 +29,7 @@ namespace Rhisis.World.Game.Chat
 
             if (!player.Inventory.HasAvailableSlots())
             {
-                WorldPacketFactory.SendAddDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                 return;
             }
 
