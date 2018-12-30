@@ -118,7 +118,35 @@ namespace Rhisis.Core.Resources.Loaders
 
             foreach (var dropItemInstruction in dropItemInstructions)
             {
-                // TODO: load items drop data
+                var dropItem = new DropItemData();
+
+                string dropItemName = dropItemInstruction.Parameters.ElementAt(0).ToString();
+                if (this._definesLoader.Defines.TryGetValue(dropItemName, out int itemId))
+                    dropItem.ItemId = itemId;
+                else
+                {
+                    this._logger.LogWarning($"Cannot find drop item id: {dropItemName} for mover {mover.Name}.");
+                    continue;
+                }
+
+                if (long.TryParse(dropItemInstruction.Parameters.ElementAt(1).ToString(), out long probability))
+                    dropItem.Probability = probability;
+                else
+                {
+                    this._logger.LogWarning($"Cannot read drop item probability for item {dropItemName} and mover {mover.Name}.");
+                }
+
+                if (int.TryParse(dropItemInstruction.Parameters.ElementAt(2).ToString(), out int itemMaxRefine))
+                    dropItem.ItemMaxRefine = itemMaxRefine;
+                else
+                    this._logger.LogWarning($"Cannot read drop item refine max for item {dropItemName} and mover {mover.Name}.");
+
+                if (int.TryParse(dropItemInstruction.Parameters.ElementAt(3).ToString(), out int itemCount))
+                    dropItem.Count = itemCount;
+                else
+                    this._logger.LogWarning($"Cannot read drop item count for item {dropItemName} and mover {mover.Name}.");
+
+                mover.DropItems.Add(dropItem);
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿using Rhisis.Core.Data;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Rhisis.Core.Structures.Game
@@ -80,6 +82,14 @@ namespace Rhisis.Core.Structures.Game
 
         [IgnoreDataMember]
         public int DropGoldMax { get; set; }
+
+        [IgnoreDataMember]
+        public ICollection<DropItemData> DropItems { get; }
+
+        public MoverData()
+        {
+            this.DropItems = new List<DropItemData>();
+        }
 
         public override string ToString() => this.Name;
     }
