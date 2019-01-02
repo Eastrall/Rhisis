@@ -95,6 +95,7 @@ namespace Rhisis.World.Game.Components
         {
             this.Position = new Vector3();
             this.Entities = new List<IEntity>();
+            this.Size = DefaultObjectSize;
             this.MovingFlags = ObjectState.OBJSTA_STAND;
         }
 

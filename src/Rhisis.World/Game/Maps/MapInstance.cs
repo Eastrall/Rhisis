@@ -88,7 +88,7 @@ namespace Rhisis.World.Game.Maps
 
                 // TODO: load wrapzones
                 // TODO: load collector regions
-                
+
                 this._regions.AddRange(respawnersRgn);
             }
         }
@@ -152,7 +152,7 @@ namespace Rhisis.World.Game.Maps
             {
                 const double FrameRatePerSeconds = 0.66666f;
                 double previousTime = 0;
-                
+
                 while (true)
                 {
                     if (this._cancellationToken.IsCancellationRequested)
@@ -200,6 +200,7 @@ namespace Rhisis.World.Game.Maps
                 Position = element.Position.Clone(),
                 Size = (short)(ObjectComponent.DefaultObjectSize * element.Scale.X),
                 Spawned = true,
+                Type = WorldObjectType.Mover,
                 Level = 1
             };
             npc.Behavior = behaviors.NpcBehaviors.GetBehavior(npc.Object.ModelId);

@@ -59,7 +59,7 @@ namespace Rhisis.World.Packets
                 packet.Write(player.VisualAppearance.HairColor);
                 packet.Write((byte)player.VisualAppearance.FaceId);
                 packet.Write(player.PlayerData.Id);
-                packet.Write((byte)1); // Job
+                packet.Write((byte)player.PlayerData.JobId); // Job
 
                 packet.Write((short) player.Statistics.Strength);
                 packet.Write((short) player.Statistics.Stamina);
@@ -240,8 +240,8 @@ namespace Rhisis.World.Packets
                     packet.Write<short>(0);
                     packet.Write<byte>(1); // is player?
                     packet.Write(playerEntity.Health.Hp); // HP
-                    packet.Write(0); // moving flags
-                    packet.Write(0); // motion flags
+                    packet.Write((int)player.Object.MovingFlags); // moving flags
+                    packet.Write((int)player.Object.MotionFlags); // motion flags
                     packet.Write<byte>(0);
                     packet.Write(-1); // baby buffer
 
@@ -278,7 +278,7 @@ namespace Rhisis.World.Packets
                     packet.Write(0); // fame
                     packet.Write<byte>(0); // duel
                     packet.Write(-1); // titles
-                    
+
                     // Serialize visible effects
                     IEnumerable<Item> equipedItems = playerEntity.Inventory.Items.GetRange(InventorySystem.EquipOffset, InventorySystem.MaxItems - InventorySystem.EquipOffset);
 
@@ -355,6 +355,13 @@ namespace Rhisis.World.Packets
                     packet.Write(0);
                     packet.Write<float>(1); // speed factor
                     packet.Write(0);
+                }
+                else if (entityToSpawn.Type == WorldEntityType.Drop)
+                {
+                    var dropItemEntity = entityToSpawn as IItemEntity;
+
+                    packet.Write(-1); // TODO: remove this line when Kaev's PR is merged
+                    dropItemEntity.Drop.Item.Serialize(packet);
                 }
 
                 player.Connection.Send(packet);
