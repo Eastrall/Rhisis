@@ -7,6 +7,10 @@
     "WI_WORLD_MADRIGAL"
   ],
   "language": "en",
+  "rates": {
+    "gold": 10,
+    "experience": 1
+  },
   "isc": {
     "password": "4fded1464736e77865df232cbcb4cd19",
     "host": "127.0.0.1",

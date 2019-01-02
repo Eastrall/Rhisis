@@ -359,8 +359,7 @@ namespace Rhisis.World.Packets
                 else if (entityToSpawn.Type == WorldEntityType.Drop)
                 {
                     var dropItemEntity = entityToSpawn as IItemEntity;
-
-                    packet.Write(-1); // TODO: remove this line when Kaev's PR is merged
+                    
                     dropItemEntity.Drop.Item.Serialize(packet);
                 }
 

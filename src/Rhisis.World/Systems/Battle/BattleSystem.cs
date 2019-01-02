@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.DependencyInjection;
+using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
+using Rhisis.Core.Structures;
 using Rhisis.World.Game.Common;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Drop;
+using Rhisis.World.Systems.Drop.EventArgs;
 
 namespace Rhisis.World.Systems.Battle
 {
@@ -84,8 +87,10 @@ namespace Rhisis.World.Systems.Battle
                 if (defender is IMonsterEntity deadMonster)
                 {
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5;
+                    int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
+
                     deadMonster.NotifySystem<DropSystem>(null); // Items
-                    deadMonster.NotifySystem<DropSystem>(null); // Gold
+                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped)); // Gold
 
                     // TODO: give exp
                 }
