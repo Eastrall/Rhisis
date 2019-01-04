@@ -38,7 +38,7 @@ namespace Rhisis.World.Game.Core
         }
 
         /// <inheritdoc />
-        public void NotifySystem<TSystem>(SystemEventArgs e)
+        public void NotifySystem<TSystem>(SystemEventArgs e = null)
             where TSystem : ISystem => SystemManager.Instance.Execute<TSystem>(this, e);
 
         /// <inheritdoc />

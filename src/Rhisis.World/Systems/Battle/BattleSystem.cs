@@ -89,8 +89,8 @@ namespace Rhisis.World.Systems.Battle
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5;
                     int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
 
-                    deadMonster.NotifySystem<DropSystem>(null); // Items
-                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped)); // Gold
+                    deadMonster.NotifySystem<DropSystem>(); // Items
+                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped, attacker)); // Gold
 
                     // TODO: give exp
                 }

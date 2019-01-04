@@ -55,6 +55,12 @@ namespace Rhisis.Core.Structures.Configuration
         public WorldRates Rates { get; set; }
 
         /// <summary>
+        /// Gets or sets the world drops configuration.
+        /// </summary>
+        [DataMember(Name = "drops")]
+        public WorldDrops Drops { get; set; }
+
+        /// <summary>
         /// Gets or sets the IPC configuration.
         /// </summary>
         [DataMember(Name = "isc")]

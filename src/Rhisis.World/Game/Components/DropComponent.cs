@@ -1,4 +1,4 @@
-﻿using Rhisis.World.Game.Entities;
+﻿using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Structures;
 
 namespace Rhisis.World.Game.Components
@@ -7,6 +7,10 @@ namespace Rhisis.World.Game.Components
     {
         public Item Item { get; set; }
 
-        public IPlayerEntity Owner { get; set; }
+        public IEntity Owner { get; set; }
+
+        public long OwnershipTime { get; set; }
+
+        public bool HasOwner => this.Owner != null && this.OwnershipTime > 0;
     }
 }

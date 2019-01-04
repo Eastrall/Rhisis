@@ -2,6 +2,7 @@
 using Rhisis.Core.Common;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
+using Rhisis.Core.IO;
 using Rhisis.Core.Structures;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.World.Game.Components;
@@ -46,7 +47,7 @@ namespace Rhisis.World.Systems.Drop
                     this.DropItem();
                     break;
                 case DropGoldEventArgs dropGoldEventArgs:
-                    this.DropGold(entity, dropGoldEventArgs.GoldAmount);
+                    this.DropGold(entity, dropGoldEventArgs);
                     break;
             }
         }
@@ -56,8 +57,9 @@ namespace Rhisis.World.Systems.Drop
             // TODO
         }
 
-        private void DropGold(IEntity entity, int goldAmount)
+        private void DropGold(IEntity entity, DropGoldEventArgs e)
         {
+            int goldAmount = e.GoldAmount;
             int goldItemId = DefineItem.II_GOLD_SEED1;
             var worldServerConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
 
@@ -76,13 +78,15 @@ namespace Rhisis.World.Systems.Drop
             var drop = entity.Object.CurrentLayer.CreateEntity<ItemEntity>();
 
             drop.Drop.Item = new Item(goldItemId, goldAmount, (int)entity.Id);
+            drop.Drop.Owner = e.Owner;
+            drop.Drop.OwnershipTime = Time.TimeInSeconds() + worldServerConfiguration.Drops.OwnershipTime;
             drop.Object = new ObjectComponent
             {
                 MapId = entity.Object.MapId,
                 LayerId = entity.Object.LayerId,
                 ModelId = goldItemId,
                 Spawned = true,
-                Position = Vector3.GetRandomPositionInCircle(entity.Object.Position, 0.6f),
+                Position = Vector3.GetRandomPositionInCircle(entity.Object.Position, 0.5f),
                 Type = WorldObjectType.Item
             };
         }
