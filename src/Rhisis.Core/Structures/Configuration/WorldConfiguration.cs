@@ -52,13 +52,13 @@ namespace Rhisis.Core.Structures.Configuration
         /// Gets or sets the world server's rates.
         /// </summary>
         [DataMember(Name = "rates")]
-        public WorldRates Rates { get; set; }
+        public WorldRates Rates { get; set; } = new WorldRates();
 
         /// <summary>
         /// Gets or sets the world drops configuration.
         /// </summary>
         [DataMember(Name = "drops")]
-        public WorldDrops Drops { get; set; }
+        public WorldDrops Drops { get; set; } = new WorldDrops();
 
         /// <summary>
         /// Gets or sets the IPC configuration.

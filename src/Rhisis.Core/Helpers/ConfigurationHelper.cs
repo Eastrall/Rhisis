@@ -26,7 +26,11 @@ namespace Rhisis.Core.Helpers
 
             string fileContent = File.ReadAllText(path);
 
-            return JsonConvert.DeserializeObject<T>(fileContent);
+            return JsonConvert.DeserializeObject<T>(fileContent, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
         public static void Save<T>(string path, T value) where T : class, new()

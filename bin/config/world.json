@@ -9,7 +9,8 @@
   "language": "en",
   "rates": {
     "gold": 10,
-    "experience": 1
+    "experience": 1,
+	"drop": 10
   },
   "isc": {
     "password": "4fded1464736e77865df232cbcb4cd19",

@@ -3,6 +3,8 @@ using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
 using Rhisis.Core.Structures;
+using Rhisis.Core.Structures.Configuration;
+using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Common;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
@@ -87,10 +89,27 @@ namespace Rhisis.World.Systems.Battle
                 if (defender is IMonsterEntity deadMonster)
                 {
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5;
-                    int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
 
-                    deadMonster.NotifySystem<DropSystem>(); // Items
-                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped, attacker)); // Gold
+                    // Drop items
+                    int itemCount = 0;
+                    foreach (DropItemData dropItem in deadMonster.Data.DropItems)
+                    {
+                        if (itemCount >= deadMonster.Data.MaxDropItem)
+                            break;
+
+                        var worldServerConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
+                        long dropChance = RandomHelper.LongRandom(0, DropSystem.MaxDropChance);
+
+                        if (dropItem.Probability * worldServerConfiguration.Rates.Drop >= dropChance)
+                        {
+                            deadMonster.NotifySystem<DropSystem>(new DropItemEventArgs(dropItem, attacker));
+                            itemCount++;
+                        }
+                    }
+
+                    // Drop gold
+                    int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
+                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped, attacker));
 
                     // TODO: give exp
                 }

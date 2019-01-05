@@ -39,7 +39,12 @@ namespace Rhisis.World.Systems
                     this.ResetDropOwnership(dropItem);
                 }
 
-                // TODO: despawn drop
+                if (dropItem.Drop.DespawnTime <= Time.TimeInSeconds())
+                {
+                    this.ResetDropOwnership(dropItem);
+                    dropItem.Object.Spawned = false;
+                    // TODO: Add a flag to delete this entity before next update
+                }
             }
         }
 

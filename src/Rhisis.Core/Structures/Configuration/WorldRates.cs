@@ -10,6 +10,7 @@ namespace Rhisis.Core.Structures.Configuration
     {
         public const int DefaultGoldRate = 1;
         public const int DefaultExperienceRate = 1;
+        public const int DefaultDropRate = 1;
 
         /// <summary>
         /// Gets or sets the gold drop rate.
@@ -24,12 +25,19 @@ namespace Rhisis.Core.Structures.Configuration
         public int Experience { get; set; }
 
         /// <summary>
+        /// Gets or sets the drop rate.
+        /// </summary>
+        [DataMember(Name = "drop")]
+        public int Drop { get; set; }
+
+        /// <summary>
         /// Creates a new <see cref="WorldRates"/> instance.
         /// </summary>
         public WorldRates()
         {
             this.Gold = DefaultGoldRate;
             this.Experience = DefaultExperienceRate;
+            this.Drop = DefaultDropRate;
         }
     }
 }

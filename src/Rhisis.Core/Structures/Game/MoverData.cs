@@ -84,6 +84,9 @@ namespace Rhisis.Core.Structures.Game
         public int DropGoldMax { get; set; }
 
         [IgnoreDataMember]
+        public int MaxDropItem { get; set; }
+
+        [IgnoreDataMember]
         public ICollection<DropItemData> DropItems { get; }
 
         public MoverData()
