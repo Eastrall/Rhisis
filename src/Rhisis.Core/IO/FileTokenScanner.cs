@@ -81,8 +81,8 @@ namespace Rhisis.Core.IO
                 IEnumerable<string> tokens = from x in splitFileContent
                                              where !string.IsNullOrEmpty(x)
                                              select x;
-
-                fileContent = string.Join(string.Empty, tokens);
+                
+                fileContent = string.Join(" ", tokens);
 
                 string[] parts = Regex.Split(fileContent, this._splitRegex);
 

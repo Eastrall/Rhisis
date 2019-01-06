@@ -35,6 +35,7 @@ namespace Rhisis.World
             typeof(ShopLoader),
             typeof(JobLoader),
             typeof(TextClientLoader),
+            typeof(ExpTableLoader),
 
             // World server specific loaders
             typeof(NpcLoader),

@@ -6,7 +6,7 @@ namespace Rhisis.Core.Structures.Configuration
     public class WorldDrops
     {
         public const int DefaultOwnershipTime = 7;
-        public const int DefaultDespawnTime = 40;
+        public const int DefaultDespawnTime = 120;
 
         /// <summary>
         /// Gets or sets the drop Ownership time expressed in seconds.

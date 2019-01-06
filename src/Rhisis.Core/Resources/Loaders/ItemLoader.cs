@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.Data;
 using Rhisis.Core.Structures.Game;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -75,6 +77,13 @@ namespace Rhisis.Core.Resources.Loaders
         /// <param name="id"></param>
         /// <returns></returns>
         public ItemData GetItem(int id) => this._itemsData.TryGetValue(id, out ItemData value) ? value : null;
+
+        /// <summary>
+        /// Gets items matching a predicate.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public IEnumerable<ItemData> GetItems(Func<ItemData, bool> predicate) => this._itemsData.Values.Where(predicate);
 
         /// <inheritdoc />
         public void Dispose()

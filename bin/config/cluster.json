@@ -1,7 +1,7 @@
 {
   "id": 1,
   "name": "Rhisis",
-  "enableLoginProtect": true,
+  "enableLoginProtect": false,
   "isc": {
     "password": "4fded1464736e77865df232cbcb4cd19",
     "host": "127.0.0.1",

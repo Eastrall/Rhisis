@@ -51,6 +51,12 @@ namespace Rhisis.Core.Structures.Game
         [DataMember(Name = "dwAbilityMax")]
         public int AbilityMax { get; set; }
 
+        [DataMember(Name = "dwItemLV")]
+        public int Level { get; set; }
+
+        [DataMember(Name = "dwItemRare")]
+        public int Rare { get; set; }
+
         [IgnoreDataMember]
         public bool IsStackable => this.PackMax > 1;
     }

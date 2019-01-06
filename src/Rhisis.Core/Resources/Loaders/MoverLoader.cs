@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.Data;
 using Rhisis.Core.Resources.Include;
 using Rhisis.Core.Structures.Game;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -69,6 +71,7 @@ namespace Rhisis.Core.Resources.Loaders
                     {
                         this.LoadDropGold(mover, moverBlock.GetInstruction("DropGold"));
                         this.LoadDropItems(mover, moverBlock.GetInstructions("DropItem"));
+                        this.LoadDropItemsKind(mover, moverBlock.GetInstructions("DropKind"));
                         
                         mover.MaxDropItem = int.Parse(moverBlock.GetVariable("Maxitem").Value.ToString());
                     }
@@ -149,6 +152,42 @@ namespace Rhisis.Core.Resources.Loaders
                     this._logger.LogWarning($"Cannot read drop item count for item {dropItemName} and mover {mover.Name}.");
 
                 mover.DropItems.Add(dropItem);
+            }
+        }
+
+        /// <summary>
+        /// Loads a collection of DropKind instructions for a given mover.
+        /// </summary>
+        /// <param name="mover"></param>
+        /// <param name="instructions"></param>
+        private void LoadDropItemsKind(MoverData mover, IEnumerable<Instruction> instructions)
+        {
+            if (instructions == null)
+                return;
+
+            foreach (var dropItemKindInstruction in instructions)
+            {
+                var dropItemKind = new DropItemKindData();
+
+                if (dropItemKindInstruction.Parameters.Count < 0 || dropItemKindInstruction.Parameters.Count > 3)
+                {
+                    this._logger.LogWarning($"Cannot load 'DropKind' instruction for mover {mover.Name}. Reason: Missing parameters.");
+                    continue;
+                }
+
+                string itemKind = dropItemKindInstruction.Parameters.ElementAt(0).ToString().Replace("IK3_", string.Empty);
+                dropItemKind.ItemKind = (ItemKind3)Enum.Parse(typeof(ItemKind3), itemKind);
+
+                // From official files: Project.cpp:2824
+                dropItemKind.UniqueMin = mover.Level - 5;
+                dropItemKind.UniqueMax = mover.Level - 2;
+
+                if (dropItemKind.UniqueMin < 1)
+                    dropItemKind.UniqueMin = 1;
+                if (dropItemKind.UniqueMax < 1)
+                    dropItemKind.UniqueMax = 1;
+
+                mover.DropItemsKind.Add(dropItemKind);
             }
         }
 

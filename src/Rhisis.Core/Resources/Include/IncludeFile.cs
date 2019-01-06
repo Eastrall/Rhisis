@@ -2,6 +2,7 @@
 using Rhisis.Core.IO;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Rhisis.Core.Resources.Include
 {
@@ -49,7 +50,7 @@ namespace Rhisis.Core.Resources.Include
             {
                 Name = this._scanner.GetPreviousToken()
             };
-
+            
             while ((token = this._scanner.GetToken()) != "}")
             {
                 if (token == null)
@@ -101,6 +102,8 @@ namespace Rhisis.Core.Resources.Include
 
             return new Variable(variableName, variableValue);
         }
+
+        public Block GetBlock(string blockName) => this._statements.FirstOrDefault(x => x.Type == StatementType.Block && x.Name.Equals(blockName)) as Block;
 
         public void Dispose()
         {
