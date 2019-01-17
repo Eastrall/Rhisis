@@ -41,17 +41,9 @@ namespace Rhisis.World.Systems.Follow
                 Logger.Error($"Cannot find entity with object id: {e.TargetId} around {entity.Object.Name}");
                 return;
             }
-
-            if (entity.Follow.Target != entityToFollow)
-            {
-                entity.Follow.Target = entityToFollow;
-                entity.MovableComponent.DestinationPosition = entityToFollow.Object.Position.Clone();
-            }
-
-            if (entity is IMonsterEntity monster)
-            {
-                monster.Timers.NextMoveTime = Time.TimeInSeconds() + 5;
-            }
+            
+            entity.Follow.Target = entityToFollow;
+            entity.MovableComponent.DestinationPosition = entityToFollow.Object.Position.Clone();
 
             WorldPacketFactory.SendFollowTarget(entity, entityToFollow, e.Distance);
         }

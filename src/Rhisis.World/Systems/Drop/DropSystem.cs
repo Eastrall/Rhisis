@@ -78,7 +78,7 @@ namespace Rhisis.World.Systems.Drop
                 LayerId = entity.Object.LayerId,
                 ModelId = e.Item.Id,
                 Spawned = true,
-                Position = Vector3.GetRandomPositionInCircle(entity.Object.Position, 0.5f),
+                Position = Vector3.GetRandomPositionInCircle(entity.Object.Position, 0.1f),
                 Type = WorldObjectType.Item
             };
         }

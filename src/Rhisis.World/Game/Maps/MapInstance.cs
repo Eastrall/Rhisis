@@ -2,6 +2,7 @@
 using Rhisis.Core.Common;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
+using Rhisis.Core.IO;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Resources.Dyo;
 using Rhisis.Core.Structures.Game;
@@ -146,20 +147,20 @@ namespace Rhisis.World.Game.Maps
         }
 
         /// <inheritdoc />
-        public void StartUpdateTask(int delay)
+        public void StartUpdateTask()
         {
             Task.Run(async () =>
             {
-                const double FrameRatePerSeconds = 0.66666f;
-                double previousTime = 0;
+                const float FrameRatePerSeconds = 66f;
+                int previousTime = Environment.TickCount;
 
                 while (true)
                 {
                     if (this._cancellationToken.IsCancellationRequested)
                         break;
 
-                    double currentTime = Rhisis.Core.IO.Time.GetElapsedTime();
-                    double deltaTime = currentTime - previousTime;
+                    int currentTime = Environment.TickCount;
+                    int deltaTime = currentTime - previousTime;
                     previousTime = currentTime;
 
                     this.GameTime = (deltaTime * FrameRatePerSeconds) / 1000f;
@@ -173,7 +174,7 @@ namespace Rhisis.World.Game.Maps
                         Logger.Error(e);
                     }
 
-                    await Task.Delay(delay, this._cancellationToken).ConfigureAwait(false);
+                    await Task.Delay((int)Math.Abs(FrameRatePerSeconds - deltaTime), this._cancellationToken).ConfigureAwait(false);
                 }
             }, this._cancellationToken);
         }

@@ -6,6 +6,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Battle;
 using Rhisis.World.Systems.Follow;
+using System;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -20,14 +21,15 @@ namespace Rhisis.World.Game.Behaviors
         /// <inheritdoc />
         public virtual void Update(IMonsterEntity entity)
         {
-            this.UpdateArivalState(entity);
-
-            if (!entity.Follow.IsFollowing && !entity.Battle.IsFighting)
-                this.UpdateMoves(entity);
+            if (entity.Battle.IsFighting)
+                this.Fight(entity);
             else
+                this.UpdateMoves(entity);
+
+            if (entity.Follow.IsFollowing)
                 this.Follow(entity);
-            
-            this.Fight(entity);
+
+            this.UpdateArivalState(entity);
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="monster"></param>
         private void Follow(IMonsterEntity monster)
         {
-            if (!monster.Object.Position.IsInCircle(monster.MovableComponent.BeginPosition, MovingRange) || 
+            if (monster.Object.Position.GetDistance2D(monster.MovableComponent.BeginPosition) >= MovingRange || 
                 (monster.Follow.Target != null && !monster.Follow.Target.Object.Spawned))
             {
                 monster.Follow.Target = null;
@@ -112,7 +114,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="monster"></param>
         private void Fight(IMonsterEntity monster)
         {
-            if (!monster.Battle.IsFighting || !monster.Battle.Target.Object.Spawned)
+            if (!monster.Battle.Target.Object.Spawned)
                 return;
 
             if (monster.Timers.NextAttackTime <= Time.TimeInMilliseconds())

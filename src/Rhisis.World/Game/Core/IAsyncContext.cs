@@ -8,8 +8,7 @@
         /// <summary>
         /// Starts a context in a parallel task.
         /// </summary>
-        /// <param name="delay"></param>
-        void StartUpdateTask(int delay);
+        void StartUpdateTask();
 
         /// <summary>
         /// Stops the context and the task.
