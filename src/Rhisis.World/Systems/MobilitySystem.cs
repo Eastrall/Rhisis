@@ -3,7 +3,6 @@ using Rhisis.Core.Structures;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
-using System;
 
 namespace Rhisis.World.Systems
 {
@@ -38,9 +37,7 @@ namespace Rhisis.World.Systems
             if (entity.Object.Position.GetDistance2D(entity.MovableComponent.DestinationPosition) < 0.1f)
             {
                 entity.MovableComponent.DestinationPosition.Reset();
-                //Logger.Info($"{entity.Object.Name} arrived.");
-                // send on arrive event
-                // reset motion
+                // TODO: Call entity OnArrived()
             }
             else
             {
@@ -49,8 +46,6 @@ namespace Rhisis.World.Systems
                 Vector3 distance = entity.MovableComponent.DestinationPosition - entity.Object.Position;
 
                 entity.Object.Position += distance.Normalize() * speed;
-
-                //Logger.Info("Dst: {0}", entity.Object.Position.GetDistance2D(entity.MovableComponent.DestinationPosition));
             }
         }
     }

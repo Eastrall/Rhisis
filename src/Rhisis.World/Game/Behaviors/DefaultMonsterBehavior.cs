@@ -6,7 +6,6 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Battle;
 using Rhisis.World.Systems.Follow;
-using System;
 
 namespace Rhisis.World.Game.Behaviors
 {
