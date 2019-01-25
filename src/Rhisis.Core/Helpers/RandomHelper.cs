@@ -9,6 +9,7 @@ namespace Rhisis.Core.Helpers
     public static class RandomHelper
     {
         private static uint _id;
+        private static object _sync = new object();
 
         /// <summary>
         /// Do a random between integers
@@ -58,7 +59,12 @@ namespace Rhisis.Core.Helpers
         /// <returns></returns>
         public static uint GenerateUniqueId()
         {
-            return ++_id;
+            lock (_sync)
+            {
+                ++_id;
+            }
+
+            return _id;
         }
     }
 }

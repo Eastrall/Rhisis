@@ -61,18 +61,6 @@ namespace Rhisis.World
             this.RemoteEndPoint = this.Socket.RemoteEndPoint.ToString();
         }
 
-        public override void Send(INetPacketStream packet)
-        {
-            if (Logger.IsTraceEnabled)
-            {
-                Logger.Trace("Send {0} packet to {1}.",
-                    (PacketType)BitConverter.ToUInt32(packet.Buffer, 5),
-                    this.RemoteEndPoint);
-            }
-
-            base.Send(packet);
-        }
-
         /// <inheritdoc />
         public override void HandleMessage(INetPacketStream packet)
         {
@@ -88,9 +76,6 @@ namespace Rhisis.World
             {
                 packet.Read<uint>(); // DPID: Always 0xFFFFFFFF (uint.MaxValue)
                 packetHeaderNumber = packet.Read<uint>();
-
-                if (Logger.IsTraceEnabled)
-                    Logger.Trace("Received {0} packet from {1}.", (PacketType)packetHeaderNumber, this.RemoteEndPoint);
 
                 bool packetInvokSuccess = PacketHandler<WorldClient>.Invoke(this, packet as FFPacket, (PacketType)packetHeaderNumber);
 

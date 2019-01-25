@@ -4,6 +4,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Packets;
+using System;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Systems
@@ -85,10 +86,12 @@ namespace Rhisis.World.Systems
         /// <param name="otherEntity"></param>
         private static void SpawnOtherEntity(IEntity entity, IEntity otherEntity)
         {
-            var player = entity as IPlayerEntity;
-
             entity.Object.Entities.Add(otherEntity);
-            WorldPacketFactory.SendSpawnObjectTo(player, otherEntity);
+
+            if (entity is IPlayerEntity player)
+            {
+                WorldPacketFactory.SendSpawnObjectTo(player, otherEntity);
+            }
 
             if (otherEntity.Type != WorldEntityType.Player && !otherEntity.Object.Entities.Contains(entity))
                 otherEntity.Object.Entities.Add(entity);
@@ -105,9 +108,11 @@ namespace Rhisis.World.Systems
         /// <param name="otherEntity">other entity</param>
         private static void DespawnOtherEntity(IEntity entity, IEntity otherEntity)
         {
-            var player = entity as IPlayerEntity;
+            Console.WriteLine($"Despawning {entity.Object.Name}({entity.Object.Position}) for {otherEntity.Object.Name}({otherEntity.Object.Position}).");
 
-            WorldPacketFactory.SendDespawnObjectTo(player, otherEntity);
+            if (entity is IPlayerEntity player)
+                WorldPacketFactory.SendDespawnObjectTo(player, otherEntity);
+
             entity.Object.Entities.Remove(otherEntity);
             
             if (otherEntity.Type != WorldEntityType.Player && otherEntity.Object.Entities.Contains(entity))

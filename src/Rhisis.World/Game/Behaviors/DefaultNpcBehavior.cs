@@ -18,11 +18,13 @@ namespace Rhisis.World.Game.Behaviors
     {
         private static readonly float OralTextRadius = 50f;
 
-        /// <inheritdoc />
         public void Update(INpcEntity entity)
         {
             this.UpdateOralText(entity);
         }
+
+        /// <inheritdoc />
+        public void OnArrived(INpcEntity entity) => throw new NotImplementedException();
 
         /// <summary>
         /// Update NPC oral text.

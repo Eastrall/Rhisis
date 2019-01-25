@@ -6,6 +6,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Battle;
 using Rhisis.World.Systems.Follow;
+using System;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -20,15 +21,21 @@ namespace Rhisis.World.Game.Behaviors
         /// <inheritdoc />
         public virtual void Update(IMonsterEntity entity)
         {
+            //this.UpdateArivalState(entity);
+
+            //if (entity.Follow.IsFollowing)
+            //    this.Follow(entity);
+
             if (entity.Battle.IsFighting)
                 this.Fight(entity);
             else
                 this.UpdateMoves(entity);
+        }
 
-            if (entity.Follow.IsFollowing)
-                this.Follow(entity);
-
-            this.UpdateArivalState(entity);
+        /// <inheritdoc />
+        public void OnArrived(IMonsterEntity entity)
+        {
+            // TODO
         }
 
         /// <summary>
@@ -37,59 +44,28 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="monster"></param>
         private void UpdateMoves(IMonsterEntity monster)
         {
-            if (monster.Timers.NextMoveTime <= Time.TimeInSeconds() && monster.MovableComponent.HasArrived)
+            if (monster.Timers.NextMoveTime <= Time.TimeInSeconds() &&
+                monster.MovableComponent.HasArrived &&
+                monster.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
             {
                 this.MoveToPosition(monster, monster.Region.GetRandomPosition());
             }
-        }
-
-        /// <summary>
-        /// Update monster's arrival state when it arrives at Destination position.
-        /// </summary>
-        /// <param name="monster"></param>
-        private void UpdateArivalState(IMonsterEntity monster)
-        {
-            // Monster has arrived to its original position after following a player
-            if (monster.MovableComponent.HasArrived && monster.MovableComponent.ReturningToOriginalPosition)
+            else if (monster.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
             {
-                if (monster.MovableComponent.SpeedFactor >= 2)
+                if (monster.MovableComponent.ReturningToOriginalPosition)
                 {
-                    monster.MovableComponent.SpeedFactor = 1f;
-                    WorldPacketFactory.SendSpeedFactor(monster, monster.MovableComponent.SpeedFactor);
+                    monster.Health.Hp = monster.Data.AddHp;
+                    WorldPacketFactory.SendUpdateAttributes(monster, DefineAttributes.HP, monster.Health.Hp);
+                    monster.MovableComponent.ReturningToOriginalPosition = false;
                 }
-
-                monster.MovableComponent.ReturningToOriginalPosition = false;
-            }
-
-            // Monster has arrived to destination and is not following any player
-            if (monster.MovableComponent.HasArrived && !monster.Follow.IsFollowing)
-            {
-                monster.MovableComponent.BeginPosition = monster.Object.Position.Clone();
-            }
-        }
-
-        /// <summary>
-        /// Update the follow state.
-        /// </summary>
-        /// <param name="monster"></param>
-        private void Follow(IMonsterEntity monster)
-        {
-            if (monster.Object.Position.GetDistance2D(monster.MovableComponent.BeginPosition) >= MovingRange || 
-                (monster.Follow.Target != null && !monster.Follow.Target.Object.Spawned))
-            {
-                monster.Follow.Target = null;
-                monster.MovableComponent.ReturningToOriginalPosition = true;
-                monster.MovableComponent.SpeedFactor = 2.66f;
-
-                WorldPacketFactory.SendSpeedFactor(monster, monster.MovableComponent.SpeedFactor);
-                this.MoveToPosition(monster, monster.MovableComponent.BeginPosition);
-                return;
-            }
-
-            if (monster.Follow.IsFollowing)
-            {
-                monster.MovableComponent.DestinationPosition = monster.Follow.Target.Object.Position.Clone();
-                monster.NotifySystem<FollowSystem>(new FollowEventArgs(monster.Follow.Target.Id, 1f));
+                else
+                {
+                    if (monster.MovableComponent.SpeedFactor >= 2f)
+                    {
+                        monster.MovableComponent.SpeedFactor = 1f;
+                        WorldPacketFactory.SendSpeedFactor(monster, monster.MovableComponent.SpeedFactor);
+                    }
+                }
             }
         }
 
@@ -101,10 +77,12 @@ namespace Rhisis.World.Game.Behaviors
         private void MoveToPosition(IMonsterEntity monster, Vector3 destPosition)
         {
             monster.Timers.NextMoveTime = Time.TimeInSeconds() + RandomHelper.LongRandom(8, 20);
-            monster.MovableComponent.DestinationPosition = destPosition.Clone();
             monster.Object.Angle = Vector3.AngleBetween(monster.Object.Position, destPosition);
+            monster.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
+            monster.MovableComponent.DestinationPosition = destPosition.Clone();
 
             WorldPacketFactory.SendDestinationPosition(monster);
+            WorldPacketFactory.SendDestinationAngle(monster, false);
         }
 
         /// <summary>
@@ -115,13 +93,39 @@ namespace Rhisis.World.Game.Behaviors
         {
             if (!monster.Battle.Target.Object.Spawned)
                 return;
-
-            if (monster.Timers.NextAttackTime <= Time.TimeInMilliseconds())
+            
+            if (monster.Follow.IsFollowing)
             {
-                monster.Timers.NextAttackTime = (long)(Time.TimeInMilliseconds() + monster.Data.ReAttackDelay);
+                monster.MovableComponent.DestinationPosition = monster.Battle.Target.Object.Position.Clone();
 
-                var meleeAttack = new MeleeAttackEventArgs(ObjectMessageType.OBJMSG_ATK1, monster.Battle.Target, monster.Data.AttackSpeed);
-                monster.NotifySystem<BattleSystem>(meleeAttack);
+                if (monster.MovableComponent.SpeedFactor != 2f)
+                {
+                    monster.MovableComponent.SpeedFactor = 2f;
+                    WorldPacketFactory.SendSpeedFactor(monster, monster.MovableComponent.SpeedFactor);
+                }
+
+                if (!monster.Object.Position.IsInCircle(monster.MovableComponent.DestinationPosition, 1f))
+                {
+                    Console.WriteLine("Fight(): Not in range, sending follow");
+                    monster.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
+                    WorldPacketFactory.SendFollowTarget(monster, monster.Follow.Target, 1f);
+                }
+                else
+                {
+                    if (monster.Timers.NextAttackTime <= Time.TimeInMilliseconds())
+                    {
+                        monster.Timers.NextAttackTime = (long)(Time.TimeInMilliseconds() + monster.Data.ReAttackDelay);
+
+                        var meleeAttack = new MeleeAttackEventArgs(ObjectMessageType.OBJMSG_ATK1, monster.Battle.Target, monster.Data.AttackSpeed);
+                        monster.NotifySystem<BattleSystem>(meleeAttack);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Reset()");
+                monster.Battle.Reset();
+                monster.Follow.Reset();
             }
         }
     }

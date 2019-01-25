@@ -14,6 +14,8 @@ namespace Rhisis.World.Game.Maps.Regions
 
         int Count { get; }
 
+        string Name { get; }
+
         IList<IEntity> Entities { get; }
     }
 }

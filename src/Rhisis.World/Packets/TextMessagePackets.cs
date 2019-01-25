@@ -59,7 +59,7 @@ namespace Rhisis.World.Packets
             {
                 packet.StartNewMergedPacket(player.Id, SnapshotType.DEFINEDTEXT);
                 packet.Write((int)textId);
-                packet.Write(String.Join(" ", stringParameter));
+                packet.Write(string.Join(" ", stringParameter));
                 player.Connection.Send(packet);
             }
         }

@@ -38,6 +38,18 @@ namespace Rhisis.World.Packets
             }
         }
 
+        public static void SendDestinationAngle(IEntity entity, bool left)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.DESTANGLE);
+                packet.Write(entity.Object.Angle);
+                packet.Write(left);
+
+                SendToVisible(packet, entity);
+            }
+        }
+
         public static void SendFollowTarget(IEntity entity, IEntity targetEntity, float distance)
         {
             using (var packet = new FFPacket())
@@ -50,16 +62,15 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendUpdateAttributes(IPlayerEntity entity, DefineAttributes attribute, int newValue)
+        public static void SendUpdateAttributes(IEntity entity, DefineAttributes attribute, int newValue)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.SETPOINTPARAM);
                 packet.Write((int)attribute);
                 packet.Write(newValue);
-
-                entity.Connection.Send(packet);
-                SendToVisible(packet, entity);
+                
+                SendToVisible(packet, entity, true);
             }
         }
 

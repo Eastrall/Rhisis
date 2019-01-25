@@ -13,9 +13,8 @@ namespace Rhisis.World.Handlers
         [PacketHandler(PacketType.PLAYERSETDESTOBJ)]
         public static void OnPlayerSetDestObject(WorldClient client, INetPacketStream packet)
         {
-            var targetObjectId = packet.Read<uint>();
-            var distance = packet.Read<float>();
-            var followEvent = new FollowEventArgs(targetObjectId, distance);
+            var onPlayerSetDestObjectPacket = new PlayerSetDestObjectPacket(packet);
+            var followEvent = new FollowEventArgs(onPlayerSetDestObjectPacket.TargetId, onPlayerSetDestObjectPacket.Distance);
 
             client.Player.NotifySystem<FollowSystem>(followEvent);
         }

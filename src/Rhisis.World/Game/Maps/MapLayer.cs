@@ -131,7 +131,8 @@ namespace Rhisis.World.Game.Maps
                 Name = moverData.Name,
                 Size = ObjectComponent.DefaultObjectSize,
                 Spawned = true,
-                Level = moverData.Level
+                Level = moverData.Level,
+                MovingFlags = ObjectState.OBJSTA_STAND
             };
             monster.Timers = new TimerComponent
             {
@@ -140,7 +141,7 @@ namespace Rhisis.World.Game.Maps
             monster.MovableComponent = new MovableComponent
             {
                 Speed = moverData.Speed,
-                DestinationPosition = monster.Object.Position.Clone()
+                SpeedFactor = 1f
             };
             monster.Health = new HealthComponent
             {

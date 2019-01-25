@@ -13,6 +13,7 @@ using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Drop;
 using Rhisis.World.Systems.Drop.EventArgs;
+using Rhisis.World.Systems.Follow;
 using System.Linq;
 
 namespace Rhisis.World.Systems.Battle
@@ -67,6 +68,12 @@ namespace Rhisis.World.Systems.Battle
 
             attacker.Battle.Target = defender;
             defender.Battle.Target = attacker;
+           
+            if (defender is IMonsterEntity)
+            {
+                defender.Follow.Target = attacker;
+                Logger.LogDebug($"{defender.Object.Name} is now following {attacker.Object.Name}");
+            }
 
             AttackResult meleeAttackResult = new MeleeAttackArbiter(attacker, defender).OnDamage();
 

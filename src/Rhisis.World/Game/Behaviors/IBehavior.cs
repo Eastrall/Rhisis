@@ -13,5 +13,11 @@ namespace Rhisis.World.Game.Behaviors
         /// </summary>
         /// <param name="entity">Entity to update</param>
         void Update(T entity);
+
+        /// <summary>
+        /// Fired when an entity arrives to its destination position.
+        /// </summary>
+        /// <param name="entity"></param>
+        void OnArrived(T entity);
     }
 }

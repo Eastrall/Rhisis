@@ -151,7 +151,7 @@ namespace Rhisis.World.Game.Maps
         {
             Task.Run(async () =>
             {
-                const float FrameRatePerSeconds = 66f;
+                const float FrameRatePerSeconds = 60f;
                 int previousTime = Environment.TickCount;
 
                 while (true)

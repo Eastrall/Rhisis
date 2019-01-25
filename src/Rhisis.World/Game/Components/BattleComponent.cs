@@ -28,5 +28,14 @@ namespace Rhisis.World.Game.Components
         {
             this.Targets = new List<ILivingEntity>();
         }
+
+        /// <summary>
+        /// Reset the battle component to its initial state.
+        /// </summary>
+        public void Reset()
+        {
+            this.Target = null;
+            this.Targets.Clear();
+        }
     }
 }

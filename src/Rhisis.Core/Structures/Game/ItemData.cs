@@ -57,6 +57,9 @@ namespace Rhisis.Core.Structures.Game
         [DataMember(Name = "dwItemRare")]
         public int Rare { get; set; }
 
+        [DataMember(Name = "dwAttackSpeed")]
+        public float AttackSpeed { get; set; }
+
         [IgnoreDataMember]
         public bool IsStackable => this.PackMax > 1;
     }

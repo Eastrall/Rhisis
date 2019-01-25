@@ -6,9 +6,11 @@ using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Battle;
 using Rhisis.World.Systems.Follow;
+using Rhisis.World.Systems.Inventory;
 
 namespace Rhisis.World.Handlers
 {
@@ -28,15 +30,18 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            if (!target.Follow.IsFollowing && target.Type == WorldEntityType.Monster)
+            if (!(target is ILivingEntity))
             {
-                if (target.MovableComponent.SpeedFactor != 2f)
-                {
-                    target.MovableComponent.SpeedFactor = 2f;
-                    WorldPacketFactory.SendSpeedFactor(target, target.MovableComponent.SpeedFactor);
-                }
+                Logger.LogError($"Target '{target.Object.Name}' is not a living entity.");
+                return;
+            }
 
-                target.NotifySystem<FollowSystem>(new FollowEventArgs(client.Player.Id, 1f));
+            Item weaponItem = client.Player.Inventory[InventorySystem.RightWeaponSlot];
+
+            if (weaponItem != null && weaponItem.Data.AttackSpeed != meleePacket.WeaponAttackSpeed)
+            {
+                Logger.LogCritical($"Player {client.Player.Object.Name} has changed his weapon speed.");
+                return;
             }
 
             client.Player.NotifySystem<BattleSystem>(new MeleeAttackEventArgs(meleePacket.AttackMessage, target, meleePacket.WeaponAttackSpeed));

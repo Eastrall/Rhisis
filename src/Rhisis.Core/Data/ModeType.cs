@@ -5,6 +5,7 @@ namespace Rhisis.Core.Data
     [Flags]
     public enum ModeType : uint
     {
+        NONE = 0x00000000,
         MATCHLESS_MODE = 0x00000001,
         TRANSPARENT_MODE = 0x00000002,
         ONEKILL_MODE = 0x00000004,

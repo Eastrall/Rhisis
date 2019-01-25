@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Rhisis.Core.Data;
 using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
@@ -44,6 +45,7 @@ namespace Rhisis.World.Systems.Follow
             
             entity.Follow.Target = entityToFollow;
             entity.MovableComponent.DestinationPosition = entityToFollow.Object.Position.Clone();
+            entity.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
 
             WorldPacketFactory.SendFollowTarget(entity, entityToFollow, e.Distance);
         }

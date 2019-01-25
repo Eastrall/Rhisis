@@ -1,19 +1,36 @@
 ﻿using Rhisis.Core.Common;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
+using Rhisis.Core.Resources.Loaders;
+using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rhisis.World.Game.Maps.Regions
 {
     public class MapRespawnRegion : MapRegion, IMapRespawnRegion
     {
-        public WorldObjectType ObjectType { get; private set; }
+        private string _name;
 
-        public int ModelId { get; private set; }
+        public WorldObjectType ObjectType { get; }
 
-        public int Time { get; private set; }
+        public int ModelId { get; }
 
-        public int Count { get; private set; }
+        public int Time { get; }
+
+        public int Count { get; }
+
+        public string Name
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this._name))
+                    this._name = this.Entities.Any() ? this.Entities.FirstOrDefault().Object.Name : "Unknown";
+
+                return this._name;
+            }
+        }
 
         public IList<IEntity> Entities { get; private set; }
 
@@ -36,6 +53,8 @@ namespace Rhisis.World.Game.Maps.Regions
             
             return region;
         }
+
+        public override string ToString() => $"{this.Count} {this.Name}";
 
         public static IMapRespawnRegion FromRgnElement(RgnRespawn7 rgnRespawn)
         {

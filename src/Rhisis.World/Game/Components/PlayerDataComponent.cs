@@ -68,6 +68,17 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         public int Version { get; set; } = StartVersion;
 
+        /// <summary>
+        /// Gets or sets the player's mode.
+        /// </summary>
         public ModeType Mode { get; set; }
+
+        /// <summary>
+        /// Creates a new <see cref="PlayerDataComponent"/> instance.
+        /// </summary>
+        public PlayerDataComponent()
+        {
+            this.Mode = ModeType.NONE;
+        }
     }
 }

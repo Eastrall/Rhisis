@@ -72,7 +72,8 @@ namespace Rhisis.World.Handlers
                 Size = 100,
                 Name = character.Name,
                 Spawned = false,
-                Level = character.Level
+                Level = character.Level,
+                MovingFlags = Core.Data.ObjectState.OBJSTA_STAND
             };
 
             client.Player.Health = new HealthComponent
