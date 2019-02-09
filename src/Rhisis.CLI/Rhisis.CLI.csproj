@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>../../../bin/tools/Rhisis.CLI/</OutputPath>
+    <OutputPath>../../bin/tools/Rhisis.CLI/</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Rhisis.Core\Rhisis.Core.csproj" />
-    <ProjectReference Include="..\..\Rhisis.Database\Rhisis.Database.csproj" />
+    <ProjectReference Include="..\Rhisis.Core\Rhisis.Core.csproj" />
+    <ProjectReference Include="..\Rhisis.Database\Rhisis.Database.csproj" />
   </ItemGroup>
 
 </Project>

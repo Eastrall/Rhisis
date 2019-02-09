@@ -1,4 +1,5 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Rhisis.CLI.Helpers;
 using Rhisis.Core.Helpers;
 using Rhisis.Database;
 using System;
@@ -8,6 +9,7 @@ namespace Rhisis.CLI.Commands
     [Command(Name = "database", Description = "Manages the database")]
     [Subcommand("configure", typeof(DatabaseConfigureCommand))]
     [Subcommand("update", typeof(DatabaseUpdateCommand))]
+    [Subcommand("initialize", typeof(DatabaseInitializationCommand))]
     public class DatabaseCommand
     {
         public void OnExecute(CommandLineApplication app, IConsole console)
@@ -30,19 +32,27 @@ namespace Rhisis.CLI.Commands
             var dbConfiguration = new DatabaseConfiguration();
 
             Console.WriteLine("Select one of the available providers:");
-            dbConfiguration.Provider = GetDatabaseProvider();
+            ConsoleHelper.DisplayEnum<DatabaseProvider>();
+            Console.Write("Database provider: ");
+            dbConfiguration.Provider = ConsoleHelper.ReadEnum<DatabaseProvider>();
 
-            Console.Write("Host: ");
-            dbConfiguration.Host = Console.ReadLine();
+            if (dbConfiguration.Provider == DatabaseProvider.MySql)
+            {
+                Console.Write("Port (3306): ");
+                dbConfiguration.Port = ConsoleHelper.ReadIntegerOrDefault(3306);
+            }
 
-            Console.Write("Username: ");
-            dbConfiguration.Username = Console.ReadLine();
+            Console.Write("Host (localhost): ");
+            dbConfiguration.Host = ConsoleHelper.ReadStringOrDefault("localhost");
+
+            Console.Write("Username (root): ");
+            dbConfiguration.Username = ConsoleHelper.ReadStringOrDefault("root");
 
             Console.Write("Password: ");
-            dbConfiguration.Password = Console.ReadLine();
+            dbConfiguration.Password = ConsoleHelper.ReadPassword();
 
-            Console.Write("Database name: ");
-            dbConfiguration.Database = Console.ReadLine();
+            Console.Write("Database name (rhisis): ");
+            dbConfiguration.Database = ConsoleHelper.ReadStringOrDefault("rhisis");
 
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Configuration:");
@@ -50,6 +60,10 @@ namespace Rhisis.CLI.Commands
             Console.WriteLine($"Host: {dbConfiguration.Host}");
             Console.WriteLine($"Username: {dbConfiguration.Username}");
             Console.WriteLine($"Database name: {dbConfiguration.Database}");
+
+            if (dbConfiguration.Provider == DatabaseProvider.MySql)
+                Console.WriteLine($"Port: {dbConfiguration.Port}");
+
             Console.WriteLine("--------------------------------");
 
             Console.WriteLine("Save this configuration ? (y/n)");
@@ -60,30 +74,6 @@ namespace Rhisis.CLI.Commands
                 ConfigurationHelper.Save(DatabaseConfigurationFile, dbConfiguration);
                 Console.WriteLine($"Database configuration saved in '{DatabaseConfigurationFile}'.");
             }
-        }
-
-        private DatabaseProvider GetDatabaseProvider()
-        {
-            var databaseProvider = DatabaseProvider.Unknown;
-
-            string[] providerNames = Enum.GetNames(typeof(DatabaseProvider));
-            int[] providerValues = (int[])Enum.GetValues(typeof(DatabaseProvider));
-
-            for (int i = 1; i < providerNames.Length; i++)
-                Console.WriteLine($"{providerValues[i]}. {providerNames[i]}");
-
-            Console.Write("Database provider: ");
-            string selectedProvider = Console.ReadLine();
-
-            if (int.TryParse(selectedProvider, out int selectedProviderValue) && selectedProviderValue > 0 && selectedProviderValue < providerValues.Length)
-                databaseProvider = (DatabaseProvider)selectedProviderValue;
-            else if (Enum.TryParse(selectedProvider, true, out DatabaseProvider provider))
-                databaseProvider = provider;
-
-            if (databaseProvider == DatabaseProvider.Unknown)
-                Console.WriteLine($"Invalid database provider: {selectedProvider}.");
-
-            return databaseProvider;
         }
     }
 
@@ -116,6 +106,34 @@ namespace Rhisis.CLI.Commands
             {
                 Console.WriteLine(e.Message);
             }
+        }
+    }
+
+    [Command(Name = "initialize", Description = "Configures and initialize the database.")]
+    public class DatabaseInitializationCommand
+    {
+        private readonly DatabaseConfigureCommand _configurationCommand;
+        private readonly DatabaseUpdateCommand _updateCommand;
+        
+        [Option(CommandOptionType.SingleValue, ShortName = "c", LongName = "configuration", Description = "Specify the database configuration file path.")]
+        public string DatabaseConfigurationFile { get; set; }
+
+        public DatabaseInitializationCommand()
+        {
+            this._configurationCommand = new DatabaseConfigureCommand
+            {
+                DatabaseConfigurationFile = this.DatabaseConfigurationFile
+            };
+            this._updateCommand = new DatabaseUpdateCommand
+            {
+                DatabaseConfigurationFile = this.DatabaseConfigurationFile
+            };
+        }
+
+        public void OnExecute(CommandLineApplication app, IConsole console)
+        {
+            this._configurationCommand.OnExecute(app, console);
+            this._updateCommand.OnExecute(app, console);
         }
     }
 }
