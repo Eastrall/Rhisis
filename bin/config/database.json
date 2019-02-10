@@ -2,7 +2,7 @@
   "host": "localhost",
   "port": 3306,
   "username": "root",
-  "password": "heloo_world",
-  "database": "rhisis_database",
+  "password": "hello_world",
+  "database": "rhisis",
   "provider": 1
 }
