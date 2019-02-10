@@ -65,11 +65,10 @@ namespace Rhisis.CLI.Commands
                 Console.WriteLine($"Port: {dbConfiguration.Port}");
 
             Console.WriteLine("--------------------------------");
+            
+            bool response = ConsoleHelper.AskConfirmation("Save this configuration?");
 
-            Console.WriteLine("Save this configuration ? (y/n)");
-            string response = Console.ReadLine();
-
-            if (response.Equals("y", StringComparison.OrdinalIgnoreCase))
+            if (response)
             {
                 ConfigurationHelper.Save(DatabaseConfigurationFile, dbConfiguration);
                 Console.WriteLine($"Database configuration saved in '{DatabaseConfigurationFile}'.");

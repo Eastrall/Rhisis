@@ -103,5 +103,19 @@ namespace Rhisis.CLI.Helpers
 
             return password;
         }
+
+        /// <summary>
+        /// Ask a questions with a yes/no answer.
+        /// </summary>
+        /// <param name="confirmationMessage">Confirmation message</param>
+        /// <returns></returns>
+        public static bool AskConfirmation(string confirmationMessage)
+        {
+            Console.Write($"{confirmationMessage} (y/n): ");
+            string response = Console.ReadLine();
+
+            return response.Equals("y", StringComparison.OrdinalIgnoreCase) 
+                || response.Equals("yes", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }
