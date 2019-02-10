@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Rhisis.CLI.Helpers
 {
@@ -75,7 +76,7 @@ namespace Rhisis.CLI.Helpers
         /// <returns></returns>
         public static string ReadPassword(string passwordCharacter = "*")
         {
-            string password = "";
+            var password = new StringBuilder();
 
             do
             {
@@ -83,14 +84,14 @@ namespace Rhisis.CLI.Helpers
 
                 if (keyinfo.Key != ConsoleKey.Backspace && keyinfo.Key != ConsoleKey.Enter)
                 {
-                    password += keyinfo.KeyChar;
+                    password.Append(keyinfo.KeyChar);
                     Console.Write(passwordCharacter);
                 }
                 else
                 {
                     if (keyinfo.Key == ConsoleKey.Backspace && password.Length > 0)
                     {
-                        password = password.Substring(0, (password.Length - 1));
+                        password = password.Remove((password.Length - 1), 1);
                         Console.Write("\b \b");
                     }
                     else if (keyinfo.Key == ConsoleKey.Enter)
@@ -100,8 +101,8 @@ namespace Rhisis.CLI.Helpers
                     }
                 }
             } while (true);
-
-            return password;
+            
+            return password.ToString();
         }
 
         /// <summary>
