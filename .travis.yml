@@ -2,6 +2,7 @@
 language: csharp
 sudo: required
 mono: none
+dist: xenial
 dotnet: 2.2
 
 # Define the jobs
