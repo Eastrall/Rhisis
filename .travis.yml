@@ -17,7 +17,7 @@ jobs:
         - dotnet build src/Rhisis.Cluster/ --configuration Release
         - dotnet build src/Rhisis.World/ --configuration Release
         name: "Rhisis Servers"
-        script:
+      - script:
         - dotnet build src/Rhisis.API/ --configuration Release
         - dotnet build src/Rhisis.CLI/ --configuration Release
         name: "Rhisis Tools"
