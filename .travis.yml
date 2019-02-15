@@ -16,9 +16,11 @@ jobs:
         - dotnet build src/Rhisis.Login/ --configuration Release
         - dotnet build src/Rhisis.Cluster/ --configuration Release
         - dotnet build src/Rhisis.World/ --configuration Release
+        name: "Rhisis Servers"
+        script:
         - dotnet build src/Rhisis.API/ --configuration Release
         - dotnet build src/Rhisis.CLI/ --configuration Release
-        name: "Rhisis Servers"
+        name: "Rhisis Tools"
 
       - stage: "Tests"
         script: 
