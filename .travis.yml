@@ -2,7 +2,7 @@
 language: csharp
 sudo: required
 mono: none
-dotnet: 2.1.400
+dotnet: 2.2.104
 
 # Define the jobs
 jobs:
@@ -20,9 +20,8 @@ jobs:
         name: "Rhisis Servers"
 
       - stage: "Tests"
-        script: dotnet test test/Rhisis.Core.Test/
-        name: "Rhisis Core Unit tests"
-      - script: dotnet test test/Rhisis.Database.Test/
-        name: "Rhisis Database Unit tests"
-      - script: dotnet test test/Rhisis.Business.Tests/
-        name: "Rhisis Business Unit tests"
+        script: 
+        - dotnet test test/Rhisis.Core.Test/
+        - dotnet test test/Rhisis.Database.Test/
+        - dotnet test test/Rhisis.Business.Tests/
+        name: "Rhisis Tests"

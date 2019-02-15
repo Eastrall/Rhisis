@@ -60,6 +60,8 @@ namespace Rhisis.World.Game.Maps
             this._mapPath = mapPath;
             this._layers = new List<IMapLayer>();
             this._regions = new List<IMapRegion>();
+            this._cancellationTokenSource = new CancellationTokenSource();
+            this._cancellationToken = this._cancellationTokenSource.Token;
         }
 
         /// <inheritdoc />

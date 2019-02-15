@@ -7,7 +7,6 @@ namespace Rhisis.Core.Test.Resources
     public class TextFileUnitTest
     {
         private static readonly string TextFilePath = "Common/text.txt.txt";
-        private static readonly int TextCount = 2;
 
         private static readonly string TextKeyWithTabs = "IDS_TEXT_00001";
         private static readonly string TextValueWithTabs = "Hello world!";
