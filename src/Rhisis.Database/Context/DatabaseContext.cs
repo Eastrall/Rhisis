@@ -13,7 +13,7 @@ namespace Rhisis.Database.Context
     {
         private const string MigrationConfigurationEnv = "DB_CONFIG";
         private const string MySqlConnectionString = "server={0};userid={1};pwd={2};port={4};database={3};sslmode=none;";
-        private const string MsSqlConnectionString = "Server={0},{1};Database={2};User Id={3};Password={4};";
+        private const string MsSqlConnectionString = "Server={0};Database={1};User Id={2};Password={3};";
 
         private readonly DatabaseConfiguration _configuration;
 
@@ -82,7 +82,6 @@ namespace Rhisis.Database.Context
                     optionsBuilder.UseSqlServer(
                         string.Format(MsSqlConnectionString,
                             this._configuration.Host,
-                            this._configuration.Port,
                             this._configuration.Database,
                             this._configuration.Username,
                             this._configuration.Password));

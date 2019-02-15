@@ -10,14 +10,14 @@ jobs:
     include:
       - stage: "Build"
         script: 
-        - dotnet build src/Rhisis.Core/ --framework netstandard2.0 --configuration Release
-        - dotnet build src/Rhisis.Database/ --framework netstandard2.0 --configuration Release
-        - dotnet build src/Rhisis.Business/ --framework netstandard2.0 --configuration Release
-        - dotnet build src/Rhisis.Login/ --framework netcoreapp2.0 --configuration Release
-        - dotnet build src/Rhisis.Cluster/ --framework netcoreapp2.0 --configuration Release
-        - dotnet build src/Rhisis.World/ --framework netcoreapp2.0 --configuration Release
-        - dotnet build src/Rhisis.API/ --framework netcoreapp2.0 --configuration Release
-        - dotnet build src/Rhisis.CLI/ --framework netcoreapp2.0 --configuration Release
+        - dotnet build src/Rhisis.Core/  --configuration Release
+        - dotnet build src/Rhisis.Database/ --configuration Release
+        - dotnet build src/Rhisis.Business/ --configuration Release
+        - dotnet build src/Rhisis.Login/ --configuration Release
+        - dotnet build src/Rhisis.Cluster/ --configuration Release
+        - dotnet build src/Rhisis.World/ --configuration Release
+        - dotnet build src/Rhisis.API/ --configuration Release
+        - dotnet build src/Rhisis.CLI/ --configuration Release
         name: "Rhisis Servers"
 
       - stage: "Tests"
