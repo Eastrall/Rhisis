@@ -1,0 +1,22 @@
+//
+// MaFl_Martinyc dialog
+//
+
+{
+	"name": "MaFl_Martinyc",
+	"oralText": "The history of Madrigal... strange to say that least. I must discover the secrets!",
+	"introText": "Do you know anything about the history of Madrigal? No? Well I've been uncovering some fascinating information as of late. It seems that much of our history has been conveniently covered up. Interesting, huh?",
+	"byeText": "If you learn of any interesting facts about Madrigal's history, be sure to stop by again!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Nice to meet you My name is Martinyc Tictraibet. I know, it's a difficult name to pronounce , isn't it? Anyway, I'm a historian and I've made it my life's work to discover the secrets of Madrigal and document it's history.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "If you learn of any interesting facts about Madrigal's history, be sure to stop by again!"
+		}
+	]
+}
