@@ -1,0 +1,22 @@
+//
+// Mafl_Charlie dialog
+//
+
+{
+	"name": "Mafl_Charlie",
+	"oralText": "If you need to access your house, or would like to buy some furniture, I'm your man!",
+	"introText": "Hello there! I sell furniture so you can decorate your house to fit your style. Amazing, right?! How about inviting your friends over to show it off? Your house can also be used as private meeting place for your guild.",
+	"byeText": "Remember, decorating your house is important if you want to entertain your guests!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Charlie and I make various types of furniture that you can use to decorate your house! My furniture is the best in Madrigal!!",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Remember, decorating your house is important if you want to entertain your guests!"
+		}
+	]
+}
