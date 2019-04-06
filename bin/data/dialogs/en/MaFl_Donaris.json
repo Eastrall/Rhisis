@@ -1,0 +1,22 @@
+//
+// MaFl_Donaris dialog
+//
+
+{
+	"name": "MaFl_Donaris",
+	"oralText": "Check in here to review the weekly results of the Guild Siege!",
+	"introText": "Only the most cunning of guilds can hope to achieve victory in the Guild Sieges. Are you ready for the challenge?",
+	"byeText": "Good luck to you! I hope I see you in ranking charts!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Hello, it's very nice to meet you! I am the Reward Manager for the Guild Siege Center. I can reward prize money, return application fees, or even show you this week's ranking for the Guild Siege.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Good luck to you! I hope I see you in ranking charts!"
+		}
+	]
+}
