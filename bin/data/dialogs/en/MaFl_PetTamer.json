@@ -1,0 +1,22 @@
+//
+// MaFl_PetTamer dialog
+//
+
+{
+	"name": "MaFl_PetTamer",
+	"oralText": "Raising your own pet takes patience and dedication. Are you ready?",
+	"introText": "Rawr! Tee hee! ^^ Sorry, I was just practicing my tiger call. Do you have a pet? I love pets, it's what I live for!",
+	"byeText": "Don't forget to feed your pet!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "I come from a long line of Pet Tamers. My family has been taming pets for generations and I am the best Pet tamer among them. Feel free to visit me if you hever need help with your pet.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Don't forget to feed your pet!"
+		}
+	]
+}
