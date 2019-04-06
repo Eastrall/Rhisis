@@ -1,0 +1,22 @@
+//
+// MaFl_Amos dialog
+//
+
+{
+	"name": "MaFl_Amos",
+	"oralText": "Welcome, Flarinians! Sign up here for entry into the 1vs1 Guild Siege!",
+	"introText": "A guild is only as strong as it's weakest member, my friend, and this is where we separate the bark from the bite. Test your mettle in the 1vs1 Guild Siege if you think you're strong enough!",
+	"byeText": "For Glory!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Greetings, adventurer! If you;re interesting in providing your worth in the 1vs1 Guild Siege, then I am the guy to talk to. My name is Amos and i am the 1vs1 Guild Siege Manager for Flarine.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "For Glory!"
+		}
+	]
+}
