@@ -1,0 +1,22 @@
+//
+// MaFl_Juria dialog
+//
+
+{
+	"name": "MaFl_Juria",
+	"oralText": "Welcome to the Office. of Flarine. How can I be of service?",
+	"introText": "*Sigh* Boboku is so manly, strong and kind. But I could never date him because his belly is too big!",
+	"byeText": "Farewell!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Julia Trinity and I manage the Office of Flarine. How can I help you today?",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Farewell!"
+		}
+	]
+}
