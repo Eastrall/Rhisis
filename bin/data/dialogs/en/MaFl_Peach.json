@@ -1,0 +1,22 @@
+//
+// MaFl_Peach dialog
+//
+
+{
+	"name": "MaFl_Peach",
+	"oralText": "Would anyone like a jewel crafted or perhaps a jewelry setting created ?",
+	"introText": "Hi there! I offer jewelry services to the citizens of Flarine and create and set jewels for those wishing to modify their Ultimate Weapons. I also remove blessings and level reductions from items, among other things!",
+	"byeText": "Take care. Remember, for anything to do with jewels. I'm your girl!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Peach! I'm here to assist Bobochan and help supplement his upgrading business. I also sell Scrolls  of Pet Awakening (Raised Pets) and Scrolls of Awakening. Stop by anytime!",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Take care. Remember, for anything to do with jewels. I'm your girl!"
+		}
+	]
+}
