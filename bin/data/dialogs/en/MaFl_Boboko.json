@@ -1,0 +1,22 @@
+//
+// MaFl_Boboko dialog
+//
+
+{
+	"name": "MaFl_Boboko",
+	"oralText": "The perfect shields of the Bobo family are only here, in the Shield Shop of Boboku!",
+	"introText": "You won't find a better armor selection in all of Flaris, I'll guarantee you that!",
+	"byeText": "Tell your friends buy Bobo Family Equipment!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Who am I? You must be joking. I'm only the most famous armorer in Flarine! I'm Boboko Bobo and I run the Bobo family Armor Shop for new Mercenaries, Acrobats and Assists.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Tell your friends buy Bobo Family Equipment!"
+		}
+	]
+}
