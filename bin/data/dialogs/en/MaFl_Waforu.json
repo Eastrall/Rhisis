@@ -1,0 +1,22 @@
+//
+// MaFl_Waforu dialog
+//
+
+{
+	"name": "MaFl_Waforu",
+	"oralText": "Step right up, champions! Welcome to the Red Chip Emporium!",
+	"introText": "Heya stranger! If your guild wins the Guild Siege, you will be awarded Red Chips for your victory. The armor sets I sell here in my shop are absolutely the best you can find! So how many Red Chips do you have, hmmmm?",
+	"byeText": "So long, contender. May Rhisis be with you.",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "I am Wafor, the Battle Merchant. I've had my share of victories in the sieges, but I'm getting to old for that sort of thing. I still love the competition, however, so i decided  to stay in the business and offer my services as a Red Chip Vendor.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "So long, contender. May Rhisis be with you."
+		}
+	]
+}
