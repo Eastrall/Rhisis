@@ -1,0 +1,22 @@
+//
+// MaFl_Helper_ver12 dialog
+//
+
+{
+	"name": "MaFl_Helper_ver12",
+	"oralText": "New to Madrigal? Visit your friendly neighborhood Buff Pang!",
+	"introText": "Hello there! I'm granting buffs to adventurers who haven't completed their second job change yet. Come see me anytime if you ever find yourself in need of a boost to your stats!",
+	"byeText": "Enjoy your stay in Madrigal!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "I am a Buff Pang. There a several of us throughout Madrigal and we are here to help adventurers by applying bonuses to their combat statistic. Are you in need of a buff, my friend?",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Enjoy your stay in Madrigal!"
+		}
+	]
+}
