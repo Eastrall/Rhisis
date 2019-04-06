@@ -1,0 +1,22 @@
+//
+// MaFl_Jeff dialog
+//
+
+{
+	"name": "MaFl_Jeff",
+	"oralText": "*sigh* I miss Kimberly so much. I can barely focus on my duties...",
+	"introText": "Ugh, I still get so many complaints about the machine I sold to Saint City and Darken City. I may have used substandard building materials from the Dekane Mines. Ah well...",
+	"byeText": "Say hello to my wife, kimberly, in Saint City if you happen to see her, will you?",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Jeff Prosis and I am the Machine Developer of Flarine. Kimberly, my wife, is a guide in Saint City.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Say hello to my wife, kimberly, in Saint City if you happen to see her, will you?"
+		}
+	]
+}
