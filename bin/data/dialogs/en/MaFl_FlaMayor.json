@@ -1,0 +1,22 @@
+//
+// MaFl_FlaMayor dialog
+//
+
+{
+	"name": "MaFl_FlaMayor",
+	"oralText": "Welcome to Flarine! Please, enjoy your stay!",
+	"introText": "Flarine is the capital city of Madrigal. It may be a small city, but it's certainly the most beautiful. Feel free to come see me if you ever need anything.",
+	"byeText": "We have a Guild Siege every Saturday. Speak to the Guild Siege Managers for more information!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "I am the mayor of Flarine. The well-being of the citizens is my highest priority. Is there anything I can help you with?",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "We have a Guild Siege every Saturday. Speak to the Guild Siege Managers for more information!"
+		}
+	]
+}
