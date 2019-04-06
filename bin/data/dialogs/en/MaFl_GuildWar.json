@@ -1,0 +1,22 @@
+//
+// MaFl_GuildWar dialog
+//
+
+{
+	"name": "MaFl_GuildWar",
+	"oralText": "Welcome, competitors! The Guild Siege Application Center is open for business!",
+	"introText": "If your guild has reached the point where you think you have the strength and numbers to compete against another guild, then you're in the right place. Prove to everyone that you;re able to become a legend like Badza!",
+	"byeText": "For Glory!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "It's pleasure to make your acquaintance. I am the Guild Siege Master of Flarine. Speak with me if you need general Guild Siege information, want to apply, form your party, or enter the arena.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "For Glory!"
+		}
+	]
+}
