@@ -1,0 +1,22 @@
+//
+// MaFl_GUILDHOUSESALE dialog
+//
+
+{
+	"name": "MaFl_GUILDHOUSESALE",
+	"oralText": "Talk to me if you would like to learn about Guild Houses.",
+	"introText": "Every guild deserves a home to call their own, don't you agree? Besides, I hear the buffs come in very handy!",
+	"byeText": "I know my service don't come cheap, but I think you will find they are definitely worth it. Think about it for a little while.",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Hello! My name is Bertha. I am currently selling property to guilds that need a little extra space.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "I know my service don't come cheap, but I think you will find they are definitely worth it. Think about it for a little while."
+		}
+	]
+}
