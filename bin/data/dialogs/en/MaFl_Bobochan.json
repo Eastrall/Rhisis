@@ -1,0 +1,22 @@
+//
+// MaFl_Bobochan dialog
+//
+
+{
+	"name": "MaFl_Bobochan",
+	"oralText": "Step right up, adventurers! BoBoChan's Upgrade Shop is open for business!",
+	"introText": "Rhisis have mercy on this poor soul. You actually fight monsters with that?! Good grief! Please, allow me to help you upgrade it...",
+	"byeText": "Goodbye, friend! Remember, for the best upgrades in Madrigal, visit BoBoChan!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "What, you haven't heard of me? I'm BoBoChan, the most well known upgrade specialist in all of Madrigal. I love what I do, and people come from all over the world for my services.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Goodbye, friend! Remember, for the best upgrades in Madrigal, visit BoBoChan!"
+		}
+	]
+}
