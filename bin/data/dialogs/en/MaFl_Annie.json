@@ -1,0 +1,22 @@
+//
+// MaFl_Annie dialog
+//
+
+{
+	"name": "MaFl_Annie",
+	"oralText": "Please visit me if you have any questions about the 1vs1 Guild Siege.",
+	"introText": "Why hello there, young one. You certainly look strong! I bet you could even handle 1v2! Hahaha! Yes, I'm lying... you'll probably last about 2 seconds.",
+	"byeText": "Toodles!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "Okay, on a serious note, my name is Anny and I am the Rewards Manager for the 1vs1 Guild Siege. Stop by anytime if you need to pick up your rewards, require some information, or would like to hear more or my witty sarcasm.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Toodles!"
+		}
+	]
+}
