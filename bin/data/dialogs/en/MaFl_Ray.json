@@ -1,0 +1,22 @@
+//
+// MaFl_Ray dialog
+//
+
+{
+	"name": "MaFl_Ray",
+	"oralText": "Hey, you two! Stop that bickering, it's pointless! Take it to the arena!",
+	"introText": "In the PvP arena, you can fight other adventurers such as yourself. If you meet unfortunate circumstances, and are slain on the arena floor, you will not incur any death penalties.",
+	"byeText": "Another one bites the dust!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Lay and I am in charge of the PvP arena. I'll only let you in if you've chosen your first job.",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Another one bites the dust!"
+		}
+	]
+}
