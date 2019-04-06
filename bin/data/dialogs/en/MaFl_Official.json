@@ -1,0 +1,22 @@
+//
+// MaFl_Official dialog
+//
+
+{
+	"name": "MaFl_Official",
+	"oralText": "Welcome to Flarine!",
+	"introText": "The library is located to my right and the reception desk is to my left. You can speak with Julia for access your bank, view ranking information, or browse your Guild Warehouse.",
+	"byeText": "Thank you for visiting the Public Office. For Flarine!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "We Public Officials work directly with the mayor to better Flarine. We are here to serve you. If you have any questions, just ask!",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Thank you for visiting the Public Office. For Flarine!"
+		}
+	]
+}
