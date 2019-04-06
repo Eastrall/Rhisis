@@ -1,0 +1,22 @@
+//
+// MaFl_Mikyel dialog
+//
+
+{
+	"name": "MaFl_Mikyel",
+	"oralText": "Welcome to the Flarine Quest Office! Looking for work? I may have a job for you...",
+	"introText": "My apologies, there are no quests available for an adventurer of your talent and skill at this time.",
+	"byeText": "Farewell!",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Mikyel and I am the manager of Flarine Quest Office. When our citizens post a hunting order or another task, it is my job to find the right candidate for the job. Check back in from time to time to see if I have anything available!",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Farewell!"
+		}
+	]
+}
