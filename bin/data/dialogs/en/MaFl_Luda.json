@@ -1,0 +1,22 @@
+//
+// MaFl_Luda dialog
+//
+
+{
+	"name": "MaFl_Luda",
+	"oralText": "Are you Vagrant? Do you weapons or armor? I've got what you need!",
+	"introText": "Hello, potential customer! Thanks for stopping by! Please, feel free to look at my collection of Vagrant weapons and armor. Careful though, you touch it, you buy it!",
+	"byeText": "Be careful out there. I wouldn't want to lose a potential customer! *Chuckles*",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"text": "My name is Luda and I run the Vagrant Store of Flarine. I opened this shop after Boboku and Boboko stopped selling Vagrant items. Now I corner the market, hahaha!",
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"text": "Be careful out there. I wouldn't want to lose a potential customer! *Chuckles*"
+		}
+	]
+}
