@@ -1,0 +1,26 @@
+//
+// MaFl_Kidmen dialog
+//
+
+{
+	"name": "MaFl_Kidmen",
+	"oralText": "Spread the blessings of Rhisis throughout Madrigal! Sprinkle the tears of Rhisis upon the ground. Welcome to the club. Assist!",
+	"introText": "An Assist naturally have a giving heart. It's one of the fundamental teaching of Eiene, the Ringmaster Hero.",
+	"byeText": "Be careful out there, young one. I sense great potential in you.",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"texts": [
+				"They call me Kidmen Nicore. I'm a Sergeant at the Madrigal Job Training Center and I hope to guide brave souls as they follow the path to becoming an Assist."
+			 ]
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			 "texts": [
+				"Be careful out there, young one. I sense great potential in you."
+			 ]
+		}
+	]
+}
