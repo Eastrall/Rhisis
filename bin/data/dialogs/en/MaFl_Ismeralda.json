@@ -1,0 +1,54 @@
+//
+// MaFl_Ismeralda dialog
+//
+
+{
+	"name": "MaFl_Ismeralda",
+	"oralText": "Welcome! If you need any help or information, please don't hesitate to ask.",
+	"introText": "Welcome to Madrigal. You look lost! Is there anything I can help you with?",
+	"byeText": "Goodbye, adventurer. Enjoy your stay in Flarine.",
+	"links": [
+		{
+			"id": "PRESENTATION",
+			"title": "Who are you?",
+			"texts": [
+				"My name is Ismerelda Trinity, and I am one of the guides in Flarine City. If you need any help or information, just ask me or my twin sisters!",
+				"There are severals of us throughout Flarine and we all look alike so try not to be get confused, tee hee! We confuse ourselves sometimes so it's alright if you do.",
+				"Anyway, stop by and see me anytime if you need any help or information. That's what we're all here for!"
+			 ]
+		},
+		{
+			"id": "PRESENTATION",
+			"title": "Where am I?",
+			"texts": [
+				"Flarine is the most beautiful city in Madrigal, in my humble opinion. It's always spring here and I love it. Just be careful of all the Masquerpets outside the city.",
+				"If you're going to explore the wilds of Flaris, make sure you stock up on supplies from one of our many vendors here before you leave."
+			 ]
+		},
+		{
+			"id": "PRESENTATION",
+			"title": "Shops?",
+			"texts": [
+				"There are many shops in the city that sell everything from food  and drink, to weapons and armor. Have a look around to see what we have available!",
+				"You can also purchase exotic items from the many private shops in the area. These shops are usually run by other adventurers, such as yourself.",
+				"People from all over Madrigal visit this city everyday to shop and enjoy the sights. It is so beautiful here. Is there anything else I can assist you with?"
+			 ]
+		},
+		{
+			"id": "PRESENTATION",
+			"title": "Death?",
+			"texts": [
+				"If your Health Points (HP) reach zero, you will die. Not to worry, through, you have several options when this happens.",
+				"If you select Lodestar, you will be summoned back to town and resurrected. Alternatively, players who've chosen the Assist Job can often resurrect you where you died.",
+				"In addition to this, you can also purchase a Scroll of Resurrection by selecting the Premium Item Shop icon on your task bar. This allows to resurrect in place."
+			 ]
+		},
+		{
+			"id": "BYE",
+			"title": "Goodbye!",
+			"texts": [
+				"Be careful out there, young one. I sense great potential in you."
+			 ]
+		},
+	]
+}
