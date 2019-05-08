@@ -18,7 +18,7 @@
 			 ]
 		},
 		{
-			"id": "PRESENTATION",
+			"id": "LOCATION",
 			"title": "Where am I?",
 			"texts": [
 				"Flarine is the most beautiful city in Madrigal, in my humble opinion. It's always spring here and I love it. Just be careful of all the Masquerpets outside the city.",
@@ -26,7 +26,7 @@
 			 ]
 		},
 		{
-			"id": "PRESENTATION",
+			"id": "SHOPS",
 			"title": "Shops?",
 			"texts": [
 				"There are many shops in the city that sell everything from food  and drink, to weapons and armor. Have a look around to see what we have available!",
@@ -35,7 +35,7 @@
 			 ]
 		},
 		{
-			"id": "PRESENTATION",
+			"id": "DEATHS",
 			"title": "Death?",
 			"texts": [
 				"If your Health Points (HP) reach zero, you will die. Not to worry, through, you have several options when this happens.",
