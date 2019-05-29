@@ -1,0 +1,53 @@
+//
+// MaFl_Dior dialog
+//
+
+{
+  "name": "MaFl_Dior",
+  "oralText": "Welcome to Dior Station! You can find flying information here.",
+  "introText": [
+    "My family has managed the Flarine Station for generations. I am proud to continue that tradition."
+  ],
+  "byeText": "You'll ever find better sushi anywhere in Madrigal!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Dior Christin. I've lived in Flarine all my life and I love this place. Look at me, I can't stop bouncing! Anyway, I manage the station here so let me know if you have any questions!"
+      ]
+    },
+	{
+      "id": "FLYGUIDE",
+      "title": "Guide to Flying",
+      "texts": [
+        "1. First, you'll need to buy a broom or board and be at least level 20 in order to fly. 2. Next, double-click the board or broom in your inventory or simply move it to a hot key to climb aboard.",
+		"3. Press the <Space Bar> to accelerate your flying vehicle. Press the <Space Bar> key again while moving to stop. Think of the accelerator like a toggle button for *Go* and *Stop*.",
+		"4. To navigate, you can simply hold the Right Mouse Button down and angle the camera in the direction that you want to go. Alternatively, you can also use the W, A, S and D controls to turn.",
+		"5. Additionally, you can simply tap the Right Mouse Button twice to lock the camera to the mouse pointer. This allows you to navigate without holding down the right mouse button. Clicking twice again will turn off this effect.",
+		"6. Anyone can fly in Madrigal. You simply have to acquire a flying vehicle! 7. There are numerous makes and models of flying vehicles. Trying shopping around in player shops or click the Use Premium Item Shop icon next to the Start Button.",
+		"I hope the information I gave you was helpful. You're on your own now, aviator! See you  in the clouds!"
+      ]
+    },
+	{
+      "id": "COMBATFLYGUIDE",
+      "title": "Guide to Combat Flying",
+      "texts": [
+        "1. Occasionally, you will run into some pesky masquerpets while flying. You will see a red box surrounding them.",
+		"2. You can target these creatures with the TAB Key or the Left Mouse Button. If you lose sight of them while flying, a green arrow appears on the edge of the screen to indicate which direction you need to turn.",
+		"3. To attack the creature, simply get as close as you can and press the Left Mouse Button or the Insert Key. 4. If you want to follow the monster automatically, press the Z Key.",
+		"5. Only Magicians with a wand equipped can shoot from range while in the air. Mercenaries, Assists, and Acrobats must rely on melee attacks.",
+		"6. When you destroy a flying masquerpet, any dropped loot will be place into your inventory automatically. If there is no room in your inventory, the loot is lost, so be careful!",
+		"7. That about covers it for your flying combat training, cadet! Just one more thing... Don't crash the burn! Hahaha, just a little pilot humor.",
+		"Have fun out there and be safe! Don't forget to check your six!"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Goodbye, adventurer! Feel free to stop by again if you have any questions about flying."
+      ]
+    }
+  ]
+}
