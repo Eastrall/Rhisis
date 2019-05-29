@@ -1,0 +1,28 @@
+//
+// MaFl_Losha dialog
+//
+
+{
+  "name": "MaFl_Losha",
+  "oralText": "Need a moment? Grab a chocolate bar from Losha's Premium Foods Shop!",
+  "introText": [
+    "Hello, welcome to Losha's Premium Foods Shop! We are here to serve the citizens of Flarine with the most tasty treats penya can buy! So whaddya say, are ya'hungry?"
+  ],
+  "byeText": "Thank you, come again!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Losha Encline. Apprentice SsotTta, my little sister Loyah, and myself all live together and help to run my Food Shop. I've been told I'm the best cook in Madrigal! Care to try a Kimbap?"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Thank you, come again!"
+      ]
+    }
+  ]
+}
