@@ -1,0 +1,28 @@
+//
+// MaFl_Marche dialog
+//
+
+{
+  "name": "MaFl_Marche",
+  "oralText": "Are you as intrigued by magic as I am? Well, look no further! I have wands, staves, blinkwings and Magician Armor in stock new!",
+  "introText": [
+    "My mentor, Mule, got himself into some trouble. I highly doubt I'll ever see him again. I've taken it upon myself to continue running his magic shop. It's the least I could do."
+  ],
+  "byeText": "You'll ever find better sushi anywhere in Madrigal!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Marche Hordin and I run the Magic Shop here in Flarine. Teehee, I also have a crush  on this hunk named Bradley! Oh um, excuse me, yould you like to buy something? Please let me know if I can be of assistance."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Thank you for visiting  my magic shop! Be careful out there!"
+      ]
+    }
+  ]
+}
