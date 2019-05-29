@@ -1,0 +1,28 @@
+//
+// MaFl_SsoTta dialog
+//
+
+{
+  "name": "MaFl_SsoTta",
+  "oralText": "I love SUSHI! I could eat it all day, every day!",
+  "introText": [
+    "Making Sushi is a fine art, you see. You don;t just boil some rice, cut up some raw fish, and wrap it in seaweed, ya' know? You have to put your heart into it. You have to LOVE it!"
+  ],
+  "byeText": "You'll ever find better sushi anywhere in Madrigal!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "Hey there, you look a little hungry! My name is Ssotta Ssegakku and I am the best sushi cook in al of Madrigal! Hang tight, I'll whip up some Naga Rolls just for you!"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "You'll ever find better sushi anywhere in Madrigal!"
+      ]
+    }
+  ]
+}
