@@ -1,0 +1,28 @@
+//
+// MaFl_Teshar dialog
+//
+
+{
+  "name": "MaFl_Teshar",
+  "oralText": "Listen up, Soldiers of Kion! We've got a new directive from the Mayor of Flarine! It's time to train!",
+  "introText": [
+    "Are you looking for work? We can always use another  hired hand here. You look like you have some skill. Show me what you got!"
+  ],
+  "byeText": "Farewell, champion! See you on the battlefield!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Teshar Testarotsa and I'm the leader of this rag-tag bunch. I manage the house of Hero, Eiene. Have you come to join our team?"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Farewell, champion! See you on the battlefield!"
+      ]
+    }
+  ]
+}
