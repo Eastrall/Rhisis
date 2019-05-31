@@ -1,0 +1,28 @@
+//
+// MaFl_Ghalade dialog
+//
+
+{
+  "name": "MaFl_Ghalade",
+  "oralText": "We, the Soldiers of Kion, are family!",
+  "introText": [
+    "Don't speak to me as if you know me, stranger. I am the most feared martial artist in all Madrigal. I can take you down with one finger!"
+  ],
+  "byeText": "Glory to Kion",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Ghalade Elore, if you must know. I am the one of the hired Kion Soldiers for Flarine. I am a legend in the world of martial arts, as I've followed in the footsteps of Roentel. Don't cross me."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Glory to Kion"
+      ]
+    }
+  ]
+}
