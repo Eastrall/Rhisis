@@ -1,0 +1,28 @@
+//
+// MaFl_Tomba dialog
+//
+
+{
+  "name": "MaFl_Tomba",
+  "oralText": "All I need is my hammer, Tesh! I require no training.",
+  "introText": [
+    "This hammer was forged from the steel of a thousand Steamwalkers! No one else is skilled or strong enough to wield it, except for me of course. You don't believe me? Try it! Hahaha!"
+  ],
+  "byeText": "Glory to Kion",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Tomba Hammer and I am a soldier of Kion. This hammer goes everywhere with me. Everywhere. I live for battle, and a little extra penya doesn't hurt either."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Glory to Kion"
+      ]
+    }
+  ]
+}
