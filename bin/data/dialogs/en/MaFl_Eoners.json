@@ -1,0 +1,28 @@
+//
+// MaFl_Eoners dialog
+//
+
+{
+  "name": "MaFl_Eoners",
+  "oralText": "Yay! I am so happy! Bubble smiles on us!",
+  "introText": [
+    "I may not look like much, but I'm very powerful. I'm ready for anything! The Soldiers of Kion will prevail!"
+  ],
+  "byeText": "Love to Kion!!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Eoners Archer and I am one of the hired soldier of Kion. We are here to protect the citizen of Flarine, as long as the money is right. *wink*"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Love to Kion!!"
+      ]
+    }
+  ]
+}
