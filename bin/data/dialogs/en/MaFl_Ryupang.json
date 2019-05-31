@@ -1,0 +1,28 @@
+//
+// MaFl_Ryupang dialog
+//
+
+{
+  "name": "MaFl_Ryupang",
+  "oralText": "Soldiers! Raise the blue flag of Jung Hwa! We exist for the people! We fight for the people!",
+  "introText": [
+    "The dark will be weakened wherever they step, and then new light shall shine!"
+  ],
+  "byeText": "Faith and trust will always lead us.",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "My name is Ryupang Silog I am Managing the House of Offerep and I lead the Blue Flag of Jung Hwa soldiers"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Faith and trust will always lead us."
+      ]
+    }
+  ]
+}
