@@ -1,0 +1,28 @@
+//
+// MaDa_CloneHachal dialog
+//
+
+{
+  "name": "MaDa_CloneHachal",
+  "oralText": "Hmmm, no. This is no good. I need more information. I wish someone could help me.",
+  "introText": [
+    "Madrigal holds much history, and many secrets, some of which should stay hidden. Don't go sticking your nose where it doesn't belong if you know what's good for ya'."
+  ],
+  "byeText": "Be careful out there. Watch your step!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "I am Hachal Gedvas. I was kicked out of the Madrigal History Society. Now I roam the Plain of Bubble in search of Madrigals many secrets."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Be careful out there. Watch your step!"
+      ]
+    }
+  ]
+}
