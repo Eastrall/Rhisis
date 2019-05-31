@@ -1,0 +1,28 @@
+//
+// MaFl_Kurumin dialog
+//
+
+{
+  "name": "MaFl_Kurumin",
+  "oralText": "Hello there, traveler! This area, the plain of Bubble, was created by Bubble himself, long ago.",
+  "introText": [
+    "The earth trembled as the battle between Shade and the Heroes was fought viciously. Scars from the battle can seen all over madrigal."
+  ],
+  "byeText": "Farewell!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "Welcome, my name is Kurmin Hersan and I watch over the Plain of Bubble. It's an amazing area filled with life. It is a powerful place that seems to fill your soul with love and euphoria."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Farewell!"
+      ]
+    }
+  ]
+}
