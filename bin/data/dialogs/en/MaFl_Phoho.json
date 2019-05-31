@@ -1,0 +1,28 @@
+//
+// MaFl_Phoho dialog
+//
+
+{
+  "name": "MaFl_Phoho",
+  "oralText": "I shall cut down our enemy with one swift thrust!",
+  "introText": [
+    "What do you want?! Can't you see I'm busy? We've got a lot of training to do! Begone, pest!"
+  ],
+  "byeText": "For Kion!",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "They call me Phoho Andere and I am one of the hired Soldiers of Kion. No one, I repeat, NO ONE is better with a blade than I am! Care to test that theory with a little wager? Hmm?"
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "For Kion!"
+      ]
+    }
+  ]
+}
