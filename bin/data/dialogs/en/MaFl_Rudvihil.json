@@ -1,0 +1,28 @@
+//
+// MaFl_Rudvihil dialog
+//
+
+{
+  "name": "MaFl_Rudvihil",
+  "oralText": "I love my money. Can anyone else out there bathe themselves in penya? Ha! I didn't think so!",
+  "introText": [
+    "Psha! I have no desire to talk to the poor. Leave my property now before I call the authorities! What, are you deaf? I said LEAVE! I have esteemed guests LibraX and Condulus coming over!"
+  ],
+  "byeText": "What? Who doesn't like money?",
+  "links": [
+    {
+      "id": "PRESENTATION",
+      "title": "Who are you?",
+      "texts": [
+        "I told you to leave. *Sigh* Very well, if it'll get you to leave me alone I'll tell you. My name is Rudvihil Tailerz and my passion is collecting. Collecting rare artifacts is my obsession! Well, aside from money, of course."
+      ]
+    },
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "What? Who doesn't like money?"
+      ]
+    }
+  ]
+}
