@@ -1,0 +1,22 @@
+//
+// MaFl_Himadel dialog
+//
+
+{
+  "name": "MaFl_Himadel",
+  "oralText": "Only the bravest of adventurers should dare to enter. Are you prepared?",
+  "introText": [
+    "You are not yet ready to challenge the beast within this lair. You are fooling if you think I would allow you to enter.",
+	"Travel to Northern Flarine and speak with the Novelist there. I cannot help you."
+  ],
+  "byeText": "Farewell, brave one.",
+  "links": [
+    {
+      "id": "BYE",
+      "title": "Goodbye!",
+      "texts": [
+        "Farewell, brave one."
+      ]
+    }
+  ]
+}
