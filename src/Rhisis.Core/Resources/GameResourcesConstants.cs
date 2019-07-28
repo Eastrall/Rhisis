@@ -1,4 +1,5 @@
-﻿using Rhisis.Core.Structures.Game;
+﻿using Rhisis.Core.Resources.Loaders;
+using Rhisis.Core.Structures.Game;
 using System.IO;
 
 namespace Rhisis.Core.Resources
@@ -7,9 +8,16 @@ namespace Rhisis.Core.Resources
     {
         // Cache keys
         public const string Defines = "Defines";
+        public const string Texts = "Texts";
         public const string Movers = nameof(MoverData);
         public const string Items = nameof(ItemData);
+        public const string Dialogs = nameof(DialogLoader);
+        public const string Shops = nameof(ShopLoader);
         public const string Jobs = nameof(JobData);
+        public const string ClientTexts = nameof(TextClientLoader);
+        public const string ExpTables = nameof(ExpTableLoader);
+        public const string PenalityData = nameof(PenalityLoader);
+        public const string Npcs = nameof(NpcLoader);
 
         public class Errors
         {

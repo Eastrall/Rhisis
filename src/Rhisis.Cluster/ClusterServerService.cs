@@ -21,7 +21,11 @@ namespace Rhisis.Cluster
             this._clusterServer = clusterServer;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Starts the cluster server service.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task StartAsync(CancellationToken cancellationToken)
         {
             this._logger.LogInformation($"Starting {nameof(ClusterServer)}.");
@@ -30,7 +34,11 @@ namespace Rhisis.Cluster
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Stops the cluster server service.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task StopAsync(CancellationToken cancellationToken)
         {
             this._logger.LogInformation($"Stopping {nameof(ClusterServer)}.");

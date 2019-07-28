@@ -1,34 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.Extensions;
 using Rhisis.Core.Structures.Game;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Rhisis.Core.Resources.Loaders
 {
     public sealed class ItemLoader : IGameResourceLoader
     {
         private readonly ILogger<ItemLoader> _logger;
-        private readonly DefineLoader _defines;
-        private readonly TextLoader _texts;
-        private readonly IDictionary<int, ItemData> _itemsData;
-
-        /// <summary>
-        /// Gets an <see cref="ItemData"/> by his id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ItemData this[int id] => this.GetItem(id);
-
-        /// <summary>
-        /// Gets an <see cref="ItemData"/> by his name.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public ItemData this[string name] => this._itemsData.Values.FirstOrDefault(x => string.Equals(x.Name, name, System.StringComparison.OrdinalIgnoreCase));
+        private readonly IMemoryCache _cache;
+        private readonly IDictionary<string, int> _defines;
+        private readonly IDictionary<string, string> _texts;
 
         /// <summary>
         /// Creates a new <see cref="ItemLoader"/> instance.
@@ -36,24 +23,28 @@ namespace Rhisis.Core.Resources.Loaders
         /// <param name="logger">Logger</param>
         /// <param name="defines">Defines</param>
         /// <param name="texts">Texts</param>
-        public ItemLoader(ILogger<ItemLoader> logger, DefineLoader defines, TextLoader texts)
+        public ItemLoader(ILogger<ItemLoader> logger, IMemoryCache cache)
         {
             this._logger = logger;
-            this._defines = defines;
-            this._texts = texts;
-            this._itemsData = new Dictionary<int, ItemData>();
+            this._cache = cache;
+            this._defines = this._cache.Get<IDictionary<string, int>>(GameResourcesConstants.Defines);
+            this._texts = this._cache.Get<IDictionary<string, string>>(GameResourcesConstants.Texts);
         }
 
         /// <inheritdoc />
         public void Load()
         {
-            if (!File.Exists(GameResources.ItemsPropPath))
+            string propItemPath = GameResourcesConstants.Paths.ItemsPropPath;
+
+            if (!File.Exists(propItemPath))
             {
-                this._logger.LogWarning("Unable to load items. Reason: cannot find '{0}' file.", GameResources.ItemsPropPath);
+                this._logger.LogWarning("Unable to load items. Reason: cannot find '{0}' file.", propItemPath);
                 return;
             }
 
-            using (var propItem = new ResourceTableFile(GameResources.ItemsPropPath, 1, this._defines.Defines, this._texts.Texts))
+            var itemsData = new ConcurrentDictionary<int, ItemData>();
+
+            using (var propItem = new ResourceTableFile(propItemPath, 1, this._defines, this._texts))
             {
                 var items = propItem.GetRecords<ItemData>();
 
@@ -61,17 +52,18 @@ namespace Rhisis.Core.Resources.Loaders
                 {
                     this.TransformItem(item);
 
-                    if (this._itemsData.ContainsKey(item.Id))
+                    if (itemsData.ContainsKey(item.Id))
                     {
-                        this._itemsData[item.Id] = item;
-                        this._logger.LogWarning(GameResources.ObjectOverridedMessage, "Item", item.Id, "already declared");
+                        itemsData[item.Id] = item;
+                        this._logger.LogWarning(GameResourcesConstants.Errors.ObjectOverridedMessage, "Item", item.Id, "already declared");
                     }
                     else
-                        this._itemsData.Add(item.Id, item);
+                        itemsData.TryAdd(item.Id, item);
                 }
             }
 
-            this._logger.LogInformation("-> {0} items loaded.", this._itemsData.Count);
+            this._cache.Set(GameResourcesConstants.Items, itemsData);
+            this._logger.LogInformation("-> {0} items loaded.", itemsData.Count);
         }
 
         /// <summary>
@@ -79,14 +71,14 @@ namespace Rhisis.Core.Resources.Loaders
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ItemData GetItem(int id) => this._itemsData.TryGetValue(id, out ItemData value) ? value : null;
+        public ItemData GetItem(int id) => null; //this._itemsData.TryGetValue(id, out ItemData value) ? value : null;
 
         /// <summary>
         /// Gets items matching a predicate.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public IEnumerable<ItemData> GetItems(Func<ItemData, bool> predicate) => this._itemsData.Values.Where(predicate);
+        public IEnumerable<ItemData> GetItems(Func<ItemData, bool> predicate) => null; //this._itemsData.Values.Where(predicate);
 
         /// <summary>
         /// Applies custom transformation to an item.
@@ -110,12 +102,6 @@ namespace Rhisis.Core.Resources.Loaders
             }
 
             item.Params = itemParams;
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this._itemsData.Clear();
         }
     }
 }

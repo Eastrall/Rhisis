@@ -1,42 +1,41 @@
 ﻿using Ether.Network.Packets;
-using System;
 
 namespace Rhisis.Network.Packets.World
 {
     /// <summary>
     /// Defines the <see cref="JoinPacket"/> structure.
     /// </summary>
-    public struct JoinPacket : IEquatable<JoinPacket>
+    public class JoinPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the World Id.
         /// </summary>
-        public int WorldId { get; }
+        public int WorldId { get; private set; }
 
         /// <summary>
         /// Gets the Player Id.
         /// </summary>
-        public int PlayerId { get; }
+        public int PlayerId { get; private set; }
 
         /// <summary>
         /// Gets the Authentication key.
         /// </summary>
-        public int AuthenticationKey { get; }
+        public int AuthenticationKey { get; private set; }
 
         /// <summary>
         /// Gets the player's party id.
         /// </summary>
-        public int PartyId { get; }
+        public int PartyId { get; private set; }
 
         /// <summary>
         /// Gets the player's guild id.
         /// </summary>
-        public int GuildId { get; }
+        public int GuildId { get; private set; }
 
         /// <summary>
         /// Gets the player's guild war id.
         /// </summary>
-        public int GuildWarId { get; }
+        public int GuildWarId { get; private set; }
 
         /// <summary>
         /// Gets the Id of multi
@@ -44,43 +43,40 @@ namespace Rhisis.Network.Packets.World
         /// <remarks>
         /// What is this ?
         /// </remarks>
-        public int IdOfMulti { get; }
+        public int IdOfMulti { get; private set; }
 
         /// <summary>
         /// Gets the player's slot.
         /// </summary>
-        public byte Slot { get; }
+        public byte Slot { get; private set; }
 
         /// <summary>
         /// Gets the player's name.
         /// </summary>
-        public string PlayerName { get; }
+        public string PlayerName { get; private set; }
 
         /// <summary>
         /// Gets the player's account username.
         /// </summary>
-        public string Username { get; }
+        public string Username { get; private set; }
 
         /// <summary>
         /// Gets the player's account password.
         /// </summary>
-        public string Password { get; }
+        public string Password { get; private set; }
 
         /// <summary>
         /// Gets the messenger state.
         /// </summary>
-        public int MessengerState { get; }
+        public int MessengerState { get; private set; }
 
         /// <summary>
         /// Gets the messenger count.
         /// </summary>
-        public int MessengerCount { get; }
+        public int MessengerCount { get; private set; }
 
-        /// <summary>
-        /// Creates a new <see cref="JoinPacket"/> object.
-        /// </summary>
-        /// <param name="packet">Incoming packet</param>
-        public JoinPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.WorldId = packet.Read<int>();
             this.PlayerId = packet.Read<int>();
@@ -95,27 +91,6 @@ namespace Rhisis.Network.Packets.World
             this.Password = packet.Read<string>();
             this.MessengerState = packet.Read<int>();
             this.MessengerCount = packet.Read<int>();
-        }
-
-        /// <summary>
-        /// Compares two <see cref="JoinPacket"/>.
-        /// </summary>
-        /// <param name="other">Other <see cref="JoinPacket"/></param>
-        public bool Equals(JoinPacket other)
-        {
-            return this.WorldId == other.WorldId
-                && this.PlayerId == other.PlayerId
-                && this.AuthenticationKey == other.AuthenticationKey
-                && this.PartyId == other.PartyId
-                && this.GuildId == other.GuildId
-                && this.GuildWarId == other.GuildWarId
-                && this.IdOfMulti == other.IdOfMulti
-                && this.Slot == other.Slot
-                && this.PlayerName.Equals(other.PlayerName, StringComparison.OrdinalIgnoreCase)
-                && this.Username.Equals(other.Username, StringComparison.OrdinalIgnoreCase)
-                && this.Password.Equals(other.Password, StringComparison.OrdinalIgnoreCase)
-                && this.MessengerState == other.MessengerState
-                && this.MessengerCount == other.MessengerCount;
         }
     }
 }

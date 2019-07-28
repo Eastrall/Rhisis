@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Rhisis.Core.Structures.Game;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,36 +11,33 @@ namespace Rhisis.Core.Resources.Loaders
     public sealed class ShopLoader : IGameResourceLoader
     {
         private readonly ILogger<ShopLoader> _logger;
-        private readonly IDictionary<string, ShopData> _shopData;
+        private readonly IMemoryCache _cache;
         private readonly JsonLoadSettings _jsonSettings = new JsonLoadSettings { CommentHandling = CommentHandling.Ignore };
-
-        /// <summary>
-        /// Gets the shop data by the shop name.
-        /// </summary>
-        /// <param name="shopName">Shop name</param>
-        /// <returns></returns>
-        public ShopData this[string shopName] => this.GetShopData(shopName);
 
         /// <summary>
         /// Creates a new <see cref="ShopLoader"/> instance.
         /// </summary>
         /// <param name="logger">Logger</param>
-        public ShopLoader(ILogger<ShopLoader> logger)
+        /// <param name="cache">Memory cache.</param>
+        public ShopLoader(ILogger<ShopLoader> logger, IMemoryCache cache)
         {
             this._logger = logger;
-            this._shopData = new Dictionary<string, ShopData>();
+            this._cache = cache;
         }
 
         /// <inheritdoc />
         public void Load()
         {
-            if (!Directory.Exists(GameResources.ShopsPath))
+            string shopPath = GameResourcesConstants.Paths.ShopsPath;
+
+            if (!Directory.Exists(shopPath))
             {
-                this._logger.LogWarning("Unable to load shops. Reason: cannot find '{0}' directory.", GameResources.ShopsPath);
+                this._logger.LogWarning("Unable to load shops. Reason: cannot find '{0}' directory.", shopPath);
                 return;
             }
 
-            string[] shopsFiles = Directory.GetFiles(GameResources.ShopsPath);
+            string[] shopsFiles = Directory.GetFiles(shopPath);
+            var shopData = new ConcurrentDictionary<string, ShopData>();
 
             foreach (string shopFile in shopsFiles)
             {
@@ -50,40 +49,28 @@ namespace Rhisis.Core.Resources.Loaders
                     var shops = shopsParsed.ToObject<ShopData[]>();
 
                     foreach (ShopData shop in shops)
-                        this.AddShop(shop);
+                        this.AddShop(shopData, shop);
                 }
                 else
                 {
-                    this.AddShop(shopsParsed.ToObject<ShopData>());
+                    this.AddShop(shopData, shopsParsed.ToObject<ShopData>());
                 }
             }
 
-            this._logger.LogInformation("-> {0} shops loaded.", this._shopData.Count);
+            this._cache.Set(GameResourcesConstants.Shops, shopData);
+            this._logger.LogInformation("-> {0} shops loaded.", shopData.Count);
         }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this._shopData.Clear();
-        }
-
-        /// <summary>
-        /// Gets the shop data by the shop name.
-        /// </summary>
-        /// <param name="shopName">Shop name</param>
-        /// <returns></returns>
-        public ShopData GetShopData(string shopName) => this._shopData.TryGetValue(shopName, out ShopData value) ? value : null;
 
         /// <summary>
         /// Adds a new shop.
         /// </summary>
         /// <param name="shop">Shop to add</param>
-        private void AddShop(ShopData shop)
+        private void AddShop(IDictionary<string, ShopData> shopData, ShopData shop)
         {
-            if (this._shopData.ContainsKey(shop.Name))
-                this._logger.LogWarning(GameResources.ObjectIgnoredMessage, "Shop", shop.Name, "already declared");
+            if (shopData.ContainsKey(shop.Name))
+                this._logger.LogWarning(GameResourcesConstants.Errors.ObjectIgnoredMessage, "Shop", shop.Name, "already declared");
             else
-                this._shopData.Add(shop.Name, shop);
+                shopData.Add(shop.Name, shop);
         }
     }
 }

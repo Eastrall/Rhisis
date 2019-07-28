@@ -1,105 +1,100 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Rhisis.Core.Common;
-using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.IO;
-using Rhisis.Core.Resources.Loaders;
+using Rhisis.Core.Structures.Game;
+using Rhisis.Core.Structures.Game.Dialogs;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Rhisis.Core.Resources
 {
-    public class GameResources : Singleton<GameResources>
+    internal class GameResources : IGameResources
     {
-        public static readonly string DataPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
-        public static readonly string DialogsPath = Path.Combine(DataPath, "dialogs");
-        public static readonly string ResourcePath = Path.Combine(DataPath, "res");
-        public static readonly string MapsPath = Path.Combine(DataPath, "maps");
-        public static readonly string ShopsPath = Path.Combine(DataPath, "shops");
-        public static readonly string DataSub0Path = Path.Combine(ResourcePath, "data");
-        public static readonly string DataSub1Path = Path.Combine(ResourcePath, "dataSub1");
-        public static readonly string DataSub2Path = Path.Combine(ResourcePath, "dataSub2");
-        public static readonly string MoversPropPath = Path.Combine(DataSub0Path, "propMover.txt");
-        public static readonly string MoversPropExPath = Path.Combine(DataSub0Path, "propMoverEx.inc");
-        public static readonly string ItemsPropPath = Path.Combine(DataSub2Path, "propItem.txt");
-        public static readonly string WorldScriptPath = Path.Combine(DataSub0Path, "World.inc");
-        public static readonly string JobPropPath = Path.Combine(DataSub1Path, "propJob.inc");
-        public static readonly string TextClientPath = Path.Combine(DataSub1Path, "textClient.inc");
-        public static readonly string ExpTablePath = Path.Combine(DataSub0Path, "expTable.inc");
-        public static readonly string DeathPenalityPath = Path.Combine(ResourcePath, "deathPenality.json");
+        private readonly ILogger<GameResources> _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IServiceProvider _serciceProvider;
+        private ConcurrentDictionary<int, MoverData> _movers;
+        private ConcurrentDictionary<int, ItemData> _items;
+        private ConcurrentDictionary<string, DialogSet> _dialogs;
+        private ConcurrentDictionary<string, ShopData> _shops;
+        private ConcurrentDictionary<int, JobData> _jobs;
+        private ConcurrentDictionary<string, string> _clientTexts;
+        private ExpTableData _expTableData;
+        private PenalityData _penalities;
 
-        // Logs messages
-        public const string UnableLoadMapMessage = "Unable to load map '{0}'. Reason: {1}.";
-        public const string UnableLoadMessage = "Unable to load {0}. Reason: {1}";
-        public const string ObjectIgnoredMessage = "{0} id '{1}' was ignored. Reason: {2}.";
-        public const string ObjectOverridedMessage = "{0} id '{1}' was overrided. Reason: {2}.";
-        public const string ObjectErrorMessage = "{0} with id '{1}' has an error. Reason: {2}";
+        /// <inheritdoc />
+        public IReadOnlyDictionary<int, MoverData> Movers => this.GetCacheValue(GameResourcesConstants.Movers, ref this._movers);
 
-        private ILogger<GameResources> _logger;
-        private IEnumerable<Type> _loaders;
-        private MoverLoader _movers;
-        private ItemLoader _items;
-        private ExpTableLoader _expTables;
-        private PenalityLoader _penalities;
+        /// <inheritdoc />
+        public IReadOnlyDictionary<int, ItemData> Items => this.GetCacheValue(GameResourcesConstants.Items, ref this._items);
 
-        /// <summary>
-        /// Gets the movers data.
-        /// </summary>
-        public MoverLoader Movers => this._movers ?? (this._movers = DependencyContainer.Instance.Resolve<MoverLoader>());
+        /// <inheritdoc />
+        public IReadOnlyDictionary<string, DialogSet> Dialogs => this.GetCacheValue(GameResourcesConstants.Dialogs, ref this._dialogs);
 
-        /// <summary>
-        /// Gets the items data.
-        /// </summary>
-        public ItemLoader Items => this._items ?? (this._items = DependencyContainer.Instance.Resolve<ItemLoader>());
+        /// <inheritdoc />
+        public IReadOnlyDictionary<string, ShopData> Shops => this.GetCacheValue(GameResourcesConstants.Shops, ref this._shops);
+
+        /// <inheritdoc />
+        public IReadOnlyDictionary<int, JobData> Jobs => this.GetCacheValue(GameResourcesConstants.Jobs, ref this._jobs);
+
+        /// <inheritdoc />
+        public IReadOnlyDictionary<string, string> ClientTexts => this.GetCacheValue(GameResourcesConstants.ClientTexts, ref this._clientTexts);
+
+        /// <inheritdoc />
+        public ExpTableData ExpTables => this.GetCacheValue(GameResourcesConstants.ExpTables, ref this._expTableData);
+
+        /// <inheritdoc />
+        public PenalityData Penalities => this.GetCacheValue(GameResourcesConstants.PenalityData, ref this._penalities);
 
         /// <summary>
-        /// Gets the exp table data.
+        /// Creates a new <see cref="GameResources"/> instance.
         /// </summary>
-        public ExpTableLoader ExpTables => this._expTables ?? (this._expTables = DependencyContainer.Instance.Resolve<ExpTableLoader>());
-
-        /// <summary>
-        /// Gets the penality resources.
-        /// </summary>
-        public PenalityLoader Penalities => this._penalities ?? (this._penalities = DependencyContainer.Instance.Resolve<PenalityLoader>());
-
-        /// <summary>
-        /// Initialize the <see cref="GameResources"/> with loaders.
-        /// </summary>
-        /// <param name="loaderTypes"></param>
-        public void Initialize(IEnumerable<Type> loaderTypes)
+        /// <param name="logger">Logger.</param>
+        /// <param name="cache">Memory cache.</param>
+        /// <param name="serviceProvider">Service provider.</param>
+        public GameResources(ILogger<GameResources> logger, IMemoryCache cache, IServiceProvider serviceProvider)
         {
-            this._loaders = loaderTypes;
-
-            foreach (var loaderType in this._loaders)
-                DependencyContainer.Instance.Register(loaderType, ServiceLifetime.Singleton);
+            this._logger = logger;
+            this._cache = cache;
+            this._serciceProvider = serviceProvider;
         }
 
-        /// <summary>
-        /// Load resources.
-        /// </summary>
-        public void Load()
+        /// <inheritdoc />
+        public void Load(params Type[] loaders)
         {
-            this._logger = this._logger ?? DependencyContainer.Instance.Resolve<ILogger<GameResources>>();
-            this._logger.LogInformation("Loading resources...");
-
             Profiler.Start("LoadResources");
+            this._logger.LogInformation("Loading server resources...");
 
-            foreach (var loaderType in this._loaders)
+            foreach (Type loaderType in loaders)
             {
-                var loader = DependencyContainer.Instance.Resolve(loaderType) as IGameResourceLoader;
+                var loader = (IGameResourceLoader)ActivatorUtilities.CreateInstance(this._serciceProvider, loaderType);
 
-                try
+                if (loader != null)
                 {
                     loader.Load();
                 }
-                catch (Exception e)
-                {
-                    this._logger.LogError(e, $"An error occured with loader {loader.GetType().Name}.");
-                }
             }
 
-            this._logger.LogInformation("Resources loaded in {0}ms.", Profiler.Stop("LoadResources").ElapsedMilliseconds);
+            this._logger.LogInformation("Resources loaded in {0} ms.", Profiler.Stop("LoadResources").ElapsedMilliseconds);
+        }
+
+        /// <summary>
+        /// Gets a cached value by it's key.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <param name="key">Cached object key.</param>
+        /// <param name="value">Object reference to store the cached value.</param>
+        /// <returns></returns>
+        private T GetCacheValue<T>(object key, ref T value)
+        {
+            if (value == null)
+            {
+                this._cache.TryGetValue(key, out value);
+            }
+
+            return value;
         }
     }
 }

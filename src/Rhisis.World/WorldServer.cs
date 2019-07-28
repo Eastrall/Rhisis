@@ -1,6 +1,11 @@
 ﻿using Ether.Network.Packets;
 using Ether.Network.Server;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Rhisis.Core.Handlers;
+using Rhisis.Core.Resources;
+using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
@@ -13,13 +18,14 @@ namespace Rhisis.World
 {
     public sealed partial class WorldServer : NetServer<WorldClient>, IWorldServer
     {
+        private const int MaxConnections = 500;
+        private const int ClientBufferSize = 128;
+        private const int ClientBacklog = 50;
+
         private readonly ILogger<WorldServer> _logger;
         private readonly WorldConfiguration _worldConfiguration;
-
-        /// <summary>
-        /// Gets the ISC client.
-        /// </summary>
-        public static ISCClient InterClient { get; private set; }
+        private readonly IGameResources _gameResources;
+        private readonly IServiceProvider _serviceProvider;
 
         /// <inheritdoc />
         protected override IPacketProcessor PacketProcessor { get; } = new FlyffPacketProcessor();
@@ -27,41 +33,43 @@ namespace Rhisis.World
         /// <summary>
         /// Creates a new <see cref="WorldServer"/> instance.
         /// </summary>
-        public WorldServer(ILogger<WorldServer> logger, WorldConfiguration worldConfiguration)
+        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IServiceProvider serviceProvider)
         {
             this._logger = logger;
-            this._worldConfiguration = worldConfiguration;
+            this._worldConfiguration = worldConfiguration.Value;
             this.Configuration.Host = this._worldConfiguration.Host;
             this.Configuration.Port = this._worldConfiguration.Port;
-            this.Configuration.MaximumNumberOfConnections = 1000;
-            this.Configuration.Backlog = 100;
-            this.Configuration.BufferSize = 4096;
-
-            this._logger.LogTrace("Host: {0}, Port: {1}, MaxNumberOfConnections: {2}, Backlog: {3}, BufferSize: {4}",
-                this.Configuration.Host,
-                this.Configuration.Port,
-                this.Configuration.MaximumNumberOfConnections,
-                this.Configuration.Backlog,
-                this.Configuration.BufferSize);
+            this.Configuration.MaximumNumberOfConnections = MaxConnections;
+            this.Configuration.Backlog = ClientBacklog;
+            this.Configuration.BufferSize = ClientBufferSize;
         }
 
         /// <inheritdoc />
         protected override void Initialize()
         {
-            this._logger.LogInformation("Connection to ISC server on {0}:{1}...", this._worldConfiguration.ISC.Host, this._worldConfiguration.ISC.Port);
-            InterClient = new ISCClient(this._worldConfiguration);
-            InterClient.Connect();
+            this._gameResources.Load(typeof(DefineLoader),
+                typeof(TextLoader),
+                typeof(MoverLoader),
+                typeof(ItemLoader),
+                typeof(DialogLoader),
+                typeof(ShopLoader),
+                typeof(JobLoader),
+                typeof(TextClientLoader),
+                typeof(ExpTableLoader),
+                typeof(PenalityLoader));
 
             //TODO: Implement this log inside OnStarted method when will be available.
             this._logger.LogInformation("'{0}' world server is started and listen on {1}:{2}.",
-                InterClient.WorldConfiguration.Name, this.Configuration.Host, this.Configuration.Port);
+                this._worldConfiguration.Name, this.Configuration.Host, this.Configuration.Port);
         }
 
         /// <inheritdoc />
         protected override void OnClientConnected(WorldClient client)
         {
-            client.InitializeClient(this);
             this._logger.LogInformation("New client connected from {0}.", client.RemoteEndPoint);
+
+            client.Initialize(this._serviceProvider.GetRequiredService<ILogger<WorldClient>>(),
+                this._serviceProvider.GetRequiredService<IHandlerInvoker>());
             CommonPacketFactory.SendWelcome(client, client.SessionId);
         }
 
@@ -84,7 +92,7 @@ namespace Rhisis.World
         /// <returns></returns>
         public IPlayerEntity GetPlayerEntity(uint id)
         {
-            WorldClient client =  this.Clients.FirstOrDefault(x => x.Player.Id == id);
+            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.Id == id);
             return client?.Player;
         }
 

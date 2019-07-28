@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Game;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -14,80 +13,43 @@ namespace Rhisis.Core.Resources.Loaders
     public sealed class PenalityLoader : IGameResourceLoader
     {
         private readonly ILogger<PenalityLoader> _logger;
-        
-        /// <summary>
-        /// Gets the death penality data.
-        /// </summary>
-        public DeathPenalityData DeathPenality { get; private set; }
+        private readonly IMemoryCache _cache;
 
         /// <summary>
         /// Creates a new <see cref="PenalityLoader"/> instance.
         /// </summary>
         /// <param name="logger"></param>
-        public PenalityLoader(ILogger<PenalityLoader> logger)
+        public PenalityLoader(ILogger<PenalityLoader> logger, IMemoryCache cache)
         {
             this._logger = logger;
+            this._cache = cache;
         }
 
         /// <inheritdoc />
         public void Load()
         {
-            if (!File.Exists(GameResources.DeathPenalityPath))
+            string deathPenalityPath = GameResourcesConstants.Paths.DeathPenalityPath;
+
+            if (!File.Exists(deathPenalityPath))
             {
-                this._logger.LogWarning("Unable to load death penality. Reason: cannot find '{0}' file.", GameResources.DeathPenalityPath);
+                this._logger.LogWarning("Unable to load death penality. Reason: cannot find '{0}' file.", deathPenalityPath);
                 return;
             }
 
-            this.DeathPenality = ConfigurationHelper.Load<DeathPenalityData>(GameResources.DeathPenalityPath);
+            var penalityData = ConfigurationHelper.Load<DeathPenalityData>(deathPenalityPath);
 
-            if (this.DeathPenality == null)
+            if (penalityData == null)
             {
-                this._logger.LogError(GameResources.UnableLoadMessage, "death penality", "Json loading error.");
+                this._logger.LogError(GameResourcesConstants.Errors.UnableLoadMessage, "death penality", "Json loading error.");
                 return;
             }
 
-            this.DeathPenality.RevivalPenality = this.DeathPenality.RevivalPenality.OrderBy(x => x.Level);
-            this.DeathPenality.DecExpPenality = this.DeathPenality.DecExpPenality.OrderBy(x => x.Level);
-            this.DeathPenality.LevelDownPenality = this.DeathPenality.LevelDownPenality.OrderBy(x => x.Level);
+            penalityData.RevivalPenality = penalityData.RevivalPenality.OrderBy(x => x.Level);
+            penalityData.DecExpPenality = penalityData.DecExpPenality.OrderBy(x => x.Level);
+            penalityData.LevelDownPenality = penalityData.LevelDownPenality.OrderBy(x => x.Level);
 
+            this._cache.Set(GameResourcesConstants.PenalityData, penalityData);
             this._logger.LogInformation("-> Penalities loaded.");
-        }
-
-        /// <summary>
-        /// Gets a revival penality by a level.
-        /// </summary>
-        /// <param name="level">Level.</param>
-        /// <returns>Revival penality expressed as a percentage.</returns>
-        public decimal GetRevivalPenality(int level) => this.GetPenality(this.DeathPenality.RevivalPenality, level).Value;
-
-        /// <summary>
-        /// Gets the experience penality by a level.
-        /// </summary>
-        /// <param name="level">Level.</param>
-        /// <returns>Experience penality expressed as a percentage.</returns>
-        public decimal GetDecExpPenality(int level) => this.GetPenality(this.DeathPenality.DecExpPenality, level).Value;
-
-        /// <summary>
-        /// Gets the level down penality by a level.
-        /// </summary>
-        /// <param name="level">Level</param>
-        /// <returns>Boolean value that indicates if level should go down.</returns>
-        public bool GetLevelDownPenality(int level) 
-            => Convert.ToBoolean(this.GetPenality(this.DeathPenality.LevelDownPenality, level).Value);
-
-        /// <summary>
-        /// Gets a <see cref="PenalityData"/> from a collection of penalities and a level.
-        /// </summary>
-        /// <param name="penalityData">Penality data colletion.</param>
-        /// <param name="level">Level</param>
-        /// <returns></returns>
-        private PenalityData GetPenality(IEnumerable<PenalityData> penalityData, int level) 
-            => penalityData.FirstOrDefault(x => level <= x.Level) ?? penalityData.LastOrDefault();
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this.DeathPenality = null;
         }
     }
 }

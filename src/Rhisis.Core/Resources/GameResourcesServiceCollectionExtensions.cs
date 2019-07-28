@@ -13,7 +13,7 @@ namespace Rhisis.Core.Resources
         /// <param name="services">Service collection.</param>
         public static void AddGameResources(this IServiceCollection services)
         {
-            services.AddSingleton<IGameResources, NewGameResources>();
+            services.AddSingleton<IGameResources, GameResources>();
         }
     }
 }

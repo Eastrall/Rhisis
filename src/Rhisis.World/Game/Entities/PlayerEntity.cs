@@ -38,7 +38,7 @@ namespace Rhisis.World.Game.Entities
         public TaskbarComponent Taskbar { get; set; }
 
         /// <inheritdoc />
-        public NetUser Connection { get; set; }
+        public INetUser Connection { get; set; }
 
         /// <inheritdoc />
         public FollowComponent Follow { get; set; }

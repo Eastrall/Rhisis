@@ -13,11 +13,6 @@ namespace Rhisis.Core.Resources.Loaders
         private readonly IMemoryCache _cache;
 
         /// <summary>
-        /// Gets the defines dictionary.
-        /// </summary>
-        public IDictionary<string, int> Defines { get; }
-
-        /// <summary>
         /// Creates a new <see cref="DefineLoader"/> instance.
         /// </summary>
         /// <param name="logger">Logger</param>
@@ -25,7 +20,6 @@ namespace Rhisis.Core.Resources.Loaders
         {
             this._logger = logger;
             this._cache = cache;
-            this.Defines = new Dictionary<string, int>();
         }
 
         /// <inheritdoc />

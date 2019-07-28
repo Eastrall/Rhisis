@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.Resources.Include;
 using Rhisis.Core.Structures.Game;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,16 +14,9 @@ namespace Rhisis.Core.Resources.Loaders
     public sealed class MoverLoader : IGameResourceLoader
     {
         private readonly ILogger<MoverLoader> _logger;
-        private readonly DefineLoader _definesLoader;
-        private readonly TextLoader _textsLoader;
-        private readonly IDictionary<int, MoverData> _moversData;
-
-        /// <summary>
-        /// Gets a <see cref="MoverData"/> by his mover id.
-        /// </summary>
-        /// <param name="moverId"></param>
-        /// <returns></returns>
-        public MoverData this[int moverId] => this.GetMover(moverId);
+        private readonly IMemoryCache _cache;
+        private readonly IDictionary<string, int> _defines;
+        private readonly IDictionary<string, string> _texts;
 
         /// <summary>
         /// Creates a new <see cref="MoverLoader"/> instance.
@@ -29,45 +24,55 @@ namespace Rhisis.Core.Resources.Loaders
         /// <param name="logger">Logger</param>
         /// <param name="defines">Defines data</param>
         /// <param name="texts">Texts data</param>
-        public MoverLoader(ILogger<MoverLoader> logger, DefineLoader defines, TextLoader texts)
+        public MoverLoader(ILogger<MoverLoader> logger, IMemoryCache cache)
         {
             this._logger = logger;
-            this._definesLoader = defines;
-            this._textsLoader = texts;
-            this._moversData = new Dictionary<int, MoverData>();
+            this._cache = cache;
+            this._defines = this._cache.Get<IDictionary<string, int>>(GameResourcesConstants.Defines);
+            this._texts = this._cache.Get<IDictionary<string, string>>(GameResourcesConstants.Texts);
         }
 
         /// <inheritdoc />
         public void Load()
         {
-            if (!File.Exists(GameResources.MoversPropPath))
+            string propMoverPath = GameResourcesConstants.Paths.MoversPropPath;
+            string propMoverExPath = GameResourcesConstants.Paths.MoversPropExPath;
+
+            if (!File.Exists(propMoverPath))
             {
-                this._logger.LogWarning("Unable to load movers. Reason: cannot find '{0}' file.", GameResources.MoversPropPath);
+                this._logger.LogWarning("Unable to load movers. Reason: cannot find '{0}' file.", propMoverPath);
                 return;
             }
 
-            using (var moversPropFile = new ResourceTableFile(GameResources.MoversPropPath, 1, this._definesLoader.Defines, this._textsLoader.Texts))
+            if (!File.Exists(propMoverExPath))
+            {
+                this._logger.LogWarning("Unable to load movers extras. Reason: cannot find '{0}' file.", propMoverExPath);
+                return;
+            }
+
+            var moversData = new ConcurrentDictionary<int, MoverData>();
+
+            using (var moversPropFile = new ResourceTableFile(propMoverPath, 1, this._defines, this._texts))
             {
                 var movers = moversPropFile.GetRecords<MoverData>();
 
                 foreach (var mover in movers)
                 {
-                    if (this._moversData.ContainsKey(mover.Id))
+                    if (moversData.ContainsKey(mover.Id))
                     {
-                        this._moversData[mover.Id] = mover;
-                        this._logger.LogWarning(GameResources.ObjectOverridedMessage, "Mover", mover.Id, "already declared");
+                        moversData[mover.Id] = mover;
+                        this._logger.LogWarning(GameResourcesConstants.Errors.ObjectOverridedMessage, "Mover", mover.Id, "already declared");
                     }
                     else
-                        this._moversData.Add(mover.Id, mover);
+                        moversData.TryAdd(mover.Id, mover);
                 }
             }
 
-            using (var moversPropExFile = new IncludeFile(GameResources.MoversPropExPath))
+            using (var moversPropExFile = new IncludeFile(propMoverExPath))
             {
                 foreach (Block moverBlock in moversPropExFile.Statements)
                 {
-                    if (this._definesLoader.Defines.TryGetValue(moverBlock.Name, out int moverId) && 
-                        this._moversData.TryGetValue(moverId, out MoverData mover))
+                    if (this._defines.TryGetValue(moverBlock.Name, out int moverId) && moversData.TryGetValue(moverId, out MoverData mover))
                     {
                         this.LoadDropGold(mover, moverBlock.GetInstruction("DropGold"));
                         this.LoadDropItems(mover, moverBlock.GetInstructions("DropItem"));
@@ -78,7 +83,8 @@ namespace Rhisis.Core.Resources.Loaders
                 }
             }
 
-            this._logger.LogInformation("-> {0} movers loaded.", this._moversData.Count);
+            this._cache.Set(GameResourcesConstants.Movers, moversData);
+            this._logger.LogInformation($"-> {moversData.Count} movers loaded.");
         }
 
         /// <summary>
@@ -126,7 +132,7 @@ namespace Rhisis.Core.Resources.Loaders
                 var dropItem = new DropItemData();
 
                 string dropItemName = dropItemInstruction.Parameters.ElementAt(0).ToString();
-                if (this._definesLoader.Defines.TryGetValue(dropItemName, out int itemId))
+                if (this._defines.TryGetValue(dropItemName, out int itemId))
                     dropItem.ItemId = itemId;
                 else
                 {
@@ -189,19 +195,6 @@ namespace Rhisis.Core.Resources.Loaders
 
                 mover.DropItemsKind.Add(dropItemKind);
             }
-        }
-
-        /// <summary>
-        /// Gets a <see cref="MoverData"/> by his mover id.
-        /// </summary>
-        /// <param name="moverId"></param>
-        /// <returns></returns>
-        public MoverData GetMover(int moverId) => this._moversData.TryGetValue(moverId, out MoverData value) ? value : null;
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this._moversData.Clear();
         }
     }
 }

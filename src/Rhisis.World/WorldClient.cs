@@ -1,15 +1,18 @@
 ﻿using Ether.Network.Common;
 using Ether.Network.Packets;
+using Microsoft.Extensions.Logging;
 using NLog;
 using Rhisis.Core.Common;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Exceptions;
+using Rhisis.Core.Handlers;
 using Rhisis.Core.Helpers;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.World.Client;
 using Rhisis.World.Game.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,33 +20,21 @@ using System.Linq;
 
 namespace Rhisis.World
 {
-    public sealed class WorldClient : NetUser
+    public sealed class WorldClient : NetUser, IWorldClient
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private ILogger<WorldClient> _logger;
+        private IHandlerInvoker _handlerInvoker;
 
-        /// <summary>
-        /// Gets the ID assigned to this session.
-        /// </summary>
+        /// <inheritdoc />
         public uint SessionId { get; }
 
-        /// <summary>
-        /// Gets or sets the player entity.
-        /// </summary>
+        /// <inheritdoc />
         public IPlayerEntity Player { get; set; }
 
-        /// <summary>
-        /// Gets the world server's instance.
-        /// </summary>
-        public IWorldServer WorldServer { get; private set; }
-
-        /// <summary>
-        /// Gets the remote end point (IP and port) for this client.
-        /// </summary>
+        /// <inheritdoc />
         public string RemoteEndPoint { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the time the player has logged in.
-        /// </summary>
+        /// <inheritdoc />
         public DateTime LoggedInAt { get; set; }
 
         /// <summary>
@@ -57,9 +48,10 @@ namespace Rhisis.World
         /// <summary>
         /// Initialize the client and send welcome packet.
         /// </summary>
-        public void InitializeClient(IWorldServer server)
+        public void Initialize(ILogger<WorldClient> logger, IHandlerInvoker handlerInvoker)
         {
-            this.WorldServer = server;
+            this._logger = logger;
+            this._handlerInvoker = handlerInvoker;
             this.RemoteEndPoint = this.Socket.RemoteEndPoint.ToString();
         }
 
@@ -68,9 +60,9 @@ namespace Rhisis.World
         {
             uint packetHeaderNumber = 0;
 
-            if (Socket == null)
+            if (this.Socket == null)
             {
-                Logger.Trace("Skip to handle packet from {0}. Reason: client is no more connected.", this.RemoteEndPoint);
+                this._logger.LogTrace("Skip to handle world packet from {this.RemoteEndPoint}. Reason: client is not connected.");
                 return;
             }
 
@@ -78,28 +70,22 @@ namespace Rhisis.World
             {
                 packet.Read<uint>(); // DPID: Always 0xFFFFFFFF (uint.MaxValue)
                 packetHeaderNumber = packet.Read<uint>();
-
 #if DEBUG
-                if (Logger.IsTraceEnabled)
-                    Logger.Trace("Received {0} packet from {1}.", (PacketType)packetHeaderNumber, this.RemoteEndPoint);
+                this._logger.LogTrace("Received {0} packet from {1}.", (PacketType)packetHeaderNumber, this.RemoteEndPoint);
 #endif
-
-                bool packetInvokSuccess = PacketHandler<WorldClient>.Invoke(this, packet as FFPacket, (PacketType)packetHeaderNumber);
-
-#if DEBUG
-                if (!packetInvokSuccess)
-                {
-                    if (Enum.IsDefined(typeof(PacketType), packetHeaderNumber))
-                        Logger.Warn("Received an unimplemented World packet {0} (0x{1}) from {2}.", Enum.GetName(typeof(PacketType), packetHeaderNumber), packetHeaderNumber.ToString("X4"), this.RemoteEndPoint);
-                    else
-                        Logger.Warn("[SECURITY] Received an unknown World packet 0x{0} from {1}.", packetHeaderNumber.ToString("X4"), this.RemoteEndPoint);
-                }
-#endif
+                this._handlerInvoker.Invoke((PacketType)packetHeaderNumber, this, packet);
             }
-            catch (RhisisPacketException packetException)
+            catch (ArgumentNullException)
             {
-                Logger.Error("Packet handle error from {0}. {1}", this.RemoteEndPoint, packetException);
-                Logger.Debug(packetException.InnerException?.StackTrace);
+                if (Enum.IsDefined(typeof(PacketType), packetHeaderNumber))
+                    this._logger.LogWarning("Received an unimplemented World packet {0} (0x{1}) from {2}.", Enum.GetName(typeof(PacketType), packetHeaderNumber), packetHeaderNumber.ToString("X4"), this.RemoteEndPoint);
+                else
+                    this._logger.LogWarning("[SECURITY] Received an unknown World packet 0x{0} from {1}.", packetHeaderNumber.ToString("X4"), this.RemoteEndPoint);
+            }
+            catch (Exception exception)
+            {
+                this._logger.LogError(exception, $"An error occured while handling a world packet.");
+                this._logger.LogDebug(exception.InnerException?.StackTrace);
             }
         }
 
