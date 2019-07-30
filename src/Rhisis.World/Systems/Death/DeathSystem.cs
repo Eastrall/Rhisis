@@ -8,7 +8,6 @@ using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.Game.Loaders;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Packets;
@@ -19,8 +18,11 @@ namespace Rhisis.World.Systems.Death
     [System(SystemType.Notifiable)]
     public sealed class DeathSystem : ISystem
     {
+        // TODO: injection
+        private readonly IGameResources _gameResources;
+        private readonly IMapManager _mapManager;
+
         private readonly ILogger<DeathSystem> _logger = DependencyContainer.Instance.Resolve<ILogger<DeathSystem>>();
-        private readonly MapLoader _mapLoader = DependencyContainer.Instance.Resolve<MapLoader>();
         private readonly WorldConfiguration _worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
 
         /// <inheritdoc />
@@ -43,7 +45,7 @@ namespace Rhisis.World.Systems.Death
                 return;
             }
 
-            decimal recoveryRate = GameResources.Instance.Penalities.GetRevivalPenality(player.Object.Level) / 100;
+            decimal recoveryRate = this._gameResources.Penalities.GetRevivalPenality(player.Object.Level) / 100;
             var jobData = player.PlayerData.JobData;
 
             int strength = player.Attributes[DefineAttributes.STR];
@@ -57,7 +59,7 @@ namespace Rhisis.World.Systems.Death
 
             if (player.Object.MapId != revivalRegion.MapId)
             {
-                IMapInstance revivalMap = this._mapLoader.GetMapById(revivalRegion.MapId);
+                IMapInstance revivalMap = this._mapManager.GetMap(revivalRegion.MapId);
 
                 if (revivalMap == null)
                 {
@@ -89,7 +91,7 @@ namespace Rhisis.World.Systems.Death
         {
             if (this._worldConfiguration.Death.DeathPenalityEnabled)
             {
-                decimal expLossPercent = GameResources.Instance.Penalities.GetDecExpPenality(player.Object.Level);
+                decimal expLossPercent = this._gameResources.Penalities.GetDecExpPenality(player.Object.Level);
 
                 if (expLossPercent <= 0)
                     return;
@@ -99,9 +101,9 @@ namespace Rhisis.World.Systems.Death
 
                 if (player.PlayerData.Experience < 0)
                 {
-                    if (GameResources.Instance.Penalities.GetLevelDownPenality(player.Object.Level))
+                    if (this._gameResources.Penalities.GetLevelDownPenality(player.Object.Level))
                     {
-                        CharacterExpTableData previousLevelExp = GameResources.Instance.ExpTables.GetCharacterExp(player.Object.Level - 1);
+                        CharacterExpTableData previousLevelExp = this._gameResources.ExpTables.GetCharacterExp(player.Object.Level - 1);
 
                         player.Object.Level--;
                         player.PlayerData.Experience = previousLevelExp.Exp + player.PlayerData.Experience;

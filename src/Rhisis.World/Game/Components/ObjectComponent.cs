@@ -71,7 +71,7 @@ namespace Rhisis.World.Game.Components
         /// <summary>
         /// Gets the current map instance.
         /// </summary>
-        public IMapInstance CurrentMap => DependencyContainer.Instance.Resolve<MapLoader>().GetMapById(this.MapId); // TODO: find better implementation
+        public IMapInstance CurrentMap { get; set; }
 
         /// <summary>
         /// Gets the current map layer.

@@ -1,8 +1,8 @@
 ﻿using Ether.Network.Packets;
 using Microsoft.Extensions.Logging;
 using Rhisis.Cluster.CoreClient.Packets;
-using Rhisis.Core.Handlers.Attributes;
 using Rhisis.Network.Core;
+using Sylver.HandlerInvoker.Attributes;
 using System;
 
 namespace Rhisis.Cluster.CoreClient.Handlers

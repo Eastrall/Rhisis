@@ -18,7 +18,14 @@ namespace Rhisis.World.Systems.Leveling
     [System(SystemType.Notifiable)]
     public sealed class LevelSystem : ISystem
     {
-        private readonly ILogger<LevelSystem> _logger = DependencyContainer.Instance.Resolve<ILogger<LevelSystem>>();
+        private readonly ILogger<LevelSystem> _logger;
+        private readonly IGameResources _gameResources;
+
+        public LevelSystem(ILogger<LevelSystem> logger, IGameResources gameResources)
+        {
+            this._logger = logger;
+            this._gameResources = gameResources;
+        }
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player;
@@ -86,7 +93,7 @@ namespace Rhisis.World.Systems.Leveling
         private bool GiveExperienceToPlayer(IPlayerEntity player, long experience)
         {
             int nextLevel = player.Object.Level + 1;
-            CharacterExpTableData nextLevelExpTable = GameResources.Instance.ExpTables.GetCharacterExp(nextLevel);
+            CharacterExpTableData nextLevelExpTable = this._gameResources.ExpTables.GetCharacterExp(nextLevel);
             player.PlayerData.Experience += experience;
 
             if (player.PlayerData.Experience >= nextLevelExpTable.Exp) // Level up

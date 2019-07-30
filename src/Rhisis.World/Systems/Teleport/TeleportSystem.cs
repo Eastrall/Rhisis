@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Structures;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.Game.Loaders;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Packets;
 
@@ -17,15 +15,15 @@ namespace Rhisis.World.Systems.Teleport
     public sealed class TeleportSystem : ISystem
     {
         private readonly ILogger<TeleportSystem> _logger;
-        private readonly MapLoader _mapLoader;
+        private readonly IMapManager _mapManager;
 
         /// <summary>
         /// Creates a new <see cref="TeleportSystem"/> instance.
         /// </summary>
-        public TeleportSystem()
+        public TeleportSystem(ILogger<TeleportSystem> logger, IMapManager mapManager)
         {
-            this._logger = DependencyContainer.Instance.Resolve<ILogger<TeleportSystem>>();
-            this._mapLoader = DependencyContainer.Instance.Resolve<MapLoader>();
+            this._logger = logger;
+            this._mapManager = mapManager;
         }
 
         /// <inheritdoc />
@@ -63,7 +61,7 @@ namespace Rhisis.World.Systems.Teleport
         {
             if (player.Object.MapId != e.MapId)
             {
-                IMapInstance destinationMap = this._mapLoader.GetMapById(e.MapId);
+                IMapInstance destinationMap = this._mapManager.GetMap(e.MapId);
 
                 if (destinationMap == null)
                 {
@@ -81,6 +79,7 @@ namespace Rhisis.World.Systems.Teleport
                 IMapLayer defaultMapLayer = destinationMap.GetDefaultMapLayer();
                 player.SwitchContext(defaultMapLayer);
                 player.Object.Spawned = false;
+                player.Object.CurrentMap = this._mapManager.GetMap(destinationMap.Id);
                 player.Object.MapId = destinationMap.Id;
                 player.Object.LayerId = defaultMapLayer.Id;
 

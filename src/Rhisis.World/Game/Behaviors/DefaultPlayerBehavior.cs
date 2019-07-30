@@ -12,21 +12,28 @@ using System;
 namespace Rhisis.World.Game.Behaviors
 {
     [Behavior(BehaviorType.Player, IsDefault: true)]
-    public sealed class DefaultPlayerBehavior : IBehavior<IPlayerEntity>
+    public sealed class DefaultPlayerBehavior : IBehavior
     {
-        /// <inheritdoc />
-        public void Update(IPlayerEntity player)
+        private readonly IPlayerEntity _player;
+
+        public DefaultPlayerBehavior(IPlayerEntity player)
         {
-            this.ProcessIdleHeal(player);
+            this._player = player;
         }
 
         /// <inheritdoc />
-        public void OnArrived(IPlayerEntity player)
+        public void Update()
         {
-            if (player.Follow.IsFollowing && player.Follow.Target.Type == WorldEntityType.Drop)
+            this.ProcessIdleHeal(this._player);
+        }
+
+        /// <inheritdoc />
+        public void OnArrived()
+        {
+            if (this._player.Follow.IsFollowing && this._player.Follow.Target.Type == WorldEntityType.Drop)
             {
-                this.PickUpDroppedItem(player, player.Follow.Target as IItemEntity);
-                player.Follow.Reset();
+                this.PickUpDroppedItem(this._player, this._player.Follow.Target as IItemEntity);
+                this._player.Follow.Reset();
             }
         }
 

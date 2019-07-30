@@ -19,13 +19,13 @@ namespace Rhisis.World.Systems
             switch (entity)
             {
                 case IMonsterEntity monster:
-                    monster.Behavior?.Update(monster);
+                    monster.Behavior?.Update();
                     break;
                 case INpcEntity npc:
-                    npc.Behavior?.Update(npc);
+                    npc.Behavior?.Update();
                     break;
                 case IPlayerEntity player:
-                    player.Behavior?.Update(player);
+                    player.Behavior?.Update();
                     break;
             }
         }

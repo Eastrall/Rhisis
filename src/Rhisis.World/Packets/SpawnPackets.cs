@@ -323,7 +323,7 @@ namespace Rhisis.World.Packets
                     packet.Write(monsterEntity.Health.Hp);
                     packet.Write(1);
                     packet.Write(0);
-                    packet.Write((byte)GameResources.Instance.Movers[entityToSpawn.Object.ModelId].Belligerence);
+                    packet.Write((byte)monsterEntity.Data.Belligerence);
                     packet.Write(-1);
 
                     packet.Write((byte)0);

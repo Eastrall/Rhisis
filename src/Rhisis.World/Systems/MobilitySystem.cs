@@ -70,9 +70,9 @@ namespace Rhisis.World.Systems
                 entity.Object.MovingFlags |= ObjectState.OBJSTA_STAND;
 
                 if (entity is IMonsterEntity monster)
-                    monster.Behavior.OnArrived(monster);
+                    monster.Behavior.OnArrived();
                 else if (entity is IPlayerEntity player)
-                    player.Behavior.OnArrived(player);
+                    player.Behavior.OnArrived();
             }
             else
             {

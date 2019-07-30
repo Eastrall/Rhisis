@@ -1,23 +1,18 @@
-﻿using Rhisis.World.Game.Core;
-
-namespace Rhisis.World.Game.Behaviors
+﻿namespace Rhisis.World.Game.Behaviors
 {
     /// <summary>
-    /// Describes the behavior of an AI (Behavior)
+    /// Provides a mechanism to manage an entity behavior.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IBehavior<in T> where T : IEntity
+    public interface IBehavior
     {
         /// <summary>
         /// Updates the AI/Behavior.
         /// </summary>
-        /// <param name="entity">Entity to update</param>
-        void Update(T entity);
+        void Update();
 
         /// <summary>
         /// Process an action when the entity arrives to its destination.
         /// </summary>
-        /// <param name="entity">Entity to update.</param>
-        void OnArrived(T entity);
+        void OnArrived();
     }
 }

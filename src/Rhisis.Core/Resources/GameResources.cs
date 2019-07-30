@@ -21,8 +21,9 @@ namespace Rhisis.Core.Resources
         private ConcurrentDictionary<string, ShopData> _shops;
         private ConcurrentDictionary<int, JobData> _jobs;
         private ConcurrentDictionary<string, string> _clientTexts;
+        private ConcurrentDictionary<string, NpcData> _npcs;
         private ExpTableData _expTableData;
-        private PenalityData _penalities;
+        private DeathPenalityData _penalities;
 
         /// <inheritdoc />
         public IReadOnlyDictionary<int, MoverData> Movers => this.GetCacheValue(GameResourcesConstants.Movers, ref this._movers);
@@ -43,10 +44,13 @@ namespace Rhisis.Core.Resources
         public IReadOnlyDictionary<string, string> ClientTexts => this.GetCacheValue(GameResourcesConstants.ClientTexts, ref this._clientTexts);
 
         /// <inheritdoc />
+        public IReadOnlyDictionary<string, NpcData> Npcs => this.GetCacheValue(GameResourcesConstants.Npcs, ref this._npcs);
+
+        /// <inheritdoc />
         public ExpTableData ExpTables => this.GetCacheValue(GameResourcesConstants.ExpTables, ref this._expTableData);
 
         /// <inheritdoc />
-        public PenalityData Penalities => this.GetCacheValue(GameResourcesConstants.PenalityData, ref this._penalities);
+        public DeathPenalityData Penalities => this.GetCacheValue(GameResourcesConstants.PenalityData, ref this._penalities);
 
         /// <summary>
         /// Creates a new <see cref="GameResources"/> instance.

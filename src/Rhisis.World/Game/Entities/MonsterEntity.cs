@@ -21,7 +21,7 @@ namespace Rhisis.World.Game.Entities
         public MovableComponent Moves { get; set; }
 
         /// <inheritdoc />
-        public IBehavior<IMonsterEntity> Behavior { get; set; }
+        public IBehavior Behavior { get; set; }
 
         /// <inheritdoc />
         public TimerComponent Timers { get; set; }

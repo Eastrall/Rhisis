@@ -47,6 +47,9 @@ namespace Rhisis.World.Game.Entities
         /// </summary>
         INetUser Connection { get; set; }
 
-        IBehavior<IPlayerEntity> Behavior { get; set; }
+        /// <summary>
+        /// Gets or sets the player's behavior.
+        /// </summary>
+        IBehavior Behavior { get; set; }
     }
 }

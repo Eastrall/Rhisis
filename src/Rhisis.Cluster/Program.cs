@@ -8,11 +8,11 @@ using Rhisis.Cluster.CoreClient;
 using Rhisis.Cluster.CoreClient.Packets;
 using Rhisis.Cluster.Packets;
 using Rhisis.Core.Extensions;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Network.Packets;
+using Sylver.HandlerInvoker;
 using System.IO;
 using System.Threading.Tasks;
 

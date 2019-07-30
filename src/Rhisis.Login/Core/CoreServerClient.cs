@@ -1,8 +1,8 @@
 ﻿using Ether.Network.Common;
 using Ether.Network.Packets;
 using Microsoft.Extensions.Logging;
-using Rhisis.Core.Handlers;
 using Rhisis.Network.Core;
+using Sylver.HandlerInvoker;
 using System;
 
 namespace Rhisis.Login.Core

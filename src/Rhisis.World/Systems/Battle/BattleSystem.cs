@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rhisis.Core.Data;
-using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
-using Rhisis.Core.Resources.Loaders;
+using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Common;
@@ -23,23 +23,32 @@ namespace Rhisis.World.Systems.Battle
     [System(SystemType.Notifiable)]
     public class BattleSystem : ISystem
     {
-        private static readonly ILogger<BattleSystem> Logger = DependencyContainer.Instance.Resolve<ILogger<BattleSystem>>();
+        private readonly ILogger<BattleSystem> _logger;
+        private readonly IGameResources _gameResources;
+        private readonly WorldConfiguration _worldConfiguration;
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player | WorldEntityType.Monster;
+
+        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources)
+        {
+            this._logger = logger;
+            this._worldConfiguration = worldConfiguration.Value;
+            this._gameResources = gameResources;
+        }
 
         /// <inheritdoc />
         public void Execute(IEntity entity, SystemEventArgs args)
         {
             if (!args.GetCheckArguments())
             {
-                Logger.LogError("Cannot execute battle action: {0} due to invalid arguments.", args.GetType());
+                this._logger.LogError("Cannot execute battle action: {0} due to invalid arguments.", args.GetType());
                 return;
             }
 
             if (!(entity is ILivingEntity livingEntity))
             {
-                Logger.LogError($"The non living entity {entity.Object.Name} tried to execute a battle action.");
+                this._logger.LogError($"The non living entity {entity.Object.Name} tried to execute a battle action.");
                 return;
             }
 
@@ -62,7 +71,7 @@ namespace Rhisis.World.Systems.Battle
 
             if (defender.Health.IsDead)
             {
-                Logger.LogError($"{attacker.Object.Name} cannot attack {defender.Object.Name} because target is already dead.");
+                this._logger.LogError($"{attacker.Object.Name} cannot attack {defender.Object.Name} because target is already dead.");
                 this.ClearBattleTargets(defender);
                 this.ClearBattleTargets(attacker);
                 return;
@@ -73,7 +82,7 @@ namespace Rhisis.World.Systems.Battle
 
             AttackResult meleeAttackResult = new MeleeAttackArbiter(attacker, defender).OnDamage();
 
-            Logger.LogDebug($"{attacker.Object.Name} inflicted {meleeAttackResult.Damages} to {defender.Object.Name}");
+            this._logger.LogDebug($"{attacker.Object.Name} inflicted {meleeAttackResult.Damages} to {defender.Object.Name}");
 
             if (meleeAttackResult.Flags.HasFlag(AttackFlags.AF_FLYING))
                 BattleHelper.KnockbackEntity(defender);
@@ -86,7 +95,7 @@ namespace Rhisis.World.Systems.Battle
 
             if (defender.Health.IsDead)
             {
-                Logger.LogDebug($"{attacker.Object.Name} killed {defender.Object.Name}.");
+                this._logger.LogDebug($"{attacker.Object.Name} killed {defender.Object.Name}.");
                 defender.Health.Hp = 0;
                 this.ClearBattleTargets(defender);
                 this.ClearBattleTargets(attacker);
@@ -95,9 +104,6 @@ namespace Rhisis.World.Systems.Battle
                 if (defender is IMonsterEntity deadMonster && attacker is IPlayerEntity player)
                 {
                     WorldPacketFactory.SendDie(player, defender, attacker, e.AttackType);
-                    var worldServerConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
-                    var itemsData = DependencyContainer.Instance.Resolve<ItemLoader>();
-                    var expTable = DependencyContainer.Instance.Resolve<ExpTableLoader>();
 
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5; // Configure this timer on world configuration
 
@@ -110,7 +116,7 @@ namespace Rhisis.World.Systems.Battle
 
                         long dropChance = RandomHelper.LongRandom(0, DropSystem.MaxDropChance);
 
-                        if (dropItem.Probability * worldServerConfiguration.Rates.Drop >= dropChance)
+                        if (dropItem.Probability * this._worldConfiguration.Rates.Drop >= dropChance)
                         {
                             var item = new Item(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
 
@@ -122,7 +128,7 @@ namespace Rhisis.World.Systems.Battle
                     // Drop item kinds
                     foreach (DropItemKindData dropItemKind in deadMonster.Data.DropItemsKind)
                     {
-                        var itemsDataByItemKind = itemsData.GetItems(x => x.ItemKind3 == dropItemKind.ItemKind && x.Rare >= dropItemKind.UniqueMin && x.Rare <= dropItemKind.UniqueMax);
+                        var itemsDataByItemKind = this._gameResources.Items.Values.Where(x => x.ItemKind3 == dropItemKind.ItemKind && x.Rare >= dropItemKind.UniqueMin && x.Rare <= dropItemKind.UniqueMax);
 
                         if (!itemsDataByItemKind.Any())
                             continue;
@@ -133,10 +139,10 @@ namespace Rhisis.World.Systems.Battle
 
                         for (int i = itemRefine; i >= 0; i--)
                         {
-                            long itemDropProbability = (long)(expTable.GetDropLuck(itemData.Level > 120 ? 119 : itemData.Level, itemRefine) * (deadMonster.Data.CorrectionValue / 100f));
+                            long itemDropProbability = (long)(this._gameResources.ExpTables.GetDropLuck(itemData.Level > 120 ? 119 : itemData.Level, itemRefine) * (deadMonster.Data.CorrectionValue / 100f));
                             long dropChance = RandomHelper.LongRandom(0, DropSystem.MaxDropChance);
 
-                            if (dropChance < itemDropProbability * worldServerConfiguration.Rates.Drop)
+                            if (dropChance < itemDropProbability * this._worldConfiguration.Rates.Drop)
                             {
                                 var item = new Item(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
 
@@ -151,7 +157,7 @@ namespace Rhisis.World.Systems.Battle
                     deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped, attacker));
 
                     // Give experience
-                    long experience = deadMonster.Data.Experience * worldServerConfiguration.Rates.Experience;
+                    long experience = deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience;
                     player.NotifySystem<LevelSystem>(new ExperienceEventArgs(experience)); 
                 }
                 else if (defender is IPlayerEntity deadPlayer)

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rhisis.Core.Common;
-using Rhisis.Core.Handlers.Attributes;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
@@ -10,6 +9,7 @@ using Rhisis.Login.Core;
 using Rhisis.Login.Packets;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.Login;
+using Sylver.HandlerInvoker.Attributes;
 using System;
 
 namespace Rhisis.Login

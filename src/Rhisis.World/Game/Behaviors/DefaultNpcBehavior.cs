@@ -13,18 +13,25 @@ namespace Rhisis.World.Game.Behaviors
     /// Default behavior of a NPC.
     /// </summary>
     [Behavior(BehaviorType.Npc, IsDefault: true)]
-    public class DefaultNpcBehavior : IBehavior<INpcEntity>
+    public class DefaultNpcBehavior : IBehavior
     {
         private static readonly float OralTextRadius = 50f;
 
-        /// <inheritdoc />
-        public void Update(INpcEntity entity)
+        private readonly INpcEntity _npc;
+
+        public DefaultNpcBehavior(INpcEntity npcEntity)
         {
-            this.UpdateOralText(entity);
+            this._npc = npcEntity;
         }
 
         /// <inheritdoc />
-        public virtual void OnArrived(INpcEntity entity)
+        public void Update()
+        {
+            this.UpdateOralText(this._npc);
+        }
+
+        /// <inheritdoc />
+        public virtual void OnArrived()
         {
             throw new NotImplementedException();
         }

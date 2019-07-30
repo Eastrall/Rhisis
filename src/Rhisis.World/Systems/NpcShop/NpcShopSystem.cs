@@ -1,10 +1,12 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
+using NLog;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
+using Rhisis.Core.Resources;
+using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.Game.Loaders;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
@@ -16,7 +18,14 @@ namespace Rhisis.World.Systems.NpcShop
     [System(SystemType.Notifiable)]
     public class NpcShopSystem : ISystem
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger<NpcShopSystem> _logger;
+        private readonly IGameResources _gameResources;
+
+        public NpcShopSystem(ILogger<NpcShopSystem> logger, IGameResources gameResources)
+        {
+            this._logger = logger;
+            this._gameResources = gameResources;
+        }
 
         /// <inheritdoc />
         public WorldEntityType Type => WorldEntityType.Player;
@@ -27,7 +36,7 @@ namespace Rhisis.World.Systems.NpcShop
             if (!(entity is IPlayerEntity player) ||
                 !e.GetCheckArguments())
             {
-                Logger.Error("NpcShopSystem: Invalid event arguments.");
+                this._logger.LogError("NpcShopSystem: Invalid event arguments.");
                 return;
             }
 
@@ -46,7 +55,7 @@ namespace Rhisis.World.Systems.NpcShop
                     this.SellItem(player, npcShopEventArgs);
                     break;
                 default:
-                    Logger.Warn("Unknown NpcShop action type: {0} for player {1}", e.GetType(), entity.Object.Name);
+                    this._logger.LogWarning("Unknown NpcShop action type: {0} for player {1}", e.GetType(), entity.Object.Name);
                     break;
             }
         }
@@ -61,13 +70,13 @@ namespace Rhisis.World.Systems.NpcShop
             var npc = player.Object.CurrentMap.FindEntity<INpcEntity>(e.NpcObjectId);
             if (npc == null)
             {
-                Logger.Error("ShopSystem: Cannot find NPC with object id : {0}", e.NpcObjectId);
+                this._logger.LogError("ShopSystem: Cannot find NPC with object id : {0}", e.NpcObjectId);
                 return;
             }
 
             if (npc.Shop == null)
             {
-                Logger.Error("ShopSystem: NPC '{0}' doesn't have a shop.", npc.Object.Name);
+                this._logger.LogError("ShopSystem: NPC '{0}' doesn't have a shop.", npc.Object.Name);
                 return;
             }
             
@@ -92,18 +101,15 @@ namespace Rhisis.World.Systems.NpcShop
         /// <param name="e"></param>
         private void BuyItem(IPlayerEntity player, NpcShopBuyEventArgs e)
         {
-            var npcLoader = DependencyContainer.Instance.Resolve<NpcLoader>();
-            var npcData = npcLoader.GetNpcData(player.PlayerData.CurrentShopName);
-
-            if (npcData == null)
+            if (!this._gameResources.Npcs.TryGetValue(player.PlayerData.CurrentShopName, out NpcData npcData))
             {
-                Logger.Error($"ShopSystem: Cannot find NPC: {player.PlayerData.CurrentShopName}");
+                this._logger.LogError($"ShopSystem: Cannot find NPC: {player.PlayerData.CurrentShopName}");
                 return;
             }
 
             if (!npcData.HasShop)
             {
-                Logger.Error($"ShopSystem: NPC {npcData.Name} doesn't have a shop.");
+                this._logger.LogError($"ShopSystem: NPC {npcData.Name} doesn't have a shop.");
                 return;
             }
 
@@ -111,7 +117,7 @@ namespace Rhisis.World.Systems.NpcShop
 
             if (e.Slot < 0 || e.Slot > currentTab.Count - 1)
             {
-                Logger.Error($"ShopSystem: Item slot index was out of tab bounds. Slot: {e.Slot}");
+                this._logger.LogError($"ShopSystem: Item slot index was out of tab bounds. Slot: {e.Slot}");
                 return;
             }
 
@@ -119,13 +125,13 @@ namespace Rhisis.World.Systems.NpcShop
 
             if (shopItem.Id != e.ItemId)
             {
-                Logger.Error($"ShopSystem: Shop item id doens't match the item id that {player.Object.Name} is trying to buy.");
+                this._logger.LogError($"ShopSystem: Shop item id doens't match the item id that {player.Object.Name} is trying to buy.");
                 return;
             }
 
             if (player.PlayerData.Gold < e.ItemData.Cost)
             {
-                Logger.Info($"ShopSystem: {player.Object.Name} doens't have enough gold to buy item {e.ItemData.Name} at {e.ItemData.Cost}.");
+                this._logger.LogTrace($"ShopSystem: {player.Object.Name} doens't have enough gold to buy item {e.ItemData.Name} at {e.ItemData.Cost}.");
                 WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
                 return;
             }
@@ -179,7 +185,7 @@ namespace Rhisis.World.Systems.NpcShop
                         }
                         else
                         {
-                            Logger.Error("ShopSystem: Failed to create item.");
+                            this._logger.LogError("ShopSystem: Failed to create item.");
                         }
                     }
                 }
@@ -204,7 +210,7 @@ namespace Rhisis.World.Systems.NpcShop
                     }
                     else
                     {
-                        Logger.Error("ShopSystem: Failed to create item.");
+                        this._logger.LogError("ShopSystem: Failed to create item.");
                     }
 
                     quantity--;   
@@ -234,7 +240,7 @@ namespace Rhisis.World.Systems.NpcShop
 
             int sellPrice = itemToSell.Data.Cost / 4;
 
-            Logger.Debug("Selling item: '{0}' for {1}", itemToSell.Data.Name, sellPrice);
+            this._logger.LogDebug("Selling item: '{0}' for {1}", itemToSell.Data.Name, sellPrice);
 
             player.PlayerData.Gold += sellPrice * e.Quantity;
             itemToSell.Quantity -= e.Quantity;

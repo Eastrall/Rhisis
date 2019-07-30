@@ -2,7 +2,6 @@
 using Rhisis.Cluster.Client;
 using Rhisis.Cluster.Packets;
 using Rhisis.Core.Common.Formulas;
-using Rhisis.Core.Handlers.Attributes;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
 using Rhisis.Core.Structures.Game;
@@ -11,6 +10,7 @@ using Rhisis.Database.Entities;
 using Rhisis.Network.Core;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.Cluster;
+using Sylver.HandlerInvoker.Attributes;
 using System;
 using System.Collections.Generic;
 

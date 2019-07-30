@@ -40,7 +40,7 @@ namespace Rhisis.World.Systems.Inventory
         public InventorySystem()
         {
             this.Logger = DependencyContainer.Instance.Resolve<ILogger<InventorySystem>>();
-            this._itemUsage = new InventoryItemUsage();
+            this._itemUsage = new InventoryItemUsage(null, null);
         }
 
         /// <inheritdoc />

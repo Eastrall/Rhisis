@@ -16,7 +16,7 @@ namespace Rhisis.World.Game.Entities
         /// <summary>
         /// Gets the monster's behavior.
         /// </summary>
-        IBehavior<IMonsterEntity> Behavior { get; set; }
+        IBehavior Behavior { get; set; }
 
         /// <summary>
         /// Gets or sets the monster's mover data.

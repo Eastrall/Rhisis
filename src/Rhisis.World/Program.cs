@@ -5,11 +5,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Rhisis.Core.Extensions;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Network.Packets;
+using Rhisis.World.Game.Behaviors;
+using Rhisis.World.Game.Maps;
+using Sylver.HandlerInvoker;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -42,6 +44,8 @@ namespace Rhisis.World
                     services.AddGameResources();
 
                     // World server configuration
+                    services.AddSingleton<IMapManager, MapManager>();
+                    services.AddSingleton<IBehaviorManager, BehaviorManager>();
                     services.AddSingleton<IWorldServer, WorldServer>();
                     services.AddSingleton<IHostedService, WorldServerService>();
                 })

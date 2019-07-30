@@ -4,8 +4,8 @@ using Rhisis.Core.Helpers;
 using Rhisis.Network.Packets;
 using System;
 using Microsoft.Extensions.Logging;
-using Rhisis.Core.Handlers;
 using Rhisis.Cluster.Packets;
+using Sylver.HandlerInvoker;
 
 namespace Rhisis.Cluster.Client
 {

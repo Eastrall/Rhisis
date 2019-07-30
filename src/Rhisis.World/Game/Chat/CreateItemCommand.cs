@@ -1,8 +1,6 @@
 ﻿using NLog;
 using Rhisis.Core.Common;
 using Rhisis.Core.Data;
-using Rhisis.Core.Resources;
-using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
@@ -37,9 +35,10 @@ namespace Rhisis.World.Game.Chat
 
             if (!int.TryParse(parameters[0], out int itemId))
             {
-                ItemData itemData = GameResources.Instance.Items[parameters[0]];
+                // TODO: Verify item data
+                //ItemData itemData = GameResources.Instance.Items[parameters[0]];
 
-                itemId = itemData?.Id ?? -1;
+                //itemId = itemData?.Id ?? -1;
             }
 
             if (parameters.Length >= 2)

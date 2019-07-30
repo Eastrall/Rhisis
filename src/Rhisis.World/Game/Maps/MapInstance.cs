@@ -6,6 +6,7 @@ using Rhisis.Core.Resources;
 using Rhisis.Core.Resources.Dyo;
 using Rhisis.Core.Structures;
 using Rhisis.Core.Structures.Game;
+using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
@@ -82,7 +83,7 @@ namespace Rhisis.World.Game.Maps
         /// <summary>
         /// Loads the world map informations from the WLD file.
         /// </summary>
-        public void LoadWld()
+        private void LoadWld()
         {
             string wldFilePath = Path.Combine(this._mapPath, $"{this.Name}.wld");
 
@@ -344,8 +345,9 @@ namespace Rhisis.World.Game.Maps
         /// <param name="element"></param>
         private void CreateNpc(NpcDyoElement element)
         {
-            var behaviors = DependencyContainer.Instance.Resolve<BehaviorLoader>();
-            var npcs = DependencyContainer.Instance.Resolve<NpcLoader>();
+            // TODO: move this to factory
+            IBehaviorManager behaviorManager = null; //DependencyContainer.Instance.Resolve<BehaviorLoader>();
+            IGameResources gameResources = null; //DependencyContainer.Instance.Resolve<NpcLoader>();
             var npc = this.CreateEntity<NpcEntity>();
 
             npc.Object = new ObjectComponent
@@ -360,9 +362,13 @@ namespace Rhisis.World.Game.Maps
                 Type = WorldObjectType.Mover,
                 Level = 1
             };
-            npc.Behavior = behaviors.NpcBehaviors.GetBehavior(npc.Object.ModelId);
+            npc.Behavior = behaviorManager.GetBehavior(BehaviorType.Npc, npc, npc.Object.ModelId);
             npc.Timers.LastSpeakTime = RandomHelper.Random(10, 15);
-            npc.Data = npcs.GetNpcData(npc.Object.Name);
+
+            if (!gameResources.Npcs.TryGetValue(npc.Object.Name, out NpcData npcData))
+            {
+                npc.Data = npcData;
+            }
 
             if (npc.Data != null && npc.Data.HasShop)
             {
@@ -376,7 +382,7 @@ namespace Rhisis.World.Game.Maps
                     for (var j = 0; j < npcShopData.Items[i].Count && j < npc.Shop[i].MaxCapacity; j++)
                     {
                         ItemBase item = npcShopData.Items[i][j];
-                        ItemData itemData = GameResources.Instance.Items[item.Id];
+                        ItemData itemData = gameResources.Items[item.Id];
 
                         npc.Shop[i].Items[j] = new Item(item.Id, itemData.PackMax, -1, j, j, item.Refine, item.Element, item.ElementRefine);
                     }

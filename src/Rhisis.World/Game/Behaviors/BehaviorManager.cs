@@ -1,94 +1,153 @@
-﻿using Rhisis.Core.Helpers;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Rhisis.Core.Helpers;
 using Rhisis.World.Game.Core;
+using Rhisis.World.Game.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Rhisis.World.Game.Behaviors
 {
-
-    /// <summary>
-    /// Manage the behavior of an entity.
-    /// </summary>
-    /// <typeparam name="T">Entity type.</typeparam>
-    public sealed class BehaviorManager<T> : IDisposable where T : IEntity
+    public sealed class BehaviorManager : IBehaviorManager
     {
-        private readonly BehaviorType _behaviorType;
-        private readonly IDictionary<int, IBehavior<T>> _behaviors;
-
-        /// <summary>
-        /// Gets the default behavior.
-        /// </summary>
-        public IBehavior<T> DefaultBehavior { get; private set; }
-        
-        /// <summary>
-        /// Gets the total amount of behaviors in this manager.
-        /// </summary>
-        public int Count => this._behaviors.Count + 1;
-
-        /// <summary>
-        /// Creates a new <see cref="BehaviorManager{T}"/> instance.
-        /// </summary>
-        /// <param name="behaviorType"></param>
-        public BehaviorManager(BehaviorType behaviorType)
+        private class BehaviorEntryCache
         {
-            this._behaviorType = behaviorType;
-            this._behaviors = new Dictionary<int, IBehavior<T>>();
+            public TypeInfo BehaviorTypeInfo { get; }
+
+            public bool IsDefault { get; }
+
+            public int MoverId { get; }
+
+            public BehaviorEntryCache(TypeInfo behaviorTypeInfo, bool isDefault, int moverId = -1)
+            {
+                this.BehaviorTypeInfo = behaviorTypeInfo;
+                this.IsDefault = isDefault;
+                this.MoverId = moverId;
+            }
         }
 
+        private readonly ILogger<BehaviorManager> _logger;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ConcurrentDictionary<BehaviorType, IList<BehaviorEntryCache>> _behaviors;
+
+        /// <inheritdoc />
+        public int Count { get; private set; }
+
         /// <summary>
-        /// Load behaviors.
+        /// Creates a new <see cref="BehaviorManager"/> instance.
         /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="serviceProvider">Service provider.</param>
+        public BehaviorManager(ILogger<BehaviorManager> logger, IServiceProvider serviceProvider)
+        {
+            this._logger = logger;
+            this._serviceProvider = serviceProvider;
+            this._behaviors = new ConcurrentDictionary<BehaviorType, IList<BehaviorEntryCache>>();
+        }
+
+        /// <inheritdoc />
         public void Load()
         {
-            IEnumerable<Type> behaviors = ReflectionHelper.GetClassesAssignableFrom(typeof(IBehavior<>));
+            IEnumerable<TypeInfo> behaviors = ReflectionHelper.GetClassesAssignableFrom<IBehavior>();
 
             foreach (var type in behaviors)
             {
-                var behavior = Activator.CreateInstance(type) as IBehavior<T>;
-                var behaviorAttributes = type.GetCustomAttributes<BehaviorAttribute>();
+                IEnumerable<BehaviorAttribute> behaviorAttributes = type.GetCustomAttributes<BehaviorAttribute>();
 
                 if (behaviorAttributes != null)
                 {
-                    foreach (var attribute in behaviorAttributes)
+                    foreach (BehaviorAttribute attribute in behaviorAttributes)
                     {
-                        if (attribute.Type != this._behaviorType)
-                            continue;
+                        if (!this._behaviors.TryGetValue(attribute.Type, out IList<BehaviorEntryCache> behaviorsCache))
+                        {
+                            behaviorsCache = new List<BehaviorEntryCache>();
+                            this._behaviors.TryAdd(attribute.Type, behaviorsCache);
+                        }
 
                         if (attribute.IsDefault)
                         {
-                            if (this.DefaultBehavior == null)
-                                this.DefaultBehavior = behavior;
-                            else throw new InvalidOperationException($"Default behavior is already set for type '{this._behaviorType.ToString()}'.");
+                            if (behaviorsCache.Any(x => x.IsDefault))
+                            {
+                                throw new InvalidOperationException($"{attribute.Type} already has a default behavior.");
+                            }
+
+                            var entityBehavior = new BehaviorEntryCache(type, true);
+
+                            behaviorsCache.Add(entityBehavior);
                         }
                         else
                         {
-                            this._behaviors.Add(attribute.MoverId, behavior);
+                            if (behaviorsCache.Any(x => x.MoverId == attribute.MoverId))
+                            {
+                                this._logger.LogWarning($"Behavior for mover id {attribute.MoverId} and type {type} is already set.");
+                                continue;
+                            }
+
+                            var entityBehavior = new BehaviorEntryCache(type, false, attribute.MoverId);
+
+                            behaviorsCache.Add(entityBehavior);
                         }
                     }
                 }
             }
 
-            if (this.DefaultBehavior == null)
-                throw new InvalidOperationException($"Default behavior is not set for type '{this._behaviorType.ToString()}'.");
+            foreach (var behaviorsForType in this._behaviors)
+            {
+                if (!behaviorsForType.Value.Any(x => x.IsDefault))
+                {
+                    throw new InvalidProgramException($"{behaviorsForType.Key}");
+                }
+            }
+
+            this.Count = this._behaviors.Aggregate(0, (current, next) => current + next.Value.Count);
+            this._logger.LogInformation("-> {0} behaviors loaded.", this.Count);
+        }
+
+        /// <inheritdoc />
+        public IBehavior GetBehavior(BehaviorType type, IEntity entity, int moverId)
+        {
+            BehaviorEntryCache behaviorEntry = this.GetBehaviorEntry(type, x => x.MoverId == moverId);
+
+            if (behaviorEntry == null)
+            {
+                throw new ArgumentNullException(nameof(behaviorEntry), $"Cannot find behavior for type {type} and mover id: '{moverId}'.");
+            }
+
+            return ActivatorUtilities.CreateInstance(this._serviceProvider, behaviorEntry.BehaviorTypeInfo, entity) as IBehavior;
+//                behaviorEntry.Factory(this._serviceProvider, new object[] { entity }) as IBehavior;
+        }
+
+        /// <inheritdoc />
+        public IBehavior GetDefaultBehavior(BehaviorType type, IEntity entity)
+        {
+            BehaviorEntryCache behaviorEntry = this.GetBehaviorEntry(type, x => x.IsDefault);
+
+            if (behaviorEntry == null)
+            {
+                throw new ArgumentNullException(nameof(behaviorEntry), $"Cannot find default behavior for type {type}.");
+            }
+
+            return ActivatorUtilities.CreateInstance(this._serviceProvider, behaviorEntry.BehaviorTypeInfo, entity) as IBehavior;
+            //behaviorEntry.Factory(this._serviceProvider, new object[] { entity }) as IBehavior;
         }
 
         /// <summary>
-        /// Gets a specific behavior.
+        /// Gets a behavior cache entry based on a behavior type and a predicate.
         /// </summary>
-        /// <param name="moverId"></param>
+        /// <param name="type">Behavior type.</param>
+        /// <param name="predicate">Predicate.</param>
         /// <returns></returns>
-        public IBehavior<T> GetBehavior(int moverId)
+        private BehaviorEntryCache GetBehaviorEntry(BehaviorType type, Func<BehaviorEntryCache, bool> predicate)
         {
-            return this._behaviors.TryGetValue(moverId, out IBehavior<T> behavior) ? behavior : this.DefaultBehavior;
-        }
+            if (!this._behaviors.TryGetValue(type, out IList<BehaviorEntryCache> behaviors))
+            {
+                throw new KeyNotFoundException($"No behaviors for type {type}.");
+            }
 
-        /// <summary>
-        /// Dispose the behavior manager resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this._behaviors.Clear();
+            return behaviors.FirstOrDefault(predicate);
         }
     }
 }

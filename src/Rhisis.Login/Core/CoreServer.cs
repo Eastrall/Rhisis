@@ -2,10 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Login.Core.Packets;
 using Rhisis.Network.Core;
+using Sylver.HandlerInvoker;
 using System;
 using System.Collections.Generic;
 using System.Linq;

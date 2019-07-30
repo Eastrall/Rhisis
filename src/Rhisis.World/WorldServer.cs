@@ -3,14 +3,15 @@ using Ether.Network.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.ISC;
+using Rhisis.World.Game.Maps;
+using Sylver.HandlerInvoker;
 using System;
 using System.Linq;
 
@@ -26,6 +27,8 @@ namespace Rhisis.World
         private readonly WorldConfiguration _worldConfiguration;
         private readonly IGameResources _gameResources;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMapManager _mapManager;
+        private readonly IBehaviorManager _behaviorManager;
 
         /// <inheritdoc />
         protected override IPacketProcessor PacketProcessor { get; } = new FlyffPacketProcessor();
@@ -33,10 +36,14 @@ namespace Rhisis.World
         /// <summary>
         /// Creates a new <see cref="WorldServer"/> instance.
         /// </summary>
-        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IServiceProvider serviceProvider)
+        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IServiceProvider serviceProvider, IMapManager mapManager, IBehaviorManager behaviorManager)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
+            this._gameResources = gameResources;
+            this._serviceProvider = serviceProvider;
+            this._mapManager = mapManager;
+            this._behaviorManager = behaviorManager;
             this.Configuration.Host = this._worldConfiguration.Host;
             this.Configuration.Port = this._worldConfiguration.Port;
             this.Configuration.MaximumNumberOfConnections = MaxConnections;
@@ -56,7 +63,11 @@ namespace Rhisis.World
                 typeof(JobLoader),
                 typeof(TextClientLoader),
                 typeof(ExpTableLoader),
-                typeof(PenalityLoader));
+                typeof(PenalityLoader),
+                typeof(NpcLoader));
+
+            this._behaviorManager.Load();
+            this._mapManager.Load();
 
             //TODO: Implement this log inside OnStarted method when will be available.
             this._logger.LogInformation("'{0}' world server is started and listen on {1}:{2}.",

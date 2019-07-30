@@ -14,12 +14,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Rhisis.Core.Data;
 using Rhisis.World.Packets;
+using Rhisis.World.Game.Behaviors;
 
 namespace Rhisis.World.Game.Maps
 {
     public class MapLayer : Context, IMapLayer
     {
         private readonly List<IMapRegion> _regions;
+        private readonly IGameResources _gameResources;
+        private readonly IBehaviorManager _behaviorManager;
 
         /// <inheritdoc />
         public int Id { get; }
@@ -49,13 +52,13 @@ namespace Rhisis.World.Game.Maps
 
                     if (respawnerRegion.ObjectType == WorldObjectType.Mover)
                     {
-                        var moverData = GameResources.Instance.Movers[respawnerRegion.ModelId];
+                        var moverData = this._gameResources.Movers[respawnerRegion.ModelId];
                         for (var i = 0; i < respawnerRegion.Count; i++)
                             respawnerRegion.Entities.Add(this.CreateMonster(moverData, respawnerRegion));
                     }
                     else if (respawnerRegion.ObjectType == WorldObjectType.Item)
                     {
-                        var itemData = GameResources.Instance.Items.GetItem(respawnerRegion.ModelId);
+                        var itemData = this._gameResources.Items[respawnerRegion.ModelId];
                         for (var i = 0; i < respawnerRegion.Count; i++)
                             respawnerRegion.Entities.Add(this.CreateWorldItem(itemData, respawnerRegion));
                     }
@@ -141,7 +144,6 @@ namespace Rhisis.World.Game.Maps
         private MonsterEntity CreateMonster(MoverData moverData, IMapRespawnRegion respawnRegion)
         {
             var monster = new MonsterEntity(this);
-            var behaviors = DependencyContainer.Instance.Resolve<BehaviorLoader>();
 
             monster.Object = new ObjectComponent
             {
@@ -176,7 +178,7 @@ namespace Rhisis.World.Game.Maps
             monster.Attributes.ResetAttribute(DefineAttributes.STA, moverData.Stamina);
             monster.Attributes.ResetAttribute(DefineAttributes.DEX, moverData.Dexterity);
             monster.Attributes.ResetAttribute(DefineAttributes.INT, moverData.Intelligence);
-            monster.Behavior = behaviors.MonsterBehaviors.GetBehavior(monster.Object.ModelId);
+            monster.Behavior = this._behaviorManager.GetBehavior(BehaviorType.Monster, monster, monster.Object.ModelId);
             monster.Region = respawnRegion;
             monster.Data = moverData;
 

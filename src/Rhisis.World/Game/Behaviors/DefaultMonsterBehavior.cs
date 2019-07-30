@@ -13,32 +13,39 @@ namespace Rhisis.World.Game.Behaviors
     /// Default behavior for all monsters.
     /// </summary>
     [Behavior(BehaviorType.Monster, IsDefault: true)]
-    public class DefaultMonsterBehavior : IBehavior<IMonsterEntity>
+    public class DefaultMonsterBehavior : IBehavior
     {
         private const float MovingRange = 40f;
 
-        /// <inheritdoc />
-        public virtual void Update(IMonsterEntity entity)
+        private readonly IMonsterEntity _monster;
+
+        public DefaultMonsterBehavior(IMonsterEntity monster)
         {
-            if (!entity.Object.Spawned || entity.Health.IsDead)
-                return;
-
-            if (entity.Timers.LastAICheck > Time.GetElapsedTime())
-                return;
-
-            if (entity.Battle.IsFighting)
-                this.ProcessMonsterFight(entity);
-            else
-                this.ProcessMonsterMovements(entity);
-            
-            entity.Timers.LastAICheck = Time.GetElapsedTime() + (long)(entity.Moves.Speed * 100f);
+            this._monster = monster;
         }
 
         /// <inheritdoc />
-        public virtual void OnArrived(IMonsterEntity entity)
+        public virtual void Update()
         {
-            if (!entity.Battle.IsFighting)
-                entity.Timers.NextMoveTime = Time.TimeInSeconds() + RandomHelper.LongRandom(5, 10);
+            if (!this._monster.Object.Spawned || this._monster.Health.IsDead)
+                return;
+
+            if (this._monster.Timers.LastAICheck > Time.GetElapsedTime())
+                return;
+
+            if (this._monster.Battle.IsFighting)
+                this.ProcessMonsterFight(this._monster);
+            else
+                this.ProcessMonsterMovements(this._monster);
+
+            this._monster.Timers.LastAICheck = Time.GetElapsedTime() + (long)(this._monster.Moves.Speed * 100f);
+        }
+
+        /// <inheritdoc />
+        public virtual void OnArrived()
+        {
+            if (!this._monster.Battle.IsFighting)
+                this._monster.Timers.NextMoveTime = Time.TimeInSeconds() + RandomHelper.LongRandom(5, 10);
         }
 
         /// <summary>

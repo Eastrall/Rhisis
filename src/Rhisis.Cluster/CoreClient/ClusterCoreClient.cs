@@ -2,9 +2,9 @@
 using Ether.Network.Packets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Network.Core;
+using Sylver.HandlerInvoker;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;

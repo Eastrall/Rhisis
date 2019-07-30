@@ -21,7 +21,7 @@ namespace Rhisis.World.Game.Entities
         public NpcTimerComponent Timers { get; set; }
 
         /// <inheritdoc />
-        public IBehavior<INpcEntity> Behavior { get; set; }
+        public IBehavior Behavior { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="NpcEntity"/> instance.

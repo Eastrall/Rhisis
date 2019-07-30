@@ -3,11 +3,11 @@ using Ether.Network.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Rhisis.Core.Handlers;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Login.Client;
 using Rhisis.Login.Packets;
 using Rhisis.Network;
+using Sylver.HandlerInvoker;
 using System;
 using System.Linq;
 

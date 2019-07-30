@@ -1,8 +1,8 @@
 ﻿using Rhisis.Cluster.Client;
 using Rhisis.Cluster.Packets;
-using Rhisis.Core.Handlers.Attributes;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.Cluster;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.Cluster.Handlers
 {

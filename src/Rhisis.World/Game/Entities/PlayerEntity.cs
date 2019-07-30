@@ -56,7 +56,7 @@ namespace Rhisis.World.Game.Entities
         public AttributeComponent Attributes { get; set; }
 
         /// <inheritdoc />
-        public IBehavior<IPlayerEntity> Behavior { get; set; }
+        public IBehavior Behavior { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="PlayerEntity"/> instance.

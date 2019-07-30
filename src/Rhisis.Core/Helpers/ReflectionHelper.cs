@@ -14,11 +14,7 @@ namespace Rhisis.Core.Helpers
         /// <returns></returns>
         public static IEnumerable<Type> GetClassesWithCustomAttribute(Type type)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            return assemblies
-                .Where(x => x.FullName.StartsWith("Rhisis"))
-                .SelectMany(y => y.GetTypes().Where(w => w.GetTypeInfo().GetCustomAttribute(type) != null));
+            return GetRhisisAssemblies().SelectMany(y => y.GetTypes().Where(w => w.GetTypeInfo().GetCustomAttribute(type) != null));
         }
 
         /// <summary>
@@ -33,12 +29,19 @@ namespace Rhisis.Core.Helpers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable<Type> GetClassesAssignableFrom(Type type)
+        public static IEnumerable<TypeInfo> GetClassesAssignableFrom(Type type)
         {
-            return from x in Assembly.GetEntryAssembly().GetTypes()
-                   where x.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == type)
-                   select x;
+            return from x in GetRhisisAssemblies().SelectMany(x => x.GetTypes())
+                   where x.GetInterfaces().Any(i => i.IsAssignableFrom(type))
+                   select x.GetTypeInfo();
         }
+
+        /// <summary>
+        /// Get classes that are assignable from a given type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<TypeInfo> GetClassesAssignableFrom<T>() => GetClassesAssignableFrom(typeof(T));
 
         /// <summary>
         /// Get methods with custom attributes.
@@ -59,5 +62,12 @@ namespace Rhisis.Core.Helpers
         /// <typeparam name="T">Attribute type</typeparam>
         /// <returns></returns>
         public static IEnumerable<MethodInfo> GetMethodsWithAttributes<T>() => GetMethodsWithAttributes(typeof(T));
+
+        /// <summary>
+        /// Gets rhisis assemblies.
+        /// </summary>
+        /// <returns></returns>
+        private static IEnumerable<Assembly> GetRhisisAssemblies()
+            => AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.StartsWith("Rhisis"));
     }
 }

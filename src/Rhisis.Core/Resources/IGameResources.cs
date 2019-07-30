@@ -41,6 +41,11 @@ namespace Rhisis.Core.Resources
         IReadOnlyDictionary<string, string> ClientTexts { get; }
 
         /// <summary>
+        /// Gets the npcs data.
+        /// </summary>
+        IReadOnlyDictionary<string, NpcData> Npcs { get; }
+
+        /// <summary>
         /// Gets the experience tables data.
         /// </summary>
         ExpTableData ExpTables { get; }
@@ -48,7 +53,7 @@ namespace Rhisis.Core.Resources
         /// <summary>
         /// Gets the penalities data.
         /// </summary>
-        PenalityData Penalities { get; }
+        DeathPenalityData Penalities { get; }
 
         /// <summary>
         /// Load all loaders passed as parameter.

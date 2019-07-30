@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.2" />
+    <PackageReference Include="Sylver.HandlerInvoker" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

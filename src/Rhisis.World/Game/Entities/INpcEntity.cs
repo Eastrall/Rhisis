@@ -23,7 +23,7 @@ namespace Rhisis.World.Game.Entities
         /// <summary>
         /// Gets the NPC behavior.
         /// </summary>
-        IBehavior<INpcEntity> Behavior { get; set; }
+        IBehavior Behavior { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC timers.

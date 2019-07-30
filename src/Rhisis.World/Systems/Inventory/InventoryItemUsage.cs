@@ -19,16 +19,17 @@ namespace Rhisis.World.Systems.Inventory
 {
     internal sealed class InventoryItemUsage
     {
+
         private readonly ILogger<InventoryItemUsage> _logger;
-        private readonly MapLoader _mapLoader;
+        private readonly IMapManager _mapManager;
 
         /// <summary>
         /// Creates a new <see cref="InventoryItemUsage"/> instance.
         /// </summary>
-        public InventoryItemUsage()
+        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IMapManager mapManager)
         {
-            this._logger = DependencyContainer.Instance.Resolve<ILogger<InventoryItemUsage>>();
-            this._mapLoader = DependencyContainer.Instance.Resolve<MapLoader>();
+            this._logger = logger;
+            this._mapManager = mapManager;
         }
 
         /// <summary>
@@ -176,7 +177,7 @@ namespace Rhisis.World.Systems.Inventory
                 }
                 if (player.Object.MapId != revivalRegion.MapId)
                 {
-                    IMapInstance revivalMap = this._mapLoader.GetMapById(revivalRegion.MapId);
+                    IMapInstance revivalMap = this._mapManager.GetMap(revivalRegion.MapId);
 
                     if (revivalMap == null)
                     {
