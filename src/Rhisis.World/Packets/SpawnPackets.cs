@@ -226,7 +226,7 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="player">Current player</param>
         /// <param name="entityToSpawn">Entity to spawn</param>
-        public static void SendSpawnObjectTo(IPlayerEntity player, IEntity entityToSpawn)
+        public static void SendSpawnObjectTo(IPlayerEntity player, IWorldEntity entityToSpawn)
         {
             using (var packet = new FFPacket())
             {
@@ -382,7 +382,7 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="player">Current player</param>
         /// <param name="entityToDespawn">Entity to despawn</param>
-        public static void SendDespawnObjectTo(IPlayerEntity player, IEntity entityToDespawn)
+        public static void SendDespawnObjectTo(IPlayerEntity player, IWorldEntity entityToDespawn)
         {
             using (var packet = new FFPacket())
             {

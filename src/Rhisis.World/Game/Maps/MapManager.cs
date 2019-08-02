@@ -1,34 +1,39 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
+using Rhisis.World.Game.Factories;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Rhisis.World.Game.Maps
 {
+    [Injectable(ServiceLifetime.Singleton)]
     public class MapManager : IMapManager
     {
         private readonly ILogger<MapManager> _logger;
         private readonly WorldConfiguration _worldConfiguration;
         private readonly IMemoryCache _cache;
+        private readonly IMapFactory _mapFactory;
         private readonly IDictionary<int, IMapInstance> _maps;
         private readonly IDictionary<string, int> _defines;
 
-        public MapManager(ILogger<MapManager> logger, IOptions<WorldConfiguration> worldConfiguration, IMemoryCache cache)
+        public MapManager(ILogger<MapManager> logger, IOptions<WorldConfiguration> worldConfiguration, IMemoryCache cache, IMapFactory mapFactory)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
             this._cache = cache;
+            this._mapFactory = mapFactory;
             this._defines = this._cache.Get<IDictionary<string, int>>(GameResourcesConstants.Defines);
             this._maps = new ConcurrentDictionary<int, IMapInstance>();
         }
 
         /// <inheritdoc />
-        public IMapInstance GetMap(int id) => this._maps.Values.FirstOrDefault(x => x.Id == id);
+        public IMapInstance GetMap(int id) => this._maps.TryGetValue(id, out IMapInstance map) ? map : null;
 
         /// <inheritdoc />
         public void Load()
@@ -62,7 +67,7 @@ namespace Rhisis.World.Game.Maps
                     continue;
                 }
 
-                IMapInstance map = MapInstance.Create(Path.Combine(GameResourcesConstants.Paths.MapsPath, mapName), mapName, mapId);
+                IMapInstance map = this._mapFactory.Create(Path.Combine(GameResourcesConstants.Paths.MapsPath, mapName), mapName, mapId); 
 
                 _maps.Add(mapId, map);
             }

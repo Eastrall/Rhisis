@@ -9,7 +9,7 @@ namespace Rhisis.World.Game.Entities
     /// <summary>
     /// Describes the Monster entity.
     /// </summary>
-    public class MonsterEntity : Entity, IMonsterEntity
+    public class MonsterEntity : WorldEntity, IMonsterEntity
     {
         /// <inheritdoc />
         public override WorldEntityType Type => WorldEntityType.Monster;
@@ -51,8 +51,7 @@ namespace Rhisis.World.Game.Entities
         /// Creates a new <see cref="MonsterEntity"/> instance.
         /// </summary>
         /// <param name="context"></param>
-        public MonsterEntity(IContext context)
-            : base(context)
+        public MonsterEntity()
         {
             this.Moves = new MovableComponent();
             this.Timers = new TimerComponent();

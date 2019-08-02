@@ -3,7 +3,7 @@ using Rhisis.World.Game.Core;
 
 namespace Rhisis.World.Game.Entities
 {
-    public interface ILivingEntity : IEntity, IMovableEntity
+    public interface ILivingEntity : IWorldEntity, IMovableEntity
     {
         /// <summary>
         /// Gets or sets the interaction component.

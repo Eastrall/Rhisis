@@ -15,7 +15,7 @@ namespace Rhisis.World.Systems
 
         public WorldEntityType Type => WorldEntityType.Monster | WorldEntityType.Drop;
 
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (entity is IMonsterEntity monster && monster.Health.IsDead)
             {

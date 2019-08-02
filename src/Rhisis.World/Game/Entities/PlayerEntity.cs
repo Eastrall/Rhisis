@@ -5,7 +5,7 @@ using Rhisis.World.Game.Core;
 
 namespace Rhisis.World.Game.Entities
 {
-    public class PlayerEntity : Entity, IPlayerEntity
+    public class PlayerEntity : WorldEntity, IPlayerEntity
     {
         /// <inheritdoc />
         public override WorldEntityType Type => WorldEntityType.Player;
@@ -62,8 +62,7 @@ namespace Rhisis.World.Game.Entities
         /// Creates a new <see cref="PlayerEntity"/> instance.
         /// </summary>
         /// <param name="context"></param>
-        public PlayerEntity(IContext context)
-            : base(context)
+        public PlayerEntity()
         {
             this.Moves = new MovableComponent();
             this.PlayerData = new PlayerDataComponent();

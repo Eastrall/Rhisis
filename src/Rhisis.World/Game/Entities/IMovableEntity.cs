@@ -6,7 +6,7 @@ namespace Rhisis.World.Game.Entities
     /// <summary>
     /// Defines an entity that can move on the world.
     /// </summary>
-    public interface IMovableEntity : IEntity
+    public interface IMovableEntity : IWorldEntity
     {
         /// <summary>
         /// Gets or sets the moving component of the entity.

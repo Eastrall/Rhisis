@@ -6,7 +6,7 @@ using Rhisis.World.Game.Core;
 
 namespace Rhisis.World.Game.Entities
 {
-    public class NpcEntity : Entity, INpcEntity
+    public class NpcEntity : WorldEntity, INpcEntity
     {
         /// <inheritdoc />
         public override WorldEntityType Type => WorldEntityType.Npc;
@@ -27,8 +27,7 @@ namespace Rhisis.World.Game.Entities
         /// Creates a new <see cref="NpcEntity"/> instance.
         /// </summary>
         /// <param name="context"></param>
-        public NpcEntity(IContext context)
-            : base(context)
+        public NpcEntity()
         {
             this.Object.Type = WorldObjectType.Mover;
             this.Timers = new NpcTimerComponent();

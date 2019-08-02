@@ -1,5 +1,6 @@
 ﻿using NLog;
 using Rhisis.Core.Common;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Systems.Teleport;
 using System;
@@ -38,8 +39,7 @@ namespace Rhisis.World.Game.Chat
                 throw new ArgumentException("You must write numbers for teleport command's parameters");
             }
 
-            player.NotifySystem<TeleportSystem>(new TeleportEventArgs(player.Object.MapId, posXValue, posZValue));
-
+            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(player.Object.MapId, posXValue, posZValue));
         }
 
         private static void TeleportCommandThreeParam(IPlayerEntity player, string[] parameters)
@@ -51,7 +51,7 @@ namespace Rhisis.World.Game.Chat
             }
 
 
-            player.NotifySystem<TeleportSystem>(new TeleportEventArgs(mapIdValue, posXValue, posZValue));
+            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(mapIdValue, posXValue, posZValue));
         }
 
         private static void TeleportCommandFourParam(IPlayerEntity player, string[] parameters)
@@ -62,7 +62,7 @@ namespace Rhisis.World.Game.Chat
                 throw new ArgumentException("You must write numbers for teleport command's parameters");
             }
 
-            player.NotifySystem<TeleportSystem>(new TeleportEventArgs(mapIdValue, posXValue, posZValue));
+            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(mapIdValue, posXValue, posZValue));
         }
     }
 }

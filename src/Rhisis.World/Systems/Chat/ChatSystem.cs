@@ -49,7 +49,7 @@ namespace Rhisis.World.Systems.Chat
         public WorldEntityType Type => WorldEntityType.Player;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(e is ChatEventArgs chatEvent) || !(entity is IPlayerEntity player))
                 return;

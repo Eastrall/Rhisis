@@ -10,11 +10,15 @@ namespace Rhisis.Core.Helpers
         /// <summary>
         /// Get classes with a custom attribute.
         /// </summary>
-        /// <param name="type">Attribute type</param>
+        /// <param name="attributeType">Attribute type</param>
         /// <returns></returns>
-        public static IEnumerable<Type> GetClassesWithCustomAttribute(Type type)
+        public static IEnumerable<TypeInfo> GetClassesWithCustomAttribute(Type attributeType)
         {
-            return GetRhisisAssemblies().SelectMany(y => y.GetTypes().Where(w => w.GetTypeInfo().GetCustomAttribute(type) != null));
+            return from x in GetRhisisAssemblies().SelectMany(x => x.GetTypes())
+                   where x.GetCustomAttribute(attributeType) != null
+                   select x.GetTypeInfo();
+
+            //return GetRhisisAssemblies().SelectMany(y => y.GetTypes().Where(w => w.GetTypeInfo().GetCustomAttribute(attributeType) != null));
         }
 
         /// <summary>
@@ -22,7 +26,7 @@ namespace Rhisis.Core.Helpers
         /// </summary>
         /// <typeparam name="T">Attribute type</typeparam>
         /// <returns></returns>
-        public static IEnumerable<Type> GetClassesWithCustomAttribute<T>() => GetClassesWithCustomAttribute(typeof(T));
+        public static IEnumerable<TypeInfo> GetClassesWithCustomAttribute<T>() => GetClassesWithCustomAttribute(typeof(T));
 
         /// <summary>
         /// Get classes that are assignable from a given type. (inherits from)
@@ -46,14 +50,17 @@ namespace Rhisis.Core.Helpers
         /// <summary>
         /// Get methods with custom attributes.
         /// </summary>
-        /// <param name="type">Attribute type</param>
+        /// <param name="attributeType">Attribute type</param>
         /// <returns></returns>
-        public static IEnumerable<MethodInfo> GetMethodsWithAttributes(Type type)
+        public static IEnumerable<MethodInfo> GetMethodsWithAttributes(Type attributeType)
         {
-            return Assembly.GetEntryAssembly()
-                .GetTypes()
-                .SelectMany(x => x.GetMethods())
-                .Where(x => x.GetCustomAttributes(type)?.Count() > 0);
+            return from x in GetRhisisAssemblies().SelectMany(a => a.GetTypes()).SelectMany(t => t.GetMethods())
+                   where x.GetCustomAttributes(attributeType)?.Count() > 0
+                   select x;
+            //return Assembly.GetEntryAssembly()
+            //    .GetTypes()
+            //    .SelectMany(x => x.GetMethods())
+            //    .Where(x => x.GetCustomAttributes(attributeType)?.Count() > 0);
         }
 
         /// <summary>

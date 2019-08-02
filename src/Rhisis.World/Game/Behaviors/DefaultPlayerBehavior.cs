@@ -1,13 +1,13 @@
 ﻿using Rhisis.Core.Data;
 using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Inventory.EventArgs;
 using Rhisis.World.Systems.Recovery;
 using Rhisis.World.Systems.Recovery.EventArgs;
-using System;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -72,7 +72,7 @@ namespace Rhisis.World.Game.Behaviors
             else
             {
                 var inventoryItemCreationEvent = new InventoryCreateItemEventArgs(droppedItem.Drop.Item.Id, droppedItem.Drop.Item.Quantity, -1, droppedItem.Drop.Item.Refine);
-                player.NotifySystem<InventorySystem>(inventoryItemCreationEvent);
+                SystemManager.Instance.Execute<InventorySystem>(player, inventoryItemCreationEvent);
                 WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 
@@ -90,7 +90,7 @@ namespace Rhisis.World.Game.Behaviors
             {
                 if (!player.Battle.IsFighting)
                 {
-                    player.NotifySystem<RecoverySystem>(new IdleRecoveryEventArgs(isSitted: false));
+                    SystemManager.Instance.Execute<RecoverySystem>(player, new IdleRecoveryEventArgs(isSitted: false));
                 }
             }
         }

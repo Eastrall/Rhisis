@@ -21,7 +21,7 @@ namespace Rhisis.World.Systems
         /// Executes the <see cref="VisibilitySystem"/> logic.
         /// </summary>
         /// <param name="entity">Current entity</param>
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!entity.Object.Spawned)
                 return;
@@ -63,9 +63,9 @@ namespace Rhisis.World.Systems
         /// </summary>
         /// <param name="entity">Current entity</param>
         /// <param name="entities">Entities</param>
-        private void UpdateEntitiesVisibility(IEntity entity, IEnumerable<IEntity> entities)
+        private void UpdateEntitiesVisibility(IWorldEntity entity, IEnumerable<IWorldEntity> entities)
         {
-            foreach (IEntity otherEntity in entities)
+            foreach (IWorldEntity otherEntity in entities)
             {
                 if (entity.Id == otherEntity.Id)
                     continue;
@@ -93,7 +93,7 @@ namespace Rhisis.World.Systems
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="otherEntity"></param>
-        private void SpawnOtherEntity(IEntity entity, IEntity otherEntity)
+        private void SpawnOtherEntity(IWorldEntity entity, IWorldEntity otherEntity)
         {
             entity.Object.Entities.Add(otherEntity);
 
@@ -115,7 +115,7 @@ namespace Rhisis.World.Systems
         /// </summary>
         /// <param name="entity">Current entity</param>
         /// <param name="otherEntity">other entity</param>
-        private void DespawnOtherEntity(IEntity entity, IEntity otherEntity)
+        private void DespawnOtherEntity(IWorldEntity entity, IWorldEntity otherEntity)
         {
             if (entity is IPlayerEntity player)
                 WorldPacketFactory.SendDespawnObjectTo(player, otherEntity);

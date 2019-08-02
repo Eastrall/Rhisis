@@ -1,5 +1,6 @@
 ﻿using Rhisis.Core.Common;
 using Rhisis.World.Game.Core;
+using Rhisis.World.Game.Entities;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Game.Maps.Regions
@@ -14,6 +15,6 @@ namespace Rhisis.World.Game.Maps.Regions
 
         int Count { get; }
 
-        IList<IEntity> Entities { get; }
+        IList<IWorldEntity> Entities { get; }
     }
 }

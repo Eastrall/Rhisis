@@ -2,6 +2,7 @@
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
 using Rhisis.Core.Structures;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems;
@@ -129,7 +130,7 @@ namespace Rhisis.World.Game.Behaviors
                         monster.Timers.NextAttackTime = (long)(Time.TimeInMilliseconds() + monster.Data.ReAttackDelay);
 
                         var meleeAttack = new MeleeAttackEventArgs(ObjectMessageType.OBJMSG_ATK1, monster.Battle.Target, monster.Data.AttackSpeed);
-                        monster.NotifySystem<BattleSystem>(meleeAttack);
+                        SystemManager.Instance.Execute<BattleSystem>(monster, meleeAttack);
                     }
                 }
             }

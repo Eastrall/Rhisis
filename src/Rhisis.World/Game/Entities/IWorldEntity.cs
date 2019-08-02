@@ -1,25 +1,20 @@
 ﻿using Rhisis.World.Game.Common;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Game.Core;
 using System;
 using System.Collections.Generic;
 
-namespace Rhisis.World.Game.Core
+namespace Rhisis.World.Game.Entities
 {
     /// <summary>
-    /// Describes the Entity behavior.
+    /// Describes how a world entity.
     /// </summary>
-    public interface IEntity : IDisposable, IEqualityComparer<IEntity>, IEquatable<IEntity>
+    public interface IWorldEntity : IDisposable, IEqualityComparer<IWorldEntity>, IEquatable<IWorldEntity>
     {
         /// <summary>
         /// Gets the entity id.
         /// </summary>
         uint Id { get; }
-
-        /// <summary>
-        /// Gets the entity context.
-        /// </summary>
-        IContext Context { get; }
 
         /// <summary>
         /// Gets the entity type.
@@ -37,29 +32,16 @@ namespace Rhisis.World.Game.Core
         Delayer Delayer { get; }
 
         /// <summary>
-        /// Notifies and executes a system.
-        /// </summary>
-        /// <typeparam name="TSystem">System type</typeparam>
-        /// <param name="e">System event arguments</param>
-        void NotifySystem<TSystem>(SystemEventArgs e = null) where TSystem : ISystem;
-
-        /// <summary>
         /// Finds an entity in the spawn list of the current entity.
         /// </summary>
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="id">Entity id</param>
         /// <returns>Entity</returns>
-        TEntity FindEntity<TEntity>(uint id) where TEntity : IEntity;
+        TEntity FindEntity<TEntity>(uint id) where TEntity : IWorldEntity;
 
         /// <summary>
-        /// Deletes this entity from the current context.
+        /// Delete this entity from the current map.
         /// </summary>
         void Delete();
-
-        /// <summary>
-        /// Switch to another context.
-        /// </summary>
-        /// <param name="newContext">New context</param>
-        void SwitchContext(IContext newContext);
     }
 }

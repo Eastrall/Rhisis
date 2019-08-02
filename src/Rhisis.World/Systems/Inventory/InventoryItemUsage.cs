@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
-using Rhisis.Core.DependencyInjection;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Helpers;
-using Rhisis.World.Game.Loaders;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Game.Structures;
@@ -19,7 +16,6 @@ namespace Rhisis.World.Systems.Inventory
 {
     internal sealed class InventoryItemUsage
     {
-
         private readonly ILogger<InventoryItemUsage> _logger;
         private readonly IMapManager _mapManager;
 

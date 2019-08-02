@@ -38,7 +38,7 @@ namespace Rhisis.World.Systems.Battle
         }
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!args.GetCheckArguments())
             {
@@ -120,7 +120,7 @@ namespace Rhisis.World.Systems.Battle
                         {
                             var item = new Item(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
 
-                            deadMonster.NotifySystem<DropSystem>(new DropItemEventArgs(item, attacker));
+                            SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropItemEventArgs(item, attacker));
                             itemCount++;
                         }
                     }
@@ -146,7 +146,7 @@ namespace Rhisis.World.Systems.Battle
                             {
                                 var item = new Item(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
 
-                                deadMonster.NotifySystem<DropSystem>(new DropItemEventArgs(item, attacker));
+                                SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropItemEventArgs(item, attacker));
                                 break;
                             }
                         }
@@ -154,11 +154,11 @@ namespace Rhisis.World.Systems.Battle
 
                     // Drop gold
                     int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
-                    deadMonster.NotifySystem<DropSystem>(new DropGoldEventArgs(goldDropped, attacker));
+                    SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropGoldEventArgs(goldDropped, attacker));
 
                     // Give experience
                     long experience = deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience;
-                    player.NotifySystem<LevelSystem>(new ExperienceEventArgs(experience)); 
+                    SystemManager.Instance.Execute<LevelSystem>(player, new ExperienceEventArgs(experience));
                 }
                 else if (defender is IPlayerEntity deadPlayer)
                 {

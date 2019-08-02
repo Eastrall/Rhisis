@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Extensions;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
@@ -42,10 +43,9 @@ namespace Rhisis.World
 
                     services.AddHandlers();
                     services.AddGameResources();
+                    services.AddInjectableServices();
 
                     // World server configuration
-                    services.AddSingleton<IMapManager, MapManager>();
-                    services.AddSingleton<IBehaviorManager, BehaviorManager>();
                     services.AddSingleton<IWorldServer, WorldServer>();
                     services.AddSingleton<IHostedService, WorldServerService>();
                 })

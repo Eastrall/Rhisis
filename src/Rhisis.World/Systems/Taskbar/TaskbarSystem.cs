@@ -22,7 +22,7 @@ namespace Rhisis.World.Systems.Taskbar
 
         public WorldEntityType Type => WorldEntityType.Player;
 
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!(entity is IPlayerEntity player))
                 return;

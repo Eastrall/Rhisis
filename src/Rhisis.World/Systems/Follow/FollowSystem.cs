@@ -17,7 +17,7 @@ namespace Rhisis.World.Systems.Follow
         public WorldEntityType Type => WorldEntityType.Player | WorldEntityType.Monster;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IMovableEntity movableEntity) || !e.GetCheckArguments())
             {
@@ -35,7 +35,7 @@ namespace Rhisis.World.Systems.Follow
 
         private void OnFollow(IMovableEntity entity, FollowEventArgs e)
         {
-            var entityToFollow = entity.FindEntity<IEntity>(e.TargetId);
+            var entityToFollow = entity.FindEntity<IWorldEntity>(e.TargetId);
 
             if (entityToFollow == null)
             {

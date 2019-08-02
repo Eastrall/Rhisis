@@ -1,9 +1,7 @@
 ﻿using Rhisis.Core.Common;
 using Rhisis.Core.Data;
-using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Structures;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Loaders;
+using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using System.Collections.Generic;
 
@@ -66,7 +64,7 @@ namespace Rhisis.World.Game.Components
         /// <summary>
         /// Gets the list of the visible entities around.
         /// </summary>
-        public IList<IEntity> Entities { get; }
+        public IList<IWorldEntity> Entities { get; }
 
         /// <summary>
         /// Gets the current map instance.
@@ -99,7 +97,7 @@ namespace Rhisis.World.Game.Components
         public ObjectComponent()
         {
             this.Position = new Vector3();
-            this.Entities = new List<IEntity>();
+            this.Entities = new List<IWorldEntity>();
             this.Size = DefaultObjectSize;
             this.MovingFlags = ObjectState.OBJSTA_STAND;
         }

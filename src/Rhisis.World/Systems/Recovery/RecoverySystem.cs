@@ -41,7 +41,7 @@ namespace Rhisis.World.Systems.Recovery
         }
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!(entity is IPlayerEntity player))
             {

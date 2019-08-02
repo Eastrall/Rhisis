@@ -29,7 +29,7 @@ namespace Rhisis.World.Systems.Drop
         public WorldEntityType Type => WorldEntityType.Mover;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (args == null)
             {
@@ -59,7 +59,7 @@ namespace Rhisis.World.Systems.Drop
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="e">Drop item event</param>
-        private void DropItem(IEntity entity, DropItemEventArgs e)
+        private void DropItem(IWorldEntity entity, DropItemEventArgs e)
         {
             var worldServerConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
             var drop = entity.Object.CurrentLayer.CreateEntity<ItemEntity>();
@@ -90,7 +90,7 @@ namespace Rhisis.World.Systems.Drop
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="e">Drop gold event</param>
-        private void DropGold(IEntity entity, DropGoldEventArgs e)
+        private void DropGold(IWorldEntity entity, DropGoldEventArgs e)
         {
             int goldAmount = e.GoldAmount;
             int goldItemId = DefineItem.II_GOLD_SEED1;

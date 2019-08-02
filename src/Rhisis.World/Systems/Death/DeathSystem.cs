@@ -29,7 +29,7 @@ namespace Rhisis.World.Systems.Death
         public WorldEntityType Type => WorldEntityType.Player;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!(entity is IPlayerEntity player))
             {

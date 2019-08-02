@@ -29,7 +29,7 @@ namespace Rhisis.World.Systems.Interaction
         /// Executes the <see cref="InteractionSystem"/> logic.
         /// </summary>
         /// <param name="entity">Current entity</param>
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IPlayerEntity playerEntity))
                 return;
@@ -58,7 +58,7 @@ namespace Rhisis.World.Systems.Interaction
         /// <param name="e"></param>
         private void SetTarget(IPlayerEntity player, SetTargetEventArgs e)
         {
-            var targetEntity = player.FindEntity<IEntity>(e.TargetId);
+            var targetEntity = player.FindEntity<IWorldEntity>(e.TargetId);
             if (targetEntity == null)
                 return;
 

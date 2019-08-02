@@ -24,7 +24,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendChatTo(IEntity fromEntity, IPlayerEntity toPlayer, string message)
+        public static void SendChatTo(IWorldEntity fromEntity, IPlayerEntity toPlayer, string message)
         {
             using (var packet = new FFPacket())
             {

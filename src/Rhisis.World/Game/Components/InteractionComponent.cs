@@ -1,4 +1,4 @@
-﻿using Rhisis.World.Game.Core;
+﻿using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Game.Components
 {
@@ -7,6 +7,6 @@ namespace Rhisis.World.Game.Components
         /// <summary>
         /// The TargetEntity to interact with.
         /// </summary>
-        public IEntity TargetEntity { get; set; }
+        public IWorldEntity TargetEntity { get; set; }
     }
 }

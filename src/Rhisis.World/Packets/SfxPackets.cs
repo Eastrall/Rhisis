@@ -1,10 +1,7 @@
 ﻿using Rhisis.Core.Data;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
-using Rhisis.World.Game.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Packets
 {
@@ -15,7 +12,7 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="entity">Entity.</param>
         /// <param name="specialEffect">Special effect Id.</param>
-        public static void SendSpecialEffect(IEntity entity, int specialEffectId)
+        public static void SendSpecialEffect(IWorldEntity entity, int specialEffectId)
         {
             using (var packet = new FFPacket())
             {
@@ -35,7 +32,7 @@ namespace Rhisis.World.Packets
         /// </summary>
         /// <param name="entity">Entity.</param>
         /// <param name="specialEffect">Special effect.</param>
-        public static void SendSpecialEffect(IEntity entity, DefineSpecialEffects specialEffect) 
+        public static void SendSpecialEffect(IWorldEntity entity, DefineSpecialEffects specialEffect) 
             => SendSpecialEffect(entity, (int)specialEffect);
     }
 }

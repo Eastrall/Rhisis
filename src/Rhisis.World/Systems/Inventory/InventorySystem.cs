@@ -44,7 +44,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IPlayerEntity player))
                 return;

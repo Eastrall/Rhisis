@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using System;
 using System.Collections.Concurrent;
@@ -11,6 +11,7 @@ using System.Reflection;
 
 namespace Rhisis.World.Game.Behaviors
 {
+    [Injectable(ServiceLifetime.Singleton)]
     public sealed class BehaviorManager : IBehaviorManager
     {
         private class BehaviorEntryCache
@@ -107,7 +108,7 @@ namespace Rhisis.World.Game.Behaviors
         }
 
         /// <inheritdoc />
-        public IBehavior GetBehavior(BehaviorType type, IEntity entity, int moverId)
+        public IBehavior GetBehavior(BehaviorType type, IWorldEntity entity, int moverId)
         {
             BehaviorEntryCache behaviorEntry = this.GetBehaviorEntry(type, x => x.MoverId == moverId);
 
@@ -116,12 +117,11 @@ namespace Rhisis.World.Game.Behaviors
                 throw new ArgumentNullException(nameof(behaviorEntry), $"Cannot find behavior for type {type} and mover id: '{moverId}'.");
             }
 
-            return ActivatorUtilities.CreateInstance(this._serviceProvider, behaviorEntry.BehaviorTypeInfo, entity) as IBehavior;
-//                behaviorEntry.Factory(this._serviceProvider, new object[] { entity }) as IBehavior;
+            return this.CreateBehaviorInstance(behaviorEntry, entity);
         }
 
         /// <inheritdoc />
-        public IBehavior GetDefaultBehavior(BehaviorType type, IEntity entity)
+        public IBehavior GetDefaultBehavior(BehaviorType type, IWorldEntity entity)
         {
             BehaviorEntryCache behaviorEntry = this.GetBehaviorEntry(type, x => x.IsDefault);
 
@@ -130,8 +130,7 @@ namespace Rhisis.World.Game.Behaviors
                 throw new ArgumentNullException(nameof(behaviorEntry), $"Cannot find default behavior for type {type}.");
             }
 
-            return ActivatorUtilities.CreateInstance(this._serviceProvider, behaviorEntry.BehaviorTypeInfo, entity) as IBehavior;
-            //behaviorEntry.Factory(this._serviceProvider, new object[] { entity }) as IBehavior;
+            return this.CreateBehaviorInstance(behaviorEntry, entity);
         }
 
         /// <summary>
@@ -149,5 +148,14 @@ namespace Rhisis.World.Game.Behaviors
 
             return behaviors.FirstOrDefault(predicate);
         }
+
+        /// <summary>
+        /// Creates a new behavior instance.
+        /// </summary>
+        /// <param name="behaviorEntry">Behavior entry informations.</param>
+        /// <param name="entity">Entity.</param>
+        /// <returns>Behavior.</returns>
+        private IBehavior CreateBehaviorInstance(BehaviorEntryCache behaviorEntry, IWorldEntity entity) 
+            => ActivatorUtilities.CreateInstance(this._serviceProvider, behaviorEntry.BehaviorTypeInfo, entity) as IBehavior;
     }
 }

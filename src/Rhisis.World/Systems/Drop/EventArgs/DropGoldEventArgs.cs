@@ -1,6 +1,5 @@
-﻿using Rhisis.Core.Structures;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
+﻿using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Systems.Drop.EventArgs
 {
@@ -8,9 +7,9 @@ namespace Rhisis.World.Systems.Drop.EventArgs
     {
         public int GoldAmount { get; }
 
-        public IEntity Owner { get; }
+        public IWorldEntity Owner { get; }
         
-        public DropGoldEventArgs(int amount, IEntity owner)
+        public DropGoldEventArgs(int amount, IWorldEntity owner)
         {
             this.GoldAmount = amount;
             this.Owner = owner;

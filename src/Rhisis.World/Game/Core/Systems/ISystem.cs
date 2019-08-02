@@ -1,4 +1,6 @@
-﻿namespace Rhisis.World.Game.Core.Systems
+﻿using Rhisis.World.Game.Entities;
+
+namespace Rhisis.World.Game.Core.Systems
 {
     /// <summary>
     /// Describes the behavior of a basic system.
@@ -15,6 +17,6 @@
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="args">System parameters</param>
-        void Execute(IEntity entity, SystemEventArgs args);
+        void Execute(IWorldEntity entity, SystemEventArgs args);
     }
 }

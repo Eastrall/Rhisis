@@ -18,7 +18,7 @@ namespace Rhisis.World.Systems.PlayerData
 
         public WorldEntityType Type => WorldEntityType.Player;
 
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IPlayerEntity playerEntity))
                 return;

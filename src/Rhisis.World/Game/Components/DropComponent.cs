@@ -1,5 +1,5 @@
 ﻿using Rhisis.Core.Data;
-using Rhisis.World.Game.Core;
+using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 
 namespace Rhisis.World.Game.Components
@@ -8,7 +8,7 @@ namespace Rhisis.World.Game.Components
     {
         public Item Item { get; set; }
 
-        public IEntity Owner { get; set; }
+        public IWorldEntity Owner { get; set; }
 
         public long OwnershipTime { get; set; }
 

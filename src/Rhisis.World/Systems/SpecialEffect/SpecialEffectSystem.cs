@@ -3,6 +3,7 @@ using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.SpecialEffect.EventArgs;
 
@@ -28,7 +29,7 @@ namespace Rhisis.World.Systems.SpecialEffect
         }
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (entity == null)
             {
@@ -58,7 +59,7 @@ namespace Rhisis.World.Systems.SpecialEffect
         /// </summary>
         /// <param name="entity">Entity that activates the special effect.</param>
         /// <param name="e">Special effect event.</param>
-        private void StartSpecialEffect(IEntity entity, SpecialEffectEventArgs e)
+        private void StartSpecialEffect(IWorldEntity entity, SpecialEffectEventArgs e)
         {
             WorldPacketFactory.SendSpecialEffect(entity, e.SpecialEffect);
         }
@@ -68,7 +69,7 @@ namespace Rhisis.World.Systems.SpecialEffect
         /// </summary>
         /// <param name="entity">Entity that activates or deactivates the state mode.</param>
         /// <param name="e">Special effect base motion event.</param>
-        private void SetStateModeBaseMotion(IEntity entity, SpecialEffectBaseMotionEventArgs e)
+        private void SetStateModeBaseMotion(IWorldEntity entity, SpecialEffectBaseMotionEventArgs e)
         {
             if (e.Motion == StateModeBaseMotion.BASEMOTION_ON)
             {

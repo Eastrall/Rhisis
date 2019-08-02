@@ -30,7 +30,7 @@ namespace Rhisis.World.Systems.Mailbox
         public WorldEntityType Type => WorldEntityType.Player;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IPlayerEntity playerEntity))
                 return;

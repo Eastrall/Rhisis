@@ -10,7 +10,7 @@ namespace Rhisis.World.Packets
 {
     public static partial class WorldPacketFactory
     {
-        public static void SendSpeedFactor(IEntity entity, float speedFactor)
+        public static void SendSpeedFactor(IWorldEntity entity, float speedFactor)
         {
             using (var packet = new FFPacket())
             {
@@ -21,7 +21,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMotion(IEntity entity, ObjectMessageType objectMessage)
+        public static void SendMotion(IWorldEntity entity, ObjectMessageType objectMessage)
         {
             using (var packet = new FFPacket())
             {
@@ -32,7 +32,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMoverMoved(IEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
+        public static void SendMoverMoved(IWorldEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
             float angle, uint state, uint stateFlag, uint motion, int motionEx, int loop, uint motionOption,
             long tickCount)
         {
@@ -58,7 +58,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMoverBehavior(IEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
+        public static void SendMoverBehavior(IWorldEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
             float angle, uint state, uint stateFlag, uint motion, int motionEx, int loop, uint motionOption,
             long tickCount)
         {
@@ -98,7 +98,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMoverPosition(IEntity entity)
+        public static void SendMoverPosition(IWorldEntity entity)
         {
             using (var packet = new FFPacket())
             {
@@ -111,7 +111,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendDestinationAngle(IEntity entity, bool left)
+        public static void SendDestinationAngle(IWorldEntity entity, bool left)
         {
             using (var packet = new FFPacket())
             {
@@ -123,7 +123,7 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendStateMode(IEntity entity, StateModeBaseMotion flags, Item item = null)
+        public static void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null)
         {
             using (var packet = new FFPacket())
             {

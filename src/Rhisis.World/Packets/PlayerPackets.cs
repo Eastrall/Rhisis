@@ -11,7 +11,7 @@ namespace Rhisis.World.Packets
         /// Sends player revival packet.
         /// </summary>
         /// <param name="entity"></param>
-        public static void SendPlayerRevival(IEntity entity)
+        public static void SendPlayerRevival(IWorldEntity entity)
         {
             using (var packet = new FFPacket())
             {

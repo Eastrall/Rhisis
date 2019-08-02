@@ -1,4 +1,4 @@
-﻿using Rhisis.World.Game.Core;
+﻿using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Game.Components
 {
@@ -12,7 +12,7 @@ namespace Rhisis.World.Game.Components
         /// <summary>
         /// Gets or sets the following target.
         /// </summary>
-        public IEntity Target { get; set; }
+        public IWorldEntity Target { get; set; }
 
         /// <summary>
         /// Gets or sets if the object is following another.

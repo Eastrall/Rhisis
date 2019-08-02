@@ -19,7 +19,7 @@ namespace Rhisis.World.Systems.NpcDialog
         public WorldEntityType Type => WorldEntityType.Player;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!(entity is IPlayerEntity player) || !(e is NpcDialogOpenEventArgs dialogEvent))
             {

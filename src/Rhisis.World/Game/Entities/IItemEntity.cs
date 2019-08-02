@@ -4,7 +4,7 @@ using Rhisis.World.Game.Maps.Regions;
 
 namespace Rhisis.World.Game.Entities
 {
-    public interface IItemEntity : IEntity
+    public interface IItemEntity : IWorldEntity
     {
         DropComponent Drop { get; set; }
 

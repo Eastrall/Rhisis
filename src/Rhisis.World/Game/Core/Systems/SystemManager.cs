@@ -1,5 +1,6 @@
 ﻿using Rhisis.Core.Common;
 using Rhisis.Core.Exceptions;
+using Rhisis.World.Game.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Rhisis.World.Game.Core.Systems
     {
         private readonly IDictionary<Type, ISystem> _notifiableSystems;
 
-        private Action<IEntity, SystemEventArgs> _updatableActions;
+        private Action<IWorldEntity, SystemEventArgs> _updatableActions;
 
         /// <summary>
         /// Creates a new <see cref="SystemManager"/> instance.
@@ -44,7 +45,7 @@ namespace Rhisis.World.Game.Core.Systems
                             this._notifiableSystems.Add(systemType, system);
                             break;
                         case SystemType.Updatable:
-                            this._updatableActions += (IEntity entity, SystemEventArgs args) =>
+                            this._updatableActions += (IWorldEntity entity, SystemEventArgs args) =>
                             {
                                 if ((entity.Type & system.Type) == entity.Type)
                                     system.Execute(entity, args);
@@ -61,7 +62,7 @@ namespace Rhisis.World.Game.Core.Systems
         /// <typeparam name="TSystem">System type</typeparam>
         /// <param name="entity">Entity</param>
         /// <param name="args">System arguments</param>
-        public void Execute<TSystem>(IEntity entity, SystemEventArgs args) where TSystem : ISystem
+        public void Execute<TSystem>(IWorldEntity entity, SystemEventArgs args) where TSystem : ISystem
         {
             if (this._notifiableSystems.TryGetValue(typeof(TSystem), out ISystem system))
                 system.Execute(entity, args);
@@ -73,6 +74,6 @@ namespace Rhisis.World.Game.Core.Systems
         /// Executes all updatable systems.
         /// </summary>
         /// <param name="entity"></param>
-        public void ExecuteUpdatable(IEntity entity) => this._updatableActions?.Invoke(entity, null);
+        public void ExecuteUpdatable(IWorldEntity entity) => this._updatableActions?.Invoke(entity, null);
     }
 }

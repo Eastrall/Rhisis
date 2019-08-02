@@ -1,4 +1,4 @@
-﻿using Rhisis.World.Game.Core;
+﻿using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -24,7 +24,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="entity">Entity that will receive the behavior.</param>
         /// <param name="moverId">Mover Id.</param>
         /// <returns>Entity behavior.</returns>
-        IBehavior GetBehavior(BehaviorType type, IEntity entity, int moverId);
+        IBehavior GetBehavior(BehaviorType type, IWorldEntity entity, int moverId);
 
         /// <summary>
         /// Gets the default behavior of an entity.
@@ -32,6 +32,6 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="type">Behavior type.</param>
         /// <param name="entity">Entity that will receive the default behavior.</param>
         /// <returns>Default entity behavior.</returns>
-        IBehavior GetDefaultBehavior(BehaviorType type, IEntity entity);
+        IBehavior GetDefaultBehavior(BehaviorType type, IWorldEntity entity);
     }
 }

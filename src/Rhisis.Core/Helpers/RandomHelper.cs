@@ -8,6 +8,7 @@ namespace Rhisis.Core.Helpers
     /// </summary>
     public static class RandomHelper
     {
+        private static object _syncLock = new object();
         private static uint _id;
 
         /// <summary>
@@ -58,7 +59,12 @@ namespace Rhisis.Core.Helpers
         /// <returns></returns>
         public static uint GenerateUniqueId()
         {
-            return ++_id;
+            lock (_syncLock)
+            {
+                _id++;
+            }
+
+            return _id;
         }
     }
 }

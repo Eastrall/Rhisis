@@ -26,7 +26,7 @@ namespace Rhisis.World.Systems.Trade
         public WorldEntityType Type => WorldEntityType.Player;
 
         /// <inheritdoc />
-        public void Execute(IEntity entity, SystemEventArgs e)
+        public void Execute(IWorldEntity entity, SystemEventArgs e)
         {
             if (!e.GetCheckArguments() || !(entity is IPlayerEntity playerEntity))
                 return;
@@ -327,7 +327,7 @@ namespace Rhisis.World.Systems.Trade
         /// <param name="player"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static IPlayerEntity GetEntityFromContextOf(IEntity player, uint id) =>
+        private static IPlayerEntity GetEntityFromContextOf(IWorldEntity player, uint id) =>
             player.Context.FindEntity<IPlayerEntity>(id) ??
             throw new RhisisSystemException($"Can't find entity of id {id}");
 

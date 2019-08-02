@@ -5,7 +5,7 @@ using Rhisis.World.Game.Maps.Regions;
 
 namespace Rhisis.World.Game.Entities
 {
-    public class ItemEntity : Entity, IItemEntity
+    public class ItemEntity : WorldEntity, IWorldEntity
     {
         public DropComponent Drop { get; set; }
 
@@ -13,8 +13,7 @@ namespace Rhisis.World.Game.Entities
 
         public IMapRespawnRegion Region { get; set; }
 
-        public ItemEntity(IContext context) 
-            : base(context)
+        public ItemEntity()
         {
             this.Object.Type = WorldObjectType.Item;
             this.Drop = new DropComponent();

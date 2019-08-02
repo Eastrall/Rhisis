@@ -19,7 +19,7 @@ namespace Rhisis.World.Systems
         /// Executes the <see cref="MobilitySystem"/> logic.
         /// </summary>
         /// <param name="entity">Current entity</param>
-        public void Execute(IEntity entity, SystemEventArgs args)
+        public void Execute(IWorldEntity entity, SystemEventArgs args)
         {
             if (!entity.Object.Spawned)
                 return;
