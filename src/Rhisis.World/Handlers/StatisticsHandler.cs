@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Statistics;
 
 namespace Rhisis.World.Handlers
@@ -17,7 +18,7 @@ namespace Rhisis.World.Handlers
                 modifyStatusPacket.Dexterity,
                 modifyStatusPacket.Intelligence);
 
-            client.Player.NotifySystem<StatisticsSystem>(statisticsEventArgs);
+            SystemManager.Instance.Execute<StatisticsSystem>(client.Player, statisticsEventArgs);
         }
     }
 }

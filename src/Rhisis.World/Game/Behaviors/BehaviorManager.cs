@@ -112,12 +112,7 @@ namespace Rhisis.World.Game.Behaviors
         {
             BehaviorEntryCache behaviorEntry = this.GetBehaviorEntry(type, x => x.MoverId == moverId);
 
-            if (behaviorEntry == null)
-            {
-                throw new ArgumentNullException(nameof(behaviorEntry), $"Cannot find behavior for type {type} and mover id: '{moverId}'.");
-            }
-
-            return this.CreateBehaviorInstance(behaviorEntry, entity);
+            return behaviorEntry == null ? this.GetDefaultBehavior(type, entity) : this.CreateBehaviorInstance(behaviorEntry, entity);
         }
 
         /// <inheritdoc />

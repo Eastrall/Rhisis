@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World.Taskbar;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Taskbar;
 using Rhisis.World.Systems.Taskbar.EventArgs;
 
@@ -15,7 +16,7 @@ namespace Rhisis.World.Handlers
             var addTaskbarAppletPacket = new AddTaskbarAppletPacket(packet);
             var addTaskbarAppletEventArgs = new AddTaskbarAppletEventArgs(addTaskbarAppletPacket.SlotIndex, addTaskbarAppletPacket.Type, addTaskbarAppletPacket.ObjectId, addTaskbarAppletPacket.ObjectType, addTaskbarAppletPacket.ObjectIndex, addTaskbarAppletPacket.UserId, addTaskbarAppletPacket.ObjectData, addTaskbarAppletPacket.Text);
             
-            client.Player.NotifySystem<TaskbarSystem>(addTaskbarAppletEventArgs);
+            SystemManager.Instance.Execute<TaskbarSystem>(client.Player, addTaskbarAppletEventArgs);
         }
 
         [PacketHandler(PacketType.REMOVEAPPLETTASKBAR)]
@@ -24,7 +25,7 @@ namespace Rhisis.World.Handlers
             var removeTaskbarAppletPacket = new RemoveTaskbarAppletPacket(packet);
             var removeTaskbarAppletEventArgs = new RemoveTaskbarAppletEventArgs(removeTaskbarAppletPacket.SlotIndex);
 
-            client.Player.NotifySystem<TaskbarSystem>(removeTaskbarAppletEventArgs);
+            SystemManager.Instance.Execute<TaskbarSystem>(client.Player, removeTaskbarAppletEventArgs);
         }
 
         [PacketHandler(PacketType.ADDITEMTASKBAR)]
@@ -33,7 +34,7 @@ namespace Rhisis.World.Handlers
             var addTaskbarItemPacket = new AddTaskbarItemPacket(packet);
             var addTaskbarItemEventArgs = new AddTaskbarItemEventArgs(addTaskbarItemPacket.SlotLevelIndex, addTaskbarItemPacket.SlotIndex, addTaskbarItemPacket.Type, addTaskbarItemPacket.ObjectId, addTaskbarItemPacket.ObjectType, addTaskbarItemPacket.ObjectIndex, addTaskbarItemPacket.UserId, addTaskbarItemPacket.ObjectData, addTaskbarItemPacket.Text);
                        
-            client.Player.NotifySystem<TaskbarSystem>(addTaskbarItemEventArgs);
+            SystemManager.Instance.Execute<TaskbarSystem>(client.Player, addTaskbarItemEventArgs);
         }
 
         [PacketHandler(PacketType.REMOVEITEMTASKBAR)]
@@ -42,7 +43,7 @@ namespace Rhisis.World.Handlers
             var removeTaskbarItemPacket = new RemoveTaskbarItemPacket(packet);
             var removeTaskbarItemEventArgs = new RemoveTaskbarItemEventArgs(removeTaskbarItemPacket.SlotLevelIndex, removeTaskbarItemPacket.SlotIndex);
 
-            client.Player.NotifySystem<TaskbarSystem>(removeTaskbarItemEventArgs);
+            SystemManager.Instance.Execute<TaskbarSystem>(client.Player, removeTaskbarItemEventArgs);
         }
 
         [PacketHandler(PacketType.SKILLTASKBAR)]
@@ -51,7 +52,7 @@ namespace Rhisis.World.Handlers
             var taskbarSkillPacket = new TaskbarSkillPacket(packet);
             var taskbarSkillEventArgs = new TaskbarSkillEventArgs(taskbarSkillPacket.Skills);
 
-            client.Player.NotifySystem<TaskbarSystem>(taskbarSkillEventArgs);
+            SystemManager.Instance.Execute<TaskbarSystem>(client.Player, taskbarSkillEventArgs);
         }
     }
 }

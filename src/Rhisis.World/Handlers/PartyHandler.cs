@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World.Party;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Party;
 using Rhisis.World.Systems.Party.EventArgs;
 
@@ -15,7 +16,7 @@ namespace Rhisis.World.Handlers
             var partyMemberRequestPacket = new PartyMemberRequestPacket(packet);
             var partyMemberRequestEventArgs = new PartyMemberRequestEventArgs(partyMemberRequestPacket);
 
-            client.Player.NotifySystem<PartySystem>(partyMemberRequestEventArgs);
+            SystemManager.Instance.Execute<PartySystem>(client.Player, partyMemberRequestEventArgs);
         }
 
         [PacketHandler(PacketType.MEMBERREQUESTCANCLE)]
@@ -24,7 +25,7 @@ namespace Rhisis.World.Handlers
             var partyMemberRequestCancelPacket = new PartyMemberRequestCancelPacket(packet);
             var partyMemberRequestCancelEventArgs = new PartyMemberRequestCancelEventArgs(partyMemberRequestCancelPacket);
 
-            client.Player.NotifySystem<PartySystem>(partyMemberRequestCancelEventArgs);
+            SystemManager.Instance.Execute<PartySystem>(client.Player, partyMemberRequestCancelEventArgs);
         }
 
         [PacketHandler(PacketType.ADDPARTYMEMBER)]
@@ -33,7 +34,7 @@ namespace Rhisis.World.Handlers
             var addPartyMemberPacket = new PartyAddMemberPacket(packet);
             var addPartyMemberEventArgs = new PartyAddMemberEventArgs(addPartyMemberPacket);
 
-            client.Player.NotifySystem<PartySystem>(addPartyMemberEventArgs);
+            SystemManager.Instance.Execute<PartySystem>(client.Player, addPartyMemberEventArgs);
         }
 
         [PacketHandler(PacketType.REMOVEPARTYMEMBER)]
@@ -42,7 +43,7 @@ namespace Rhisis.World.Handlers
             var removePartyMemberPacket = new PartyRemoveMemberPacket(packet);
             var removePartyMemberEventArgs = new PartyRemoveMemberEventArgs(removePartyMemberPacket);
 
-            client.Player.NotifySystem<PartySystem>(removePartyMemberEventArgs);
+            SystemManager.Instance.Execute<PartySystem>(client.Player, removePartyMemberEventArgs);
         }
     }
 }

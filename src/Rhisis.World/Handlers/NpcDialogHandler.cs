@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.NpcDialog;
 
 namespace Rhisis.World.Handlers
@@ -14,7 +15,7 @@ namespace Rhisis.World.Handlers
             var dialogPacket = new DialogPacket(packet);
             var dialogEvent = new NpcDialogOpenEventArgs(dialogPacket.ObjectId, dialogPacket.Key);
 
-            client.Player.NotifySystem<NpcDialogSystem>(dialogEvent);
+            SystemManager.Instance.Execute<NpcDialogSystem>(client.Player, dialogEvent);
         }
     }
 }

@@ -5,6 +5,7 @@ using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
@@ -22,7 +23,7 @@ namespace Rhisis.World.Handlers
         public static void OnMeleeAttack(WorldClient client, INetPacketStream packet)
         {
             var meleePacket = new MeleeAttackPacket(packet);
-            var target = client.Player.Object.CurrentLayer.FindEntity<IMonsterEntity>(meleePacket.ObjectId);
+            var target = client.Player.FindEntity<IMonsterEntity>(meleePacket.ObjectId);
 
             if (target == null)
             {
@@ -46,10 +47,10 @@ namespace Rhisis.World.Handlers
                     WorldPacketFactory.SendSpeedFactor(target, target.Moves.SpeedFactor);
                 }
 
-                target.NotifySystem<FollowSystem>(new FollowEventArgs(client.Player.Id, 1f));
+                SystemManager.Instance.Execute<FollowSystem>(target, new FollowEventArgs(client.Player.Id, 1f));
             }
 
-            client.Player.NotifySystem<BattleSystem>(new MeleeAttackEventArgs(meleePacket.AttackMessage, target, meleePacket.WeaponAttackSpeed));
+            SystemManager.Instance.Execute<BattleSystem>(client.Player, new MeleeAttackEventArgs(meleePacket.AttackMessage, target, meleePacket.WeaponAttackSpeed));
         }
     }
 }

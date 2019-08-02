@@ -20,7 +20,6 @@ namespace Rhisis.World.Game.Maps
         private readonly IMemoryCache _cache;
         private readonly IMapFactory _mapFactory;
         private readonly IDictionary<int, IMapInstance> _maps;
-        private readonly IDictionary<string, int> _defines;
 
         public MapManager(ILogger<MapManager> logger, IOptions<WorldConfiguration> worldConfiguration, IMemoryCache cache, IMapFactory mapFactory)
         {
@@ -28,7 +27,6 @@ namespace Rhisis.World.Game.Maps
             this._worldConfiguration = worldConfiguration.Value;
             this._cache = cache;
             this._mapFactory = mapFactory;
-            this._defines = this._cache.Get<IDictionary<string, int>>(GameResourcesConstants.Defines);
             this._maps = new ConcurrentDictionary<int, IMapInstance>();
         }
 
@@ -40,6 +38,7 @@ namespace Rhisis.World.Game.Maps
         {
             string worldScriptPath = GameResourcesConstants.Paths.WorldScriptPath;
             var worldsPaths = new Dictionary<string, string>();
+            var defines = this._cache.Get<Dictionary<string, int>>(GameResourcesConstants.Defines);
 
             using (var textFile = new TextFile(worldScriptPath))
             {
@@ -55,7 +54,7 @@ namespace Rhisis.World.Game.Maps
                     continue;
                 }
 
-                if (!this._defines.TryGetValue(mapDefineName, out int mapId))
+                if (!defines.TryGetValue(mapDefineName, out int mapId))
                 {
                     this._logger.LogWarning(GameResourcesConstants.Errors.UnableLoadMapMessage, mapDefineName, $"map has no define id inside '{GameResourcesConstants.Paths.DataSub0Path}/defineWorld.h' file");
                     continue;

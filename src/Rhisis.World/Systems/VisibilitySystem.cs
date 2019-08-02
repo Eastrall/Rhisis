@@ -26,19 +26,19 @@ namespace Rhisis.World.Systems
             if (!entity.Object.Spawned)
                 return;
 
-            var currentMapLayer = entity.Context as IMapLayer;
+            IMapLayer currentMapLayer = entity.Object.CurrentLayer;
 
             if (currentMapLayer == null)
                 throw new RhisisSystemException($"Object {entity.Object.Name}:{entity.Id} doesn't belong to a map layer.");
 
-            var currentMap = currentMapLayer.Parent;
+            var currentMap = currentMapLayer.ParentMap;
 
             if (currentMap != null)
-                UpdateEntitiesVisibility(entity, currentMap.Entities);
+                UpdateEntitiesVisibility(entity, currentMap.Entities.Values);
 
             if (currentMapLayer != null)
             {
-                UpdateEntitiesVisibility(entity, currentMapLayer.Entities);
+                UpdateEntitiesVisibility(entity, currentMapLayer.Entities.Values);
 
                 if (entity.Type == WorldEntityType.Player)
                 {

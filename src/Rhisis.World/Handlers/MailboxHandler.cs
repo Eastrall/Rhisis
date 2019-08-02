@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World.Mailbox;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Mailbox;
 using Rhisis.World.Systems.Mailbox.EventArgs;
 
@@ -18,7 +19,7 @@ namespace Rhisis.World.Handlers
         public static void OnQueryMailbox(WorldClient client, INetPacketStream packet)
         {
             var queryMailboxEvent = new QueryMailboxEventArgs();
-            client.Player.NotifySystem<MailboxSystem>(queryMailboxEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, queryMailboxEvent);
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryPostMailPacket = new QueryPostMailPacket(packet);
             var queryPostMailEvent = new QueryPostMailEventArgs(onQueryPostMailPacket.ItemSlot, onQueryPostMailPacket.ItemQuantity, onQueryPostMailPacket.Receiver, (uint)onQueryPostMailPacket.Gold, onQueryPostMailPacket.Title, onQueryPostMailPacket.Text);
-            client.Player.NotifySystem<MailboxSystem>(queryPostMailEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, queryPostMailEvent);
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryRemoveMailPacket = new QueryRemoveMailPacket(packet);
             var queryRemoveMailEvent = new QueryRemoveMailEventArgs(onQueryRemoveMailPacket.MailId);
-            client.Player.NotifySystem<MailboxSystem>(queryRemoveMailEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, queryRemoveMailEvent);
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryGetMailItem = new QueryGetMailItemPacket(packet);
             var queryGetMailItemEvent = new QueryGetMailItemEventArgs(onQueryGetMailItem.MailId);
-            client.Player.NotifySystem<MailboxSystem>(queryGetMailItemEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, queryGetMailItemEvent);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryGetMailGold = new QueryGetMailGoldPacket(packet);
             var queryGetMailGoldEvent = new QueryGetMailGoldEventArgs(onQueryGetMailGold.MailId);
-            client.Player.NotifySystem<MailboxSystem>(queryGetMailGoldEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, queryGetMailGoldEvent);
         }
 
         /// <summary>
@@ -83,7 +84,7 @@ namespace Rhisis.World.Handlers
         {
             var onReadMail = new ReadMailPacket(packet);
             var readMailEvent = new ReadMailEventArgs(onReadMail.MailId);
-            client.Player.NotifySystem<MailboxSystem>(readMailEvent);
+            SystemManager.Instance.Execute<MailboxSystem>(client.Player, readMailEvent);
         }
     }
 }

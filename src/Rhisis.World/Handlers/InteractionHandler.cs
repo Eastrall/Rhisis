@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Interaction;
 using Rhisis.World.Systems.Interaction.EventArgs;
 
@@ -15,7 +16,7 @@ namespace Rhisis.World.Handlers
             var setTargetPacket = new SetTargetPacket(packet);
             var setTargetArgs = new SetTargetEventArgs(setTargetPacket.TargetId, setTargetPacket.Clear);
 
-            client.Player.NotifySystem<InteractionSystem>(setTargetArgs);
+            SystemManager.Instance.Execute<InteractionSystem>(client.Player, setTargetArgs);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Chat;
 
 namespace Rhisis.World.Handlers
@@ -14,7 +15,7 @@ namespace Rhisis.World.Handlers
             var chatPacket = new ChatPacket(packet);
             var chatEvent = new ChatEventArgs(chatPacket.Message);
 
-            client.Player.NotifySystem<ChatSystem>(chatEvent);
+            SystemManager.Instance.Execute<ChatSystem>(client.Player, chatEvent);
         }
     }
 }

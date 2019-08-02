@@ -12,6 +12,7 @@ using Rhisis.Network.Packets.World;
 using Rhisis.World.Client;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Packets;
@@ -79,7 +80,7 @@ namespace Rhisis.World.Handlers
             IMapLayer mapLayer = map.GetMapLayer(character.MapLayerId) ?? map.GetDefaultMapLayer();
 
             // 1st: Create the player entity with the map layer context
-            client.Player = mapLayer.CreateEntity<PlayerEntity>();
+            client.Player = new PlayerEntity();
 
             // 2nd: create and initialize the components
             client.Player.Object = new ObjectComponent
@@ -87,6 +88,7 @@ namespace Rhisis.World.Handlers
                 ModelId = character.Gender == 0 ? 11 : 12,
                 Type = WorldObjectType.Mover,
                 MapId = character.MapId,
+                CurrentMap = map,
                 LayerId = mapLayer.Id,
                 Position = new Vector3(character.PosX, character.PosY, character.PosZ),
                 Angle = character.Angle,
@@ -144,7 +146,7 @@ namespace Rhisis.World.Handlers
 
             // Initialize the inventory
             var inventoryEventArgs = new InventoryInitializeEventArgs(character.Items);
-            client.Player.NotifySystem<InventorySystem>(inventoryEventArgs);
+            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEventArgs);
 
             // Taskbar
             foreach (var applet in character.TaskbarShortcuts.Where(x => x.TargetTaskbar == ShortcutTaskbarTarget.Applet))

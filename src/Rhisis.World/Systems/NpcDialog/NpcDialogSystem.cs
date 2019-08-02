@@ -43,7 +43,7 @@ namespace Rhisis.World.Systems.NpcDialog
         /// <param name="e"></param>
         private void OpenDialog(IPlayerEntity player, NpcDialogOpenEventArgs e)
         {
-            var npcEntity = player.Object.CurrentMap?.FindEntity<INpcEntity>(e.NpcObjectId);
+            var npcEntity = player.FindEntity<INpcEntity>(e.NpcObjectId);
 
             if (npcEntity == null)
             {

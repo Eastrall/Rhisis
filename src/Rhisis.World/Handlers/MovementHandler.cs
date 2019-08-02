@@ -2,6 +2,7 @@
 using Rhisis.Core.Data;
 using Rhisis.Core.Structures;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.SpecialEffect;
 using Rhisis.World.Systems.SpecialEffect.EventArgs;
@@ -16,7 +17,7 @@ namespace Rhisis.World.Handlers
             var setDestPositionPacket = new SetDestPositionPacket(packet);
 
             // Cancel current item usage action and SFX
-            client.Player.NotifySystem<SpecialEffectSystem>(new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+            SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
             client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
             client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 

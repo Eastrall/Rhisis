@@ -6,6 +6,7 @@ using Rhisis.Core.Structures;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Death;
@@ -30,11 +31,11 @@ namespace Rhisis.World.Handlers
             var followEvent = new FollowEventArgs(targetObjectId, distance);
 
             // Cancel current item usage action and SFX
-            client.Player.NotifySystem<SpecialEffectSystem>(new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+            SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
             client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
             client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
-            client.Player.NotifySystem<FollowSystem>(followEvent);
+            SystemManager.Instance.Execute<FollowSystem>(client.Player, followEvent);
         }
 
         [PacketHandler(PacketType.QUERY_PLAYER_DATA)]
@@ -42,7 +43,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryPlayerDataPacket = new QueryPlayerDataPacket(packet);
             var queryPlayerDataEvent = new QueryPlayerDataEventArgs(onQueryPlayerDataPacket.PlayerId, onQueryPlayerDataPacket.Version);
-            client.Player.NotifySystem<PlayerDataSystem>(queryPlayerDataEvent);
+            SystemManager.Instance.Execute<PlayerDataSystem>(client.Player, queryPlayerDataEvent);
         }
 
         [PacketHandler(PacketType.QUERY_PLAYER_DATA2)]
@@ -50,7 +51,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryPlayerData2Packet = new QueryPlayerData2Packet(packet);
             var queryPlayerData2Event = new QueryPlayerData2EventArgs(onQueryPlayerData2Packet.Size, onQueryPlayerData2Packet.PlayerDictionary);
-            client.Player.NotifySystem<PlayerDataSystem>(queryPlayerData2Event);
+            SystemManager.Instance.Execute<PlayerDataSystem>(client.Player, queryPlayerData2Event);
         }
 
         [PacketHandler(PacketType.PLAYERMOVED)]
@@ -65,7 +66,7 @@ namespace Rhisis.World.Handlers
             }
 
             // Cancel current item usage action and SFX
-            client.Player.NotifySystem<SpecialEffectSystem>(new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+            SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
             client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
             client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
@@ -137,7 +138,7 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            client.Player.NotifySystem<DeathSystem>();
+            SystemManager.Instance.Execute<DeathSystem>(client.Player, null);
         }
     }
 }

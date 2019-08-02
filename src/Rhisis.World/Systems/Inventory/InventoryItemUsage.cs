@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
+using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Helpers;
 using Rhisis.World.Game.Maps;
@@ -201,13 +202,13 @@ namespace Rhisis.World.Systems.Inventory
 
             player.Inventory.ItemInUseActionId = player.Delayer.DelayAction(TimeSpan.FromMilliseconds(blinkwing.Data.SkillReadyType), () =>
             {
-                player.NotifySystem<TeleportSystem>(teleportEvent);
-                player.NotifySystem<SpecialEffectSystem>(new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+                SystemManager.Instance.Execute<TeleportSystem>(player, teleportEvent);
+                SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
                 player.Inventory.ItemInUseActionId = Guid.Empty;
                 this.DecreaseItem(player, blinkwing);
             });
 
-            player.NotifySystem<SpecialEffectSystem>(new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_ON, blinkwing));
+            SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_ON, blinkwing));
         }
 
         /// <summary>
@@ -231,7 +232,7 @@ namespace Rhisis.World.Systems.Inventory
             WorldPacketFactory.SendItemUpdate(player, itemUpdateType, item.UniqueId, item.Quantity);
 
             if (item.Data.SfxObject3 != 0)
-                player.NotifySystem<SpecialEffectSystem>(new SpecialEffectEventArgs(item.Data.SfxObject3));
+                SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectEventArgs(item.Data.SfxObject3));
         }
     }
 }

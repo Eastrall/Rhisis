@@ -333,7 +333,7 @@ namespace Rhisis.World.Systems.Inventory
 
             Item itemToDrop = inventoryItem.Clone();
             itemToDrop.Quantity = quantityToDrop;
-            player.NotifySystem<DropSystem>(new DropItemEventArgs(itemToDrop));
+            SystemManager.Instance.Execute<DropSystem>(player, new DropItemEventArgs(itemToDrop));
 
             inventoryItem.Quantity -= quantityToDrop;
             if (inventoryItem.Quantity <= 0)

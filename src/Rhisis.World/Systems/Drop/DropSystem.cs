@@ -62,7 +62,7 @@ namespace Rhisis.World.Systems.Drop
         private void DropItem(IWorldEntity entity, DropItemEventArgs e)
         {
             var worldServerConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
-            var drop = entity.Object.CurrentLayer.CreateEntity<ItemEntity>();
+            var drop = new ItemEntity(); 
 
             drop.Drop.Item = new Item(e.Item.Id, e.Item.Quantity, -1, -1, -1, e.Item.Refine);
 
@@ -75,6 +75,7 @@ namespace Rhisis.World.Systems.Drop
 
             drop.Object = new ObjectComponent
             {
+                CurrentMap = null, // TODO: set map correctly
                 MapId = entity.Object.MapId,
                 LayerId = entity.Object.LayerId,
                 ModelId = e.Item.Id,

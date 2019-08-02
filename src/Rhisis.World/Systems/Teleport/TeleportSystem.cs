@@ -77,7 +77,7 @@ namespace Rhisis.World.Systems.Teleport
                 }
 
                 IMapLayer defaultMapLayer = destinationMap.GetDefaultMapLayer();
-                player.SwitchContext(defaultMapLayer);
+                //player.SwitchContext(defaultMapLayer);
                 player.Object.Spawned = false;
                 player.Object.CurrentMap = this._mapManager.GetMap(destinationMap.Id);
                 player.Object.MapId = destinationMap.Id;
