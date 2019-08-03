@@ -59,7 +59,7 @@ namespace Rhisis.World
 
             if (this.Socket == null)
             {
-                this._logger.LogTrace("Skip to handle world packet from {this.RemoteEndPoint}. Reason: client is not connected.");
+                this._logger.LogTrace($"Skip to handle world packet from {this.RemoteEndPoint}. Reason: {nameof(WorldClient)} is not connected.");
                 return;
             }
 

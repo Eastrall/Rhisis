@@ -1,23 +1,25 @@
-﻿using Ether.Network.Client;
-using Ether.Network.Packets;
-using Rhisis.Network.ISC;
-using Rhisis.Network.ISC.Packets;
+﻿using Ether.Network.Packets;
+using Microsoft.Extensions.DependencyInjection;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Structures.Configuration;
+using Rhisis.Network.Core;
 
-namespace Rhisis.World.ISC
+namespace Rhisis.World.CoreClient.Packets
 {
-    public static class ISCPacketFactory
+    [Injectable(ServiceLifetime.Singleton)]
+    public sealed class CorePacketFactory : ICorePacketFactory
     {
-        public static void SendAuthentication(INetClient client, WorldConfiguration worldConfiguration)
+        /// <inheritdoc />
+        public void SendAuthentication(ICoreClient client, WorldConfiguration worldConfiguration)
         {
             using (var packet = new NetPacket())
             {
-                packet.Write((uint)ISCPacketType.AUTHENT);
+                packet.Write((uint)CorePacketType.Authenticate);
                 packet.Write(worldConfiguration.Id);
                 packet.Write(worldConfiguration.Name);
                 packet.Write(worldConfiguration.Host);
                 packet.Write(worldConfiguration.Port);
-                packet.Write((byte)ISCServerType.World);
+                packet.Write((byte)ServerType.World);
                 packet.Write(worldConfiguration.ClusterId);
 
                 // TODO: add more information to packet if needed.

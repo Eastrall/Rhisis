@@ -10,8 +10,7 @@ using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database;
 using Rhisis.Network.Packets;
-using Rhisis.World.Game.Behaviors;
-using Rhisis.World.Game.Maps;
+using Rhisis.World.CoreClient;
 using Sylver.HandlerInvoker;
 using System.IO;
 using System.Threading.Tasks;
@@ -44,6 +43,10 @@ namespace Rhisis.World
                     services.AddHandlers();
                     services.AddGameResources();
                     services.AddInjectableServices();
+
+                    // Core client configuration
+                    services.AddSingleton<IWorldCoreClient, WorldCoreClient>();
+                    services.AddSingleton<IHostedService, WorldCoreClientService>();
 
                     // World server configuration
                     services.AddSingleton<IWorldServer, WorldServer>();

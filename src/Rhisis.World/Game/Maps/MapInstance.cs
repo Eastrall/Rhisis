@@ -1,6 +1,9 @@
 ﻿using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
+using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps.Regions;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,11 +16,17 @@ namespace Rhisis.World.Game.Maps
         private const int FrameRate = 60;
         private const double UpdateRate = 1000f / FrameRate;
 
+        private readonly ConcurrentDictionary<int, IMapLayer> _layers;
+        private readonly IMapFactory _mapFactory;
+
         /// <inheritdoc />
         public string Name { get; }
 
         /// <inheritdoc />
         public WldFileInformations MapInformation { get; }
+
+        /// <inheritdoc />
+        public IMapLayer DefaultMapLayer { get; private set; }
 
         /// <inheritdoc />
         public IMapRevivalRegion DefaultRevivalRegion { get; private set; }
@@ -34,61 +43,97 @@ namespace Rhisis.World.Game.Maps
         /// <inheritdoc />
         public IReadOnlyList<IMapRegion> Regions { get; private set; }
 
-        public MapInstance(int id, string name, WldFileInformations worldInformations)
+        /// <summary>
+        /// Creates a new <see cref="MapInstance"/>.
+        /// </summary>
+        /// <param name="id">Map Id.</param>
+        /// <param name="name">Map name.</param>
+        /// <param name="worldInformations">Map world informations.</param>
+        public MapInstance(IMapFactory mapFactory, int id, string name, WldFileInformations worldInformations)
         {
             this.Id = id;
+            this._mapFactory = mapFactory;
             this.Name = name;
             this.MapInformation = worldInformations;
+            this._layers = new ConcurrentDictionary<int, IMapLayer>();
         }
 
-        public bool ContainsPosition(Vector3 position)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        // <inheritdoc />
         public IMapLayer CreateMapLayer()
         {
-            throw new System.NotImplementedException();
+            int layerId = this._layers.Count > 0 ? this._layers.Values.Max(x => x.Id) + 1 : DefaultMapLayerId;
+
+            return this.CreateMapLayer(layerId);
         }
 
+        // <inheritdoc />
         public IMapLayer CreateMapLayer(int id)
         {
-            throw new System.NotImplementedException();
+            var mapLayer = this._mapFactory.CreateLayer(this, id);
+
+            this._layers.TryAdd(id, mapLayer);
+
+            if (this.DefaultMapLayer == null)
+                this.DefaultMapLayer = mapLayer;
+
+            return mapLayer;
         }
 
+        // <inheritdoc />
         public void DeleteMapLayer(int id)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public IMapLayer GetDefaultMapLayer()
-        {
-            throw new System.NotImplementedException();
-        }
+        // <inheritdoc />
+        public IMapLayer GetMapLayer(int id) => this._layers.TryGetValue(id, out IMapLayer layer) ? layer : null;
 
-        public IMapLayer GetMapLayer(int id)
-        {
-            throw new System.NotImplementedException();
-        }
+        // <inheritdoc />
+        public IMapRevivalRegion GetNearRevivalRegion(Vector3 position) => this.GetNearRevivalRegion(position, false);
 
-        public IMapRevivalRegion GetNearRevivalRegion(Vector3 position)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        /// <inheritdoc />
         public IMapRevivalRegion GetNearRevivalRegion(Vector3 position, bool isChaoMode)
         {
-            throw new System.NotImplementedException();
+            IEnumerable<IMapRevivalRegion> revivalRegions = this.Regions.Where(x => x is IMapRevivalRegion).Cast<IMapRevivalRegion>();
+            var nearestRevivalRegion = revivalRegions.FirstOrDefault(x => x.MapId == this.Id && x.IsChaoRegion == isChaoMode && x.Contains(position) && x.TargetRevivalKey);
+
+            if (nearestRevivalRegion != null)
+                return this.GetRevivalRegion(nearestRevivalRegion.Key, isChaoMode);
+
+            revivalRegions = from x in this.Regions
+                             where x is IMapRevivalRegion y && y.IsChaoRegion == isChaoMode && !y.TargetRevivalKey
+                             let region = x as IMapRevivalRegion
+                             let distance = position.GetDistance3D(region.RevivalPosition)
+                             orderby distance ascending
+                             select region;
+
+            return revivalRegions.FirstOrDefault() ?? this.DefaultRevivalRegion;
         }
 
-        public IMapRevivalRegion GetRevivalRegion(string revivalKey)
-        {
-            throw new System.NotImplementedException();
-        }
+        /// <inheritdoc />
+        public IMapRevivalRegion GetRevivalRegion(string revivalKey) => this.GetRevivalRegion(revivalKey, false);
 
+        /// <inheritdoc />
         public IMapRevivalRegion GetRevivalRegion(string revivalKey, bool isChaoMode)
         {
-            throw new System.NotImplementedException();
+            IEnumerable<IMapRevivalRegion> revivalRegions = this.Regions.Where(x => x is IMapRevivalRegion).Cast<IMapRevivalRegion>();
+            IEnumerable<IMapRevivalRegion> revivalRegion = from x in revivalRegions
+                                                           where x.Key.Equals(revivalKey, StringComparison.OrdinalIgnoreCase) && x.IsChaoRegion == isChaoMode && !x.TargetRevivalKey
+                                                           select x;
+
+            return revivalRegion.FirstOrDefault() ?? this.DefaultRevivalRegion;
+        }
+
+        /// <inheritdoc />
+        public bool ContainsPosition(Vector3 position)
+        {
+            float x = position.X / this.MapInformation.MPU;
+            float z = position.Z / this.MapInformation.MPU;
+
+            if (x < 0 || x > this.Width * MapLandSize || z < 0 || z > this.Length * MapLandSize)
+                return false;
+
+            return true;
         }
 
         public void StartUpdateTask()

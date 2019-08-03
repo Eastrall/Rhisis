@@ -76,12 +76,11 @@ namespace Rhisis.World.Systems.Teleport
                     return;
                 }
 
-                IMapLayer defaultMapLayer = destinationMap.GetDefaultMapLayer();
                 //player.SwitchContext(defaultMapLayer);
                 player.Object.Spawned = false;
                 player.Object.CurrentMap = this._mapManager.GetMap(destinationMap.Id);
                 player.Object.MapId = destinationMap.Id;
-                player.Object.LayerId = defaultMapLayer.Id;
+                player.Object.LayerId = destinationMap.DefaultMapLayer.Id;
 
                 // TODO: get map height at x/z position
                 float positionY = e.PositionY ?? 100;

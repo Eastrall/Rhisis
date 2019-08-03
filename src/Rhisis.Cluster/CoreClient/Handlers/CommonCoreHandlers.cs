@@ -60,7 +60,7 @@ namespace Rhisis.Cluster.CoreClient.Handlers
                     break;
                 default:
                     this._logger.LogTrace("Core authentification result: {0}", authenticationResult);
-                    this._logger.LogCritical("Unable to authenticate ISC client. Reason: Cannot recognize ISC server. You probably have to update all servers.");
+                    this._logger.LogCritical("Unable to authenticate Cluster Core client. Reason: Cannot recognize Core server. You probably have to update all servers.");
                     break;
             }
 

@@ -20,6 +20,7 @@ namespace Rhisis.Login.Core
         private readonly ILogger<CoreServer> _logger;
         private readonly ISCConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHandlerInvoker _handlerInvoker;
 
         /// <summary>
         /// Creates a new <see cref="CoreServer"/> instance.
@@ -27,11 +28,12 @@ namespace Rhisis.Login.Core
         /// <param name="logger">Logger.</param>
         /// <param name="configuration">Core server configuration.</param>
         /// <param name="serviceProvider">Service provider.</param>
-        public CoreServer(ILogger<CoreServer> logger, IOptions<ISCConfiguration> configuration, IServiceProvider serviceProvider)
+        public CoreServer(ILogger<CoreServer> logger, IOptions<ISCConfiguration> configuration, IServiceProvider serviceProvider, IHandlerInvoker handlerInvoker)
         {
             this._logger = logger;
             this._configuration = configuration.Value;
             this._serviceProvider = serviceProvider;
+            this._handlerInvoker = handlerInvoker;
             this.Configuration.Host = this._configuration.Host;
             this.Configuration.Port = this._configuration.Port;
             this.Configuration.MaximumNumberOfConnections = 10;
@@ -51,8 +53,7 @@ namespace Rhisis.Login.Core
         {
             var corePacketFactory = this._serviceProvider.GetRequiredService<ICorePacketFactory>();
 
-            connection.Initialize(this._serviceProvider.GetRequiredService<ILogger<CoreServerClient>>(),
-                this._serviceProvider.GetRequiredService<IHandlerInvoker>());
+            connection.Initialize(this._serviceProvider.GetRequiredService<ILogger<CoreServerClient>>(), this._handlerInvoker);
 
             corePacketFactory.SendWelcome(connection);
 
@@ -62,18 +63,7 @@ namespace Rhisis.Login.Core
         /// <inheritdoc />
         protected override void OnClientDisconnected(CoreServerClient connection)
         {
-            switch (connection.ServerInfo)
-            {
-                case ClusterServerInfo cluster:
-                    this._logger.LogInformation($"Cluster server '{cluster.Name}' disconnected from core server.");
-                    break;
-                case WorldServerInfo world:
-                    this._logger.LogInformation($"World server '{world.Name}' disconnected from core server.");
-                    break;
-                default:
-                    this._logger.LogInformation("Unknown server disconnected from core server.");
-                    break;
-            }
+            this._handlerInvoker.Invoke(CorePacketType.Disconnect, connection);
         }
 
         /// <inheritdoc />

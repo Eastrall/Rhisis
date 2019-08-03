@@ -45,6 +45,14 @@ namespace Rhisis.World.Game.Maps
             return mapInstance;
         }
 
+        /// <inheritdoc />
+        public IMapLayer CreateLayer(IMapInstance parentMapInstance, int layerId)
+        {
+            var mapLayer = ActivatorUtilities.CreateInstance<MapLayer>(this._serviceProvider, parentMapInstance, layerId);
+
+            return mapLayer;
+        }
+
         /// <summary>
         /// Loads the world map informations from the WLD file.
         /// </summary>

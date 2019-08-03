@@ -36,6 +36,11 @@ namespace Rhisis.World.Game.Maps
         IMapRevivalRegion DefaultRevivalRegion { get; }
 
         /// <summary>
+        /// Gets the default map layer.
+        /// </summary>
+        IMapLayer DefaultMapLayer { get; }
+
+        /// <summary>
         /// Gets the map layers.
         /// </summary>
         IReadOnlyList<IMapLayer> Layers { get; }
@@ -64,12 +69,6 @@ namespace Rhisis.World.Game.Maps
         /// <param name="id"></param>
         /// <returns></returns>
         IMapLayer GetMapLayer(int id);
-
-        /// <summary>
-        /// Gets the default map layer.
-        /// </summary>
-        /// <returns></returns>
-        IMapLayer GetDefaultMapLayer();
 
         /// <summary>
         /// Deletes a map layer by his id.

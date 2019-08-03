@@ -77,7 +77,7 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            IMapLayer mapLayer = map.GetMapLayer(character.MapLayerId) ?? map.GetDefaultMapLayer();
+            IMapLayer mapLayer = map.GetMapLayer(character.MapLayerId) ?? map.DefaultMapLayer;
 
             // 1st: Create the player entity with the map layer context
             client.Player = new PlayerEntity();

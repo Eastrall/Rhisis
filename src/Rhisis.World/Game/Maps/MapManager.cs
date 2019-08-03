@@ -66,7 +66,10 @@ namespace Rhisis.World.Game.Maps
                     continue;
                 }
 
-                IMapInstance map = this._mapFactory.Create(Path.Combine(GameResourcesConstants.Paths.MapsPath, mapName), mapName, mapId); 
+                IMapInstance map = this._mapFactory.Create(Path.Combine(GameResourcesConstants.Paths.MapsPath, mapName), mapName, mapId);
+
+                map.CreateMapLayer();
+                // TODO: start update task
 
                 _maps.Add(mapId, map);
             }
