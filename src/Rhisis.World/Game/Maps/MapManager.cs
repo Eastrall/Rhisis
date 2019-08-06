@@ -12,6 +12,9 @@ using System.IO;
 
 namespace Rhisis.World.Game.Maps
 {
+    /// <summary>
+    /// Provides a mechanism to load and manage maps.
+    /// </summary>
     [Injectable(ServiceLifetime.Singleton)]
     public class MapManager : IMapManager
     {
@@ -21,6 +24,13 @@ namespace Rhisis.World.Game.Maps
         private readonly IMapFactory _mapFactory;
         private readonly IDictionary<int, IMapInstance> _maps;
 
+        /// <summary>
+        /// Creates a new <see cref="MapManager"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="worldConfiguration">World server configuration.</param>
+        /// <param name="cache">World server memory cache.</param>
+        /// <param name="mapFactory">Map factory.</param>
         public MapManager(ILogger<MapManager> logger, IOptions<WorldConfiguration> worldConfiguration, IMemoryCache cache, IMapFactory mapFactory)
         {
             this._logger = logger;
@@ -69,7 +79,7 @@ namespace Rhisis.World.Game.Maps
                 IMapInstance map = this._mapFactory.Create(Path.Combine(GameResourcesConstants.Paths.MapsPath, mapName), mapName, mapId);
 
                 map.CreateMapLayer();
-                // TODO: start update task
+                map.StartUpdateTask();
 
                 _maps.Add(mapId, map);
             }

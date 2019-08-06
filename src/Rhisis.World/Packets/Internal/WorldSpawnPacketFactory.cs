@@ -1,5 +1,6 @@
-﻿using Rhisis.Core.Data;
-using Rhisis.Core.Resources;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Rhisis.Core.Data;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Core;
@@ -9,15 +10,13 @@ using Rhisis.World.Systems.Inventory;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rhisis.World.Packets
+namespace Rhisis.World.Packets.Internal
 {
-    public static partial class WorldPacketFactory
+    [Injectable(ServiceLifetime.Singleton)]
+    public sealed class WorldSpawnPacketFactory : IWorldSpawnPacketFactory
     {
-        /// <summary>
-        /// Send the spawn packet to the current player.
-        /// </summary>
-        /// <param name="player">Current player</param>
-        public static void SendPlayerSpawn(IPlayerEntity player)
+        /// <inheritdoc />
+        public void SendPlayerSpawn(IPlayerEntity player)
         {
             using (var packet = new FFPacket())
             {
@@ -100,7 +99,7 @@ namespace Rhisis.World.Packets
 
                 packet.Write(0); // guild war state
 
-                for (int i = 0; i < 26; ++i)
+                for (var i = 0; i < 26; ++i)
                     packet.Write(0);
 
                 packet.Write((short)player.Health.Mp); // MP
@@ -114,7 +113,7 @@ namespace Rhisis.World.Packets
                 packet.Write<long>(0); // death exp
                 packet.Write(0); // death level
 
-                for (int i = 0; i < 32; ++i)
+                for (var i = 0; i < 32; ++i)
                     packet.Write(0); // job in each level
 
                 packet.Write(0); // marking world id
@@ -136,7 +135,7 @@ namespace Rhisis.World.Packets
                     packet.Write(item.Id);
 
                 // skills
-                for (int i = 0; i < 45; ++i)
+                for (var i = 0; i < 45; ++i)
                 {
                     packet.Write(-1); // skill id
                     packet.Write(0); // skill level
@@ -147,9 +146,9 @@ namespace Rhisis.World.Packets
 
                 // Bank
                 packet.Write((byte)player.PlayerData.Slot);
-                for (int i = 0; i < 3; ++i)
+                for (var i = 0; i < 3; ++i)
                     packet.Write(0); // gold
-                for (int i = 0; i < 3; ++i)
+                for (var i = 0; i < 3; ++i)
                     packet.Write(0); // player bank ?
 
                 packet.Write(1); // ar << m_nPlusMaxHitPoint
@@ -163,12 +162,12 @@ namespace Rhisis.World.Packets
                 player.Inventory.Serialize(packet);
 
                 // Bank
-                for (int i = 0; i < 3; ++i)
+                for (var i = 0; i < 3; ++i)
                 {
-                    for (int j = 0; j < 0x2A; ++j)
+                    for (var j = 0; j < 0x2A; ++j)
                         packet.Write(j);
                     packet.Write<byte>(0); // count
-                    for (int j = 0; j < 0x2A; ++j)
+                    for (var j = 0; j < 0x2A; ++j)
                         packet.Write(j);
                 }
 
@@ -176,20 +175,16 @@ namespace Rhisis.World.Packets
 
                 // Bag
                 packet.Write<byte>(1);
-                for (int i = 0; i < 6; i++)
-                {
+                for (var i = 0; i < 6; i++)
                     packet.Write(i);
-                }
                 packet.Write<byte>(0); // Base bag item count
-                for (int i = 0; i < 0; i++)
+                for (var i = 0; i < 0; i++)
                 {
                     packet.Write((byte)i); // Slot
                     packet.Write(i); // Slot
                 }
-                for (int i = 0; i < 6; i++)
-                {
+                for (var i = 0; i < 6; i++)
                     packet.Write(i);
-                }
                 packet.Write(0);
                 packet.Write(0);
 
@@ -199,7 +194,7 @@ namespace Rhisis.World.Packets
                 packet.Write(0); // muted
 
                 // Honor titles
-                for (int i = 0; i < 150; ++i)
+                for (var i = 0; i < 150; ++i)
                     packet.Write(0);
 
                 packet.Write(0); // id campus
@@ -221,12 +216,8 @@ namespace Rhisis.World.Packets
             }
         }
 
-        /// <summary>
-        /// Sends the spawn object to the current player.
-        /// </summary>
-        /// <param name="player">Current player</param>
-        /// <param name="entityToSpawn">Entity to spawn</param>
-        public static void SendSpawnObjectTo(IPlayerEntity player, IWorldEntity entityToSpawn)
+        /// <inheritdoc />
+        public void SendSpawnObjectTo(IPlayerEntity player, IWorldEntity entityToSpawn)
         {
             using (var packet = new FFPacket())
             {
@@ -295,21 +286,19 @@ namespace Rhisis.World.Packets
                     foreach (var item in equipedItems)
                         packet.Write(item.Refines);
 
-                    for (int i = 0; i < 28; i++)
+                    for (var i = 0; i < 28; i++)
                         packet.Write(0);
 
                     // Serialize Equiped items
                     packet.Write((byte)equipedItems.Count(x => x.Id != -1));
 
                     foreach (var item in equipedItems)
-                    {
                         if (item != null && item.Id > 0)
                         {
                             packet.Write((byte)(item.Slot - InventorySystemOld.EquipOffset));
                             packet.Write((short)item.Id);
                             packet.Write<byte>(0);
                         }
-                    }
 
                     packet.Write(-1); // pet ?
                     packet.Write(0); // buffs ?
@@ -332,13 +321,9 @@ namespace Rhisis.World.Packets
                     packet.Write(0);
                     packet.Write((byte)0);
                     if (entityToSpawn.Object.ModelId == 1021)
-                    {
                         packet.Write((byte)0);
-                    }
                     else
-                    {
                         packet.Write(false ? (byte)1 : (byte)0);
-                    }
                     packet.Write((byte)0);
                     packet.Write((byte)0);
                     packet.Write(0);
@@ -377,12 +362,8 @@ namespace Rhisis.World.Packets
             }
         }
 
-        /// <summary>
-        /// Sends the despawn object to the current player.
-        /// </summary>
-        /// <param name="player">Current player</param>
-        /// <param name="entityToDespawn">Entity to despawn</param>
-        public static void SendDespawnObjectTo(IPlayerEntity player, IWorldEntity entityToDespawn)
+        /// <inheritdoc />
+        public void SendDespawnObjectTo(IPlayerEntity player, IWorldEntity entityToDespawn)
         {
             using (var packet = new FFPacket())
             {

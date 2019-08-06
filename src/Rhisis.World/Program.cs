@@ -44,13 +44,13 @@ namespace Rhisis.World
                     services.AddGameResources();
                     services.AddInjectableServices();
 
-                    // Core client configuration
-                    services.AddSingleton<IWorldCoreClient, WorldCoreClient>();
-                    services.AddSingleton<IHostedService, WorldCoreClientService>();
-
                     // World server configuration
                     services.AddSingleton<IWorldServer, WorldServer>();
                     services.AddSingleton<IHostedService, WorldServerService>();
+
+                    // Core client configuration
+                    services.AddSingleton<IWorldCoreClient, WorldCoreClient>();
+                    services.AddSingleton<IHostedService, WorldCoreClientService>();
                 })
                 .ConfigureLogging(builder =>
                 {

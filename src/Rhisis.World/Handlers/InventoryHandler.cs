@@ -16,7 +16,7 @@ namespace Rhisis.World.Handlers
             var moveItemPacket = new MoveItemPacket(packet);
             var inventoryEvent = new InventoryMoveEventArgs(moveItemPacket.SourceSlot, moveItemPacket.DestinationSlot);
 
-            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEvent);
+            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
         }
 
         [PacketHandler(PacketType.DOEQUIP)]
@@ -25,7 +25,7 @@ namespace Rhisis.World.Handlers
             var equipItemPacket = new EquipItemPacket(packet);
             var inventoryEvent = new InventoryEquipEventArgs(equipItemPacket.UniqueId, equipItemPacket.Part);
 
-            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEvent);
+            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
         }
 
         [PacketHandler(PacketType.DROPITEM)]
@@ -34,7 +34,7 @@ namespace Rhisis.World.Handlers
             var dropItemPacket = new DropItemPacket(packet);
             var inventoryEvent = new InventoryDropItemEventArgs(dropItemPacket.ItemId, dropItemPacket.ItemQuantity);
 
-            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEvent);
+            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
         }
 
         [PacketHandler(PacketType.DOUSEITEM)]
@@ -43,7 +43,7 @@ namespace Rhisis.World.Handlers
             var useItemPacket = new DoUseItemPacket(packet);
             var inventoryEvent = new InventoryUseItemEventArgs(useItemPacket.UniqueItemId, useItemPacket.Part);
 
-            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEvent);
+            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
         }
     }
 }

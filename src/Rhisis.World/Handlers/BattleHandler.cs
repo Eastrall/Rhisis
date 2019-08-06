@@ -31,7 +31,7 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            Item weaponItem = client.Player.Inventory.GetItem(x => x.Slot == InventorySystem.RightWeaponSlot) ?? InventorySystem.Hand;
+            Item weaponItem = client.Player.Inventory.GetItem(x => x.Slot == InventorySystemOld.RightWeaponSlot) ?? InventorySystemOld.Hand;
 
             if (weaponItem != null && weaponItem.Data?.AttackSpeed != meleePacket.WeaponAttackSpeed)
             {

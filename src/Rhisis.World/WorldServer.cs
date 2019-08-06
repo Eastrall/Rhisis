@@ -49,6 +49,7 @@ namespace Rhisis.World
             this.Configuration.MaximumNumberOfConnections = MaxConnections;
             this.Configuration.Backlog = ClientBacklog;
             this.Configuration.BufferSize = ClientBufferSize;
+            this.Configuration.Blocking = false;
         }
 
         /// <inheritdoc />
@@ -96,32 +97,15 @@ namespace Rhisis.World
             this._logger.LogError("WorldServer Error: {0}", exception.Message);
         }
 
-        /// <summary>
-        /// Gets a player entity by his id.
-        /// </summary>
-        /// <param name="id">Player id</param>
-        /// <returns></returns>
-        public IPlayerEntity GetPlayerEntity(uint id)
-        {
-            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.Id == id);
-            return client?.Player;
-        }
+        /// <inheritdoc />
+        public IPlayerEntity GetPlayerEntity(uint id) => this.Clients.FirstOrDefault(x => x.Player.Id == id)?.Player;
 
-        /// <summary>
-        /// Gets a player entity by his name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public IPlayerEntity GetPlayerEntity(string name)
-        {
-            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.Object.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            return client?.Player;
-        }
+        /// <inheritdoc />
+        public IPlayerEntity GetPlayerEntity(string name) 
+            => this.Clients.FirstOrDefault(x => x.Player.Object.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Player;
 
-        public IPlayerEntity GetPlayerEntityByCharacterId(uint id)
-        {
-            WorldClient client = this.Clients.FirstOrDefault(x => x.Player.PlayerData.Id == id);
-            return client?.Player;
-        }
+        /// <inheritdoc />
+        public IPlayerEntity GetPlayerEntityByCharacterId(uint id) 
+            => this.Clients.FirstOrDefault(x => x.Player.PlayerData.Id == id)?.Player;
     }
 }

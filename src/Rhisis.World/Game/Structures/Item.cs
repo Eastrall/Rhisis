@@ -237,7 +237,7 @@ namespace Rhisis.World.Game.Structures
                 this.ElementRefine, this.ExtraUsed);
         }
 
-        public bool IsEquipped() => this.Slot > InventorySystem.EquipOffset;
+        public bool IsEquipped() => this.Slot > InventorySystemOld.EquipOffset;
 
         /// <summary>
         /// Reset the item.

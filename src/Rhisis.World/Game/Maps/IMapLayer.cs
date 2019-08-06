@@ -17,5 +17,10 @@ namespace Rhisis.World.Game.Maps
         /// Gets the regions of the current layer.
         /// </summary>
         ICollection<IMapRegion> Regions { get; }
+
+        /// <summary>
+        /// Updates the layer entities.
+        /// </summary>
+        void Update();
     }
 }

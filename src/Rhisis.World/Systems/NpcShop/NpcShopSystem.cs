@@ -141,7 +141,7 @@ namespace Rhisis.World.Systems.NpcShop
 
             if (e.ItemData.IsStackable)
             {
-                for (var i = 0; i < InventorySystem.EquipOffset; i++)
+                for (var i = 0; i < InventorySystemOld.EquipOffset; i++)
                 {
                     Item inventoryItem = player.Inventory.Items[i];
 

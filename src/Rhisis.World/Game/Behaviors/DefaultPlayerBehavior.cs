@@ -6,6 +6,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Inventory.EventArgs;
+using Rhisis.World.Systems.Mobility;
 using Rhisis.World.Systems.Recovery;
 using Rhisis.World.Systems.Recovery.EventArgs;
 
@@ -15,15 +16,18 @@ namespace Rhisis.World.Game.Behaviors
     public sealed class DefaultPlayerBehavior : IBehavior
     {
         private readonly IPlayerEntity _player;
+        private readonly IMobilitySystem _mobilitySystem;
 
-        public DefaultPlayerBehavior(IPlayerEntity player)
+        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem)
         {
             this._player = player;
+            this._mobilitySystem = mobilitySystem;
         }
 
         /// <inheritdoc />
         public void Update()
         {
+            this._mobilitySystem.CalculatePosition(this._player);
             this.ProcessIdleHeal(this._player);
         }
 
@@ -72,7 +76,7 @@ namespace Rhisis.World.Game.Behaviors
             else
             {
                 var inventoryItemCreationEvent = new InventoryCreateItemEventArgs(droppedItem.Drop.Item.Id, droppedItem.Drop.Item.Quantity, -1, droppedItem.Drop.Item.Refine);
-                SystemManager.Instance.Execute<InventorySystem>(player, inventoryItemCreationEvent);
+                SystemManager.Instance.Execute<InventorySystemOld>(player, inventoryItemCreationEvent);
                 WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 

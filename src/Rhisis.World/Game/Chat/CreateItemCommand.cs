@@ -46,7 +46,7 @@ namespace Rhisis.World.Game.Chat
                 int.TryParse(parameters[1], out quantity);
 
             var createItemEvent = new InventoryCreateItemEventArgs(itemId, quantity, player.PlayerData.Id);
-            SystemManager.Instance.Execute<InventorySystem>(player, createItemEvent);
+            SystemManager.Instance.Execute<InventorySystemOld>(player, createItemEvent);
         }
     }
 }

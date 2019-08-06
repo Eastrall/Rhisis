@@ -12,12 +12,10 @@ using Rhisis.Network.Packets.World;
 using Rhisis.World.Client;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
-using Rhisis.World.Systems.Inventory.EventArgs;
 using Rhisis.World.Systems.Recovery;
 using Sylver.HandlerInvoker.Attributes;
 using System;
@@ -34,16 +32,35 @@ namespace Rhisis.World.Handlers
         private readonly IGameResources _gameResources;
         private readonly IMapManager _mapManager;
         private readonly IBehaviorManager _behaviorManager;
+        private readonly IInventorySystem _inventorySystem;
+        private readonly IWorldSpawnPacketFactory _worldSpawnPacketFactory;
 
-        public JoinGameHandler(ILogger<JoinGameHandler> logger, IDatabase database, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager)
+        /// <summary>
+        /// Creates a new <see cref="JoinGameHandler"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="database">Database access layer.</param>
+        /// <param name="gameResources">Game resources.</param>
+        /// <param name="mapManager">Map manager.</param>
+        /// <param name="behaviorManager">Behavior manager.</param>
+        /// <param name="inventorySystem">Inventory system.</param>
+        /// <param name="worldSpawnPacketFactory">World spawn packet factory.</param>
+        public JoinGameHandler(ILogger<JoinGameHandler> logger, IDatabase database, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager, IInventorySystem inventorySystem, IWorldSpawnPacketFactory worldSpawnPacketFactory)
         {
             this._logger = logger;
             this._database = database;
             this._gameResources = gameResources;
             this._mapManager = mapManager;
             this._behaviorManager = behaviorManager;
+            this._inventorySystem = inventorySystem;
+            this._worldSpawnPacketFactory = worldSpawnPacketFactory;
         }
 
+        /// <summary>
+        /// Prepares the player to join the world.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming join packet.</param>
         [HandlerAction(PacketType.JOIN)]
         public void OnJoin(IWorldClient client, JoinPacket packet)
         {
@@ -94,7 +111,7 @@ namespace Rhisis.World.Handlers
                 Angle = character.Angle,
                 Size = 100,
                 Name = character.Name,
-                Spawned = false,
+                Spawned = true,
                 Level = character.Level,
                 MovingFlags = ObjectState.OBJSTA_STAND
             };
@@ -122,7 +139,7 @@ namespace Rhisis.World.Handlers
                 Gold = character.Gold,
                 Authority = (AuthorityType)character.User.Authority,
                 Experience = character.Experience,
-                JobId = character.ClassId
+                JobData = this._gameResources.Jobs[character.ClassId]
             };
 
             client.Player.Moves = new MovableComponent
@@ -145,8 +162,7 @@ namespace Rhisis.World.Handlers
             client.Player.Connection = client;
 
             // Initialize the inventory
-            var inventoryEventArgs = new InventoryInitializeEventArgs(character.Items);
-            SystemManager.Instance.Execute<InventorySystem>(client.Player, inventoryEventArgs);
+            this._inventorySystem.InitializeInventory(client.Player, character.Items);
 
             // Taskbar
             foreach (var applet in character.TaskbarShortcuts.Where(x => x.TargetTaskbar == ShortcutTaskbarTarget.Applet))
@@ -182,10 +198,10 @@ namespace Rhisis.World.Handlers
             client.Player.Taskbar.Queue.CreateShortcuts(list);
 
             // 3rd: spawn the player
-            WorldPacketFactory.SendPlayerSpawn(client.Player);
+            this._worldSpawnPacketFactory.SendPlayerSpawn(client.Player);
 
             // 4th: player is now spawned
-            client.Player.Object.Spawned = true;
+            mapLayer.AddEntity(client.Player);
             client.LoggedInAt = DateTime.UtcNow;
         }
     }

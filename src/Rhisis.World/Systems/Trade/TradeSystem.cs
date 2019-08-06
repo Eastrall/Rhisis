@@ -475,7 +475,7 @@ namespace Rhisis.World.Systems.Trade
         {
             if (player.Trade.ItemCount > 0 &&
                 (!target.Inventory.HasAvailableSlots() ||
-                 (InventorySystem.InventorySize - target.Inventory.GetItemCount()) < player.Trade.ItemCount))
+                 (InventorySystemOld.InventorySize - target.Inventory.GetItemCount()) < player.Trade.ItemCount))
             {
                 CancelTrade(player, target);
                 return false;
@@ -483,7 +483,7 @@ namespace Rhisis.World.Systems.Trade
 
             if (target.Trade.ItemCount > 0 &&
                 (!player.Inventory.HasAvailableSlots() ||
-                 (InventorySystem.InventorySize - player.Inventory.GetItemCount()) < target.Trade.ItemCount))
+                 (InventorySystemOld.InventorySize - player.Inventory.GetItemCount()) < target.Trade.ItemCount))
             {
                 CancelTrade(player, target);
                 return false;

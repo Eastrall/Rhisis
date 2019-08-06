@@ -28,8 +28,8 @@ namespace Rhisis.World.Systems.Inventory.EventArgs
         /// <inheritdoc />
         public override bool GetCheckArguments()
         {
-            return SourceSlot < InventorySystem.EquipOffset &&
-               DestinationSlot < InventorySystem.EquipOffset;
+            return SourceSlot < InventorySystemOld.EquipOffset &&
+               DestinationSlot < InventorySystemOld.EquipOffset;
         }
     }
 }

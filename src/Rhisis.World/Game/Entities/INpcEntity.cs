@@ -20,11 +20,6 @@ namespace Rhisis.World.Game.Entities
         NpcData Data { get; }
 
         /// <summary>
-        /// Gets the NPC behavior.
-        /// </summary>
-        IBehavior Behavior { get; set; }
-
-        /// <summary>
         /// Gets or sets the NPC timers.
         /// </summary>
         NpcTimerComponent Timers { get; set; }

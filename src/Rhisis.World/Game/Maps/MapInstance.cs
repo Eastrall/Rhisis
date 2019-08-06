@@ -1,11 +1,14 @@
 ﻿using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
+using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps.Regions;
+using Rhisis.World.Systems.Visibility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Rhisis.World.Game.Maps
 {
@@ -13,7 +16,7 @@ namespace Rhisis.World.Game.Maps
     {
         private const int DefaultMapLayerId = 1;
         private const int MapLandSize = 128;
-        private const int FrameRate = 60;
+        private const int FrameRate = 15;
         private const double UpdateRate = 1000f / FrameRate;
 
         private readonly ConcurrentDictionary<int, IMapLayer> _layers;
@@ -136,11 +139,33 @@ namespace Rhisis.World.Game.Maps
             return true;
         }
 
+        /// <inheritdoc />
         public void StartUpdateTask()
         {
-            throw new System.NotImplementedException();
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    // TODO: update map entities behavior
+                    foreach (var worldEntity in this.Entities)
+                    {
+                        if (worldEntity.Value is ILivingEntity livingEntity)
+                        {
+                            livingEntity.Behavior?.Update();
+                        }
+                    }
+
+                    foreach (var layer in this._layers)
+                    {
+                        layer.Value.Update();
+                    }
+
+                    await Task.Delay((int)UpdateRate);
+                }
+            });
         }
 
+        /// <inheritdoc />
         public void StopUpdateTask()
         {
             throw new System.NotImplementedException();
