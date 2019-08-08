@@ -36,6 +36,10 @@ namespace Rhisis.World.Game.Entities
             => (TEntity)this.Object.Entities.FirstOrDefault(x => x is TEntity && x.Id == id);
 
         /// <inheritdoc />
+        public TEntity FindEntity<TEntity>(Func<TEntity, bool> predicate) where TEntity : IWorldEntity
+            => (TEntity)this.Object.Entities.FirstOrDefault(x => x is TEntity entity && predicate(entity));
+
+        /// <inheritdoc />
         public void Delete()
         {
             this.Object.CurrentMap.DeleteEntity(this);

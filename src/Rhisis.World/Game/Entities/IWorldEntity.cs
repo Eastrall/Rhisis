@@ -40,6 +40,14 @@ namespace Rhisis.World.Game.Entities
         TEntity FindEntity<TEntity>(uint id) where TEntity : IWorldEntity;
 
         /// <summary>
+        /// Finds an entity matching the predicate in the spawn list of the current entity.
+        /// </summary>
+        /// <typeparam name="TEntity">Entity type.</typeparam>
+        /// <param name="predicate">Matching predicate.</param>
+        /// <returns>Entity.</returns>
+        TEntity FindEntity<TEntity>(Func<TEntity, bool> predicate) where TEntity : IWorldEntity;
+
+        /// <summary>
         /// Delete this entity from the current map.
         /// </summary>
         void Delete();

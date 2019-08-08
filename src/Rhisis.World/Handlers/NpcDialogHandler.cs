@@ -1,21 +1,40 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
-using Rhisis.World.Systems.NpcDialog;
+using Rhisis.World.Client;
+using Rhisis.World.Systems.Dialog;
+using Sylver.HandlerInvoker.Attributes;
+using System;
 
 namespace Rhisis.World.Handlers
 {
-    public static class NpcDialogHandler
+    [Handler]
+    public class NpcDialogHandler
     {
-        [PacketHandler(PacketType.SCRIPTDLG)]
-        public static void OnDialogScript(WorldClient client, INetPacketStream packet)
-        {
-            var dialogPacket = new DialogPacket(packet);
-            var dialogEvent = new NpcDialogOpenEventArgs(dialogPacket.ObjectId, dialogPacket.Key);
+        private readonly IDialogSystem _dialogSystem;
 
-            SystemManager.Instance.Execute<NpcDialogSystem>(client.Player, dialogEvent);
+        /// <summary>
+        /// Creates a new <see cref="NpcDialogHandler"/> instance.
+        /// </summary>
+        /// <param name="dialogSystem">Dialog system.</param>
+        public NpcDialogHandler(IDialogSystem dialogSystem)
+        {
+            this._dialogSystem = dialogSystem;
+        }
+
+        /// <summary>
+        /// Opens a dialog script.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming <see cref="DialogPacket"/>.</param>
+        [HandlerAction(PacketType.SCRIPTDLG)]
+        public void OnDialogScript(IWorldClient client, DialogPacket packet)
+        {
+            if (packet.ObjectId <= 0)
+            {
+                throw new ArgumentException("Invalid object id.");
+            }
+
+            this._dialogSystem.OpenNpcDialog(client.Player, packet.ObjectId, packet.Key);
         }
     }
 }

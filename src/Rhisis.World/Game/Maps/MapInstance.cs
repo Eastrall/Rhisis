@@ -3,7 +3,6 @@ using Rhisis.Core.Structures;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps.Regions;
-using Rhisis.World.Systems.Visibility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -146,21 +145,27 @@ namespace Rhisis.World.Game.Maps
             {
                 while (true)
                 {
-                    // TODO: update map entities behavior
-                    foreach (var worldEntity in this.Entities)
+                    try
                     {
-                        if (worldEntity.Value is ILivingEntity livingEntity)
+                        foreach (var worldEntity in this.Entities)
                         {
-                            livingEntity.Behavior?.Update();
+                            if (worldEntity.Value is ILivingEntity livingEntity)
+                            {
+                                livingEntity.Behavior?.Update();
+                            }
                         }
-                    }
 
-                    foreach (var layer in this._layers)
+                        foreach (var layer in this._layers)
+                        {
+                            layer.Value.Update();
+                        }
+
+                        await Task.Delay((int)UpdateRate);
+                    }
+                    catch (Exception e)
                     {
-                        layer.Value.Update();
+                        
                     }
-
-                    await Task.Delay((int)UpdateRate);
                 }
             });
         }
@@ -186,5 +191,7 @@ namespace Rhisis.World.Game.Maps
 
             this.Regions = regions;
         }
+
+        public override string ToString() => this.Name;
     }
 }

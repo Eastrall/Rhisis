@@ -1,31 +1,24 @@
-﻿using System;
-using Ether.Network.Packets;
+﻿using Ether.Network.Packets;
 
 namespace Rhisis.Network.Packets.World
 {
-    public struct SellItemPacket : IEquatable<SellItemPacket>
+    public class SellItemPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the item's unique id.
         /// </summary>
-        public byte ItemUniqueId { get; }
+        public byte ItemUniqueId { get; set; }
 
         /// <summary>
         /// Gets the item quantity to sell.
         /// </summary>
-        public short Quantity { get; }
+        public short Quantity { get; set; }
 
-        /// <summary>
-        /// Creates a new <see cref="SellItemPacket"/> instance.
-        /// </summary>
-        /// <param name="packet"></param>
-        public SellItemPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.ItemUniqueId = packet.Read<byte>();
             this.Quantity = packet.Read<short>();
         }
-
-        /// <inheritdoc />
-        public bool Equals(SellItemPacket other) => this.ItemUniqueId == other.ItemUniqueId && this.Quantity == other.Quantity;
     }
 }

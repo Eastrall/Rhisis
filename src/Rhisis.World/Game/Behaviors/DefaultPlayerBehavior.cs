@@ -94,7 +94,7 @@ namespace Rhisis.World.Game.Behaviors
             {
                 if (!player.Battle.IsFighting)
                 {
-                    SystemManager.Instance.Execute<RecoverySystem>(player, new IdleRecoveryEventArgs(isSitted: false));
+                    //SystemManager.Instance.Execute<RecoverySystem>(player, new IdleRecoveryEventArgs(isSitted: false));
                 }
             }
         }

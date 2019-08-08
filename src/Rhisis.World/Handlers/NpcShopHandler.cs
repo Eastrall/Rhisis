@@ -1,46 +1,67 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Client;
 using Rhisis.World.Systems.NpcShop;
-using Rhisis.World.Systems.NpcShop.EventArgs;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    public static class NpcShopHandler
+    [Handler]
+    public sealed class NpcShopHandler
     {
-        [PacketHandler(PacketType.OPENSHOPWND)]
-        public static void OnOpenShopWindow(WorldClient client, INetPacketStream packet)
-        {
-            var openShopPacket = new OpenShopWindowPacket(packet);
-            var npcEvent = new NpcShopOpenEventArgs(openShopPacket.ObjectId);
+        private readonly INpcShopSystem _npcShopSystem;
 
-            SystemManager.Instance.Execute<NpcShopSystem>(client.Player, npcEvent);
+        /// <summary>
+        /// Creates a new <see cref="NpcShopHandler"/>.
+        /// </summary>
+        /// <param name="npcShopSystem"></param>
+        public NpcShopHandler(INpcShopSystem npcShopSystem)
+        {
+            this._npcShopSystem = npcShopSystem;
         }
 
-        [PacketHandler(PacketType.CLOSESHOPWND)]
-        public static void OnCloseShopWindow(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Player requests to open a NPC shop.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming packet.</param>
+        [HandlerAction(PacketType.OPENSHOPWND)]
+        public void OnOpenShopWindow(IWorldClient client, OpenShopWindowPacket packet)
         {
-            SystemManager.Instance.Execute<NpcShopSystem>(client.Player, new NpcShopCloseEventArgs());
+            this._npcShopSystem.OpenShop(client.Player, packet.ObjectId);
         }
 
-        [PacketHandler(PacketType.BUYITEM)]
-        public static void OnBuyItem(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Player closes a opened NPC shop.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming packet.</param>
+        [HandlerAction(PacketType.CLOSESHOPWND)]
+        public void OnCloseShopWindow(IWorldClient client)
         {
-            var buyItemPacket = new BuyItemPacket(packet);
-            var npcShopEvent = new NpcShopBuyEventArgs(buyItemPacket.ItemId, buyItemPacket.Quantity, buyItemPacket.Tab, buyItemPacket.Slot);
-
-            SystemManager.Instance.Execute<NpcShopSystem>(client.Player, npcShopEvent);
+            this._npcShopSystem.CloseShop(client.Player);
         }
 
-        [PacketHandler(PacketType.SELLITEM)]
-        public static void OnSellItem(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Player buys an item from a NPC shop.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming packet.</param>
+        [HandlerAction(PacketType.BUYITEM)]
+        public void OnBuyItem(IWorldClient client, BuyItemPacket packet)
         {
-            var sellItemPacket = new SellItemPacket(packet);
-            var npcShopEvent = new NpcShopSellEventArgs(sellItemPacket.ItemUniqueId, sellItemPacket.Quantity);
+            this._npcShopSystem.BuyItem(client.Player);
+        }
 
-            SystemManager.Instance.Execute<NpcShopSystem>(client.Player, npcShopEvent);
+        /// <summary>
+        /// Player sells an item at a NPC shop.
+        /// </summary>
+        /// <param name="client">Client.</param>
+        /// <param name="packet">Incoming packet.</param>
+        [HandlerAction(PacketType.SELLITEM)]
+        public void OnSellItem(IWorldClient client, SellItemPacket packet)
+        {
+            this._npcShopSystem.SellItem(client.Player);
         }
     }
 }

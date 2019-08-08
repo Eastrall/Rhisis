@@ -1,49 +1,36 @@
 ﻿using Ether.Network.Packets;
-using System;
 
 namespace Rhisis.Network.Packets.World
 {
-    public struct BuyItemPacket : IEquatable<BuyItemPacket>
+    public class BuyItemPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the tab.
         /// </summary>
-        public byte Tab { get; }
+        public byte Tab { get; set; }
 
         /// <summary>
         /// Gets the slot of the item.
         /// </summary>
-        public byte Slot { get; }
+        public byte Slot { get; set; }
 
         /// <summary>
         /// Gets the quantity of items.
         /// </summary>
-        public short Quantity { get; }
+        public short Quantity { get; set; }
 
         /// <summary>
         /// Gets the Item Id.
         /// </summary>
-        public int ItemId { get; }
-        
-        /// <summary>
-        /// Creates a new <see cref="BuyItemPacket"/> instance.
-        /// </summary>
-        /// <param name="packet">Incoming packet stream</param>
-        public BuyItemPacket(INetPacketStream packet)
+        public int ItemId { get; set; }
+
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.Tab = packet.Read<byte>();
             this.Slot = packet.Read<byte>();
             this.Quantity = packet.Read<short>();
             this.ItemId = packet.Read<int>();
-        }
-        
-        /// <inheritdoc />
-        public bool Equals(BuyItemPacket other)
-        {
-            return this.Tab == other.Tab 
-                && this.Slot == other.Slot 
-                && this.Quantity == other.Quantity
-                && this.ItemId == other.ItemId;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Rhisis.World.Game.Factories
             npc.Behavior = behaviorManager.GetBehavior(BehaviorType.Npc, npc, npc.Object.ModelId);
             npc.Timers.LastSpeakTime = RandomHelper.Random(10, 15);
 
-            if (!this._gameResources.Npcs.TryGetValue(npc.Object.Name, out NpcData npcData))
+            if (this._gameResources.Npcs.TryGetValue(npc.Object.Name, out NpcData npcData))
             {
                 npc.Data = npcData;
             }

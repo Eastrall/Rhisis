@@ -109,7 +109,7 @@ namespace Rhisis.World.Handlers
                 LayerId = mapLayer.Id,
                 Position = new Vector3(character.PosX, character.PosY, character.PosZ),
                 Angle = character.Angle,
-                Size = 100,
+                Size = ObjectComponent.DefaultObjectSize,
                 Name = character.Name,
                 Spawned = true,
                 Level = character.Level,

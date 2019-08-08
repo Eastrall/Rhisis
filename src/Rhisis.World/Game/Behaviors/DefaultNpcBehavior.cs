@@ -15,7 +15,7 @@ namespace Rhisis.World.Game.Behaviors
     [Behavior(BehaviorType.Npc, IsDefault: true)]
     public class DefaultNpcBehavior : IBehavior
     {
-        private static readonly float OralTextRadius = 50f;
+        private const float OralTextRadius = 50f;
 
         private readonly INpcEntity _npc;
 
@@ -27,7 +27,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <inheritdoc />
         public void Update()
         {
-            this.UpdateOralText(this._npc);
+            this.UpdateOralText();
         }
 
         /// <inheritdoc />
@@ -39,26 +39,28 @@ namespace Rhisis.World.Game.Behaviors
         /// <summary>
         /// Update NPC oral text.
         /// </summary>
-        /// <param name="npc">NPC Entity</param>
-        private void UpdateOralText(INpcEntity npc)
+        private void UpdateOralText()
         {
-            if (npc.Timers.LastSpeakTime <= Time.TimeInSeconds())
+            if (this._npc.Data == null)
+                return;
+
+            if (this._npc.Timers.LastSpeakTime <= Time.TimeInSeconds())
             {
-                if (npc.Data != null && npc.Data.HasDialog && !string.IsNullOrEmpty(npc.Data.Dialog.OralText))
+                if (this._npc.Data.HasDialog && !string.IsNullOrEmpty(this._npc.Data.Dialog.OralText))
                 {
-                    IEnumerable<IPlayerEntity> playersArount = from x in npc.Object.Entities
-                                                               where x.Object.Position.IsInCircle(npc.Object.Position, OralTextRadius) &&
+                    IEnumerable<IPlayerEntity> playersArount = from x in this._npc.Object.Entities
+                                                               where x.Object.Position.IsInCircle(this._npc.Object.Position, OralTextRadius) &&
                                                                x is IPlayerEntity
                                                                select x as IPlayerEntity;
 
                     foreach (IPlayerEntity player in playersArount)
                     {
-                        string text = npc.Data.Dialog.OralText.Replace(DialogVariables.PlayerNameText, player.Object.Name);
+                        string text = this._npc.Data.Dialog.OralText.Replace(DialogVariables.PlayerNameText, player.Object.Name);
 
-                        WorldPacketFactory.SendChatTo(npc, player, text);
+                        WorldPacketFactory.SendChatTo(this._npc, player, text);
                     }
 
-                    npc.Timers.LastSpeakTime = Time.TimeInSeconds() + RandomHelper.Random(10, 15);
+                    this._npc.Timers.LastSpeakTime = Time.TimeInSeconds() + RandomHelper.Random(10, 15);
                 }
             }
         }
