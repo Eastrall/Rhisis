@@ -2,11 +2,14 @@
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Core;
+using Rhisis.World.Systems.PlayerData;
 
 namespace Rhisis.World.Game.Entities
 {
     public class PlayerEntity : WorldEntity, IPlayerEntity
     {
+        private readonly IPlayerDataSystem _playerDataSystem;
+
         /// <inheritdoc />
         public override WorldEntityType Type => WorldEntityType.Player;
 
@@ -62,7 +65,7 @@ namespace Rhisis.World.Game.Entities
         /// Creates a new <see cref="PlayerEntity"/> instance.
         /// </summary>
         /// <param name="context"></param>
-        public PlayerEntity()
+        public PlayerEntity(IPlayerDataSystem playerDataSystem)
         {
             this.Moves = new MovableComponent();
             this.PlayerData = new PlayerDataComponent();
@@ -75,6 +78,17 @@ namespace Rhisis.World.Game.Entities
             this.Health = new HealthComponent();
             this.Timers = new TimerComponent();
             this.Attributes = new AttributeComponent();
+            this._playerDataSystem = playerDataSystem;
+        }
+
+        /// <summary>
+        /// Dispose the <see cref="PlayerEntity"/> resources.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            this._playerDataSystem.SavePlayer(this);
+            base.Dispose(disposing);
         }
     }
 }

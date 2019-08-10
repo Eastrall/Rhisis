@@ -1,38 +1,24 @@
 ﻿using Ether.Network.Packets;
-using System;
 
 namespace Rhisis.Network.Packets.World
 {
-    public struct EquipItemPacket : IEquatable<EquipItemPacket>
+    public class EquipItemPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the item unique id.
         /// </summary>
-        public int UniqueId { get; }
+        public int UniqueId { get; private set; }
 
         /// <summary>
         /// Gets the equip item destination part.
         /// </summary>
-        public int Part { get; }
+        public int Part { get; private set; }
 
-        /// <summary>
-        /// Creates a new <see cref="EquipItemPacket"/> instance.
-        /// </summary>
-        /// <param name="packet"></param>
-        public EquipItemPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.UniqueId = packet.Read<int>();
             this.Part = packet.Read<int>();
-        }
-
-        /// <summary>
-        /// Comapares two 
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(EquipItemPacket other)
-        {
-            throw new NotImplementedException();
         }
     }
 }

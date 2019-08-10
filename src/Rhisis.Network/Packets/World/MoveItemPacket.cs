@@ -1,47 +1,33 @@
 ﻿using Ether.Network.Packets;
-using System;
 
 namespace Rhisis.Network.Packets.World
 {
     /// <summary>
     /// Defines the <see cref="MoveItemPacket"/> structure.
     /// </summary>
-    public struct MoveItemPacket : IEquatable<MoveItemPacket>
+    public class MoveItemPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the Item type.
         /// </summary>
-        public byte ItemType { get; }
+        public byte ItemType { get; private set; }
 
         /// <summary>
         /// Gets the Item source slot.
         /// </summary>
-        public byte SourceSlot { get; }
+        public byte SourceSlot { get; private set; }
 
         /// <summary>
         /// Gets the item destination slot.
         /// </summary>
-        public byte DestinationSlot { get; }
+        public byte DestinationSlot { get; private set; }
 
-        /// <summary>
-        /// Creates a new <see cref="MoveItemPacket"/> instance.
-        /// </summary>
-        /// <param name="packet"></param>
-        public MoveItemPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.ItemType = packet.Read<byte>();
             this.SourceSlot = packet.Read<byte>();
             this.DestinationSlot = packet.Read<byte>();
-        }
-
-        /// <summary>
-        /// Compares two <see cref="MoveItemPacket"/> instance.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(MoveItemPacket other)
-        {
-            throw new NotImplementedException();
         }
     }
 }

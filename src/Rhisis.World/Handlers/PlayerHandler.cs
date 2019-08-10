@@ -43,7 +43,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryPlayerDataPacket = new QueryPlayerDataPacket(packet);
             var queryPlayerDataEvent = new QueryPlayerDataEventArgs(onQueryPlayerDataPacket.PlayerId, onQueryPlayerDataPacket.Version);
-            SystemManager.Instance.Execute<PlayerDataSystem>(client.Player, queryPlayerDataEvent);
+            SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerDataEvent);
         }
 
         [PacketHandler(PacketType.QUERY_PLAYER_DATA2)]
@@ -51,7 +51,7 @@ namespace Rhisis.World.Handlers
         {
             var onQueryPlayerData2Packet = new QueryPlayerData2Packet(packet);
             var queryPlayerData2Event = new QueryPlayerData2EventArgs(onQueryPlayerData2Packet.Size, onQueryPlayerData2Packet.PlayerDictionary);
-            SystemManager.Instance.Execute<PlayerDataSystem>(client.Player, queryPlayerData2Event);
+            SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerData2Event);
         }
 
         [PacketHandler(PacketType.PLAYERMOVED)]

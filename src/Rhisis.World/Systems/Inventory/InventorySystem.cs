@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.Core.Resources;
+using Rhisis.Core.Extensions;
 using Rhisis.Core.Structures.Game;
 using Rhisis.Database.Entities;
 using Rhisis.World.Game.Components;
@@ -24,10 +24,12 @@ namespace Rhisis.World.Systems.Inventory
         public const int MaxHumanParts = MaxItems - EquipOffset;
         public static readonly Item Hand = new Item(11, 1, -1, RightWeaponSlot);
         private readonly IItemFactory _itemFactory;
+        private readonly IInventoryPacketFactory _inventoryPacketFactory;
 
-        public InventorySystem(IItemFactory itemFactory)
+        public InventorySystem(IItemFactory itemFactory, IInventoryPacketFactory inventoryPacketFactory)
         {
             this._itemFactory = itemFactory;
+            this._inventoryPacketFactory = inventoryPacketFactory;
         }
 
         /// <inheritdoc />
@@ -78,7 +80,7 @@ namespace Rhisis.World.Systems.Inventory
                             quantity = 0;
                         }
 
-                        WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.UniqueId, inventoryItem.Quantity);
+                        this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.UniqueId, inventoryItem.Quantity);
                     }
                 }
 
@@ -104,7 +106,7 @@ namespace Rhisis.World.Systems.Inventory
                         newItem.Slot = availableSlot;
                         player.Inventory[availableSlot] = newItem;
 
-                        WorldPacketFactory.SendItemCreation(player, newItem);
+                        this._inventoryPacketFactory.SendItemCreation(player, newItem);
 
                         createdAmount += quantity;
                     }
@@ -134,7 +136,7 @@ namespace Rhisis.World.Systems.Inventory
                     newItem.Slot = availableSlot;
                     player.Inventory[availableSlot] = newItem;
 
-                    WorldPacketFactory.SendItemCreation(player, newItem);
+                    this._inventoryPacketFactory.SendItemCreation(player, newItem);
 
                     createdAmount++;
                     quantity--;
@@ -159,12 +161,49 @@ namespace Rhisis.World.Systems.Inventory
 
             itemToDelete.Quantity -= quantityToDelete;
 
-            WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, itemToDelete.UniqueId, itemToDelete.Quantity);
+            this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, itemToDelete.UniqueId, itemToDelete.Quantity);
 
             if (itemToDelete.Quantity <= 0)
                 itemToDelete.Reset();
 
             return quantityToDelete;
+        }
+
+        /// <inheritdoc />
+        public void MoveItem(IPlayerEntity player, byte sourceSlot, byte destinationSlot)
+        {
+            if (sourceSlot < 0 || sourceSlot >= MaxItems)
+            {
+                throw new InvalidOperationException("Source slot is out of inventory range.");
+            }
+
+            if (destinationSlot < 0 || destinationSlot >= MaxItems)
+            {
+                throw new InvalidOperationException("Destination slot is out of inventory range.");
+            }
+
+            Item sourceItem = player.Inventory[sourceSlot];
+            Item destinationItem = player.Inventory[destinationSlot];
+
+            if (sourceItem.Id == destinationItem.Id && sourceItem.Data.IsStackable)
+            {
+                // TODO: stack items
+            }
+            else
+            {
+                sourceItem.Slot = destinationSlot;
+
+                if (destinationItem.Slot != -1)
+                    destinationItem.Slot = sourceSlot;
+
+                player.Inventory.Items.Swap(sourceSlot, destinationSlot);
+                this._inventoryPacketFactory.SendItemMove(player, sourceSlot, destinationSlot);
+            }
+        }
+
+        public void EquipItem(IPlayerEntity player, int itemUniqueId, int equipPart)
+        {
+            throw new NotImplementedException();
         }
     }
 }

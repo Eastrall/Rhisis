@@ -5,7 +5,7 @@ using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
 
-namespace Rhisis.World.Packets
+namespace Rhisis.World.Packets.Internal
 {
     [Injectable(ServiceLifetime.Singleton)]
     public sealed class MoverPacketFactory : IMoverPacketFactory

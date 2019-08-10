@@ -1,6 +1,7 @@
 ﻿using Rhisis.Core.Common;
 using Rhisis.Core.Data;
 using Rhisis.Core.Structures.Game;
+using System;
 
 namespace Rhisis.World.Game.Components
 {
@@ -15,6 +16,11 @@ namespace Rhisis.World.Game.Components
         /// Gets or sets the player's id.
         /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time the player has logged in.
+        /// </summary>
+        public DateTime LoggedInAt { get; set; }
 
         /// <summary>
         /// Gets or sets the player's slot.

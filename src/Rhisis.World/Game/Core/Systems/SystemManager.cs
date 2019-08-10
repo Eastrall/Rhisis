@@ -64,10 +64,10 @@ namespace Rhisis.World.Game.Core.Systems
         /// <param name="args">System arguments</param>
         public void Execute<TSystem>(IWorldEntity entity, SystemEventArgs args) where TSystem : ISystem
         {
-            if (this._notifiableSystems.TryGetValue(typeof(TSystem), out ISystem system))
-                system.Execute(entity, args);
-            else
-                throw new RhisisException($"Cannot find notifiable system with type: {typeof(TSystem).FullName}.");
+            //if (this._notifiableSystems.TryGetValue(typeof(TSystem), out ISystem system))
+            //    system.Execute(entity, args);
+            //else
+            //    throw new RhisisException($"Cannot find notifiable system with type: {typeof(TSystem).FullName}.");
         }
 
         /// <summary>

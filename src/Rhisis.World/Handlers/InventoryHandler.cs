@@ -1,49 +1,67 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Client;
 using Rhisis.World.Systems.Inventory;
-using Rhisis.World.Systems.Inventory.EventArgs;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    public static class InventoryHandler
+    [Handler]
+    public class InventoryHandler
     {
-        [PacketHandler(PacketType.MOVEITEM)]
-        public static void OnMoveItem(WorldClient client, INetPacketStream packet)
-        {
-            var moveItemPacket = new MoveItemPacket(packet);
-            var inventoryEvent = new InventoryMoveEventArgs(moveItemPacket.SourceSlot, moveItemPacket.DestinationSlot);
+        private readonly IInventorySystem _inventorySystem;
 
-            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
+        /// <summary>
+        /// Creates a new <see cref="InventoryHandler"/> instance.
+        /// </summary>
+        /// <param name="inventorySystem">Inventory System.</param>
+        public InventoryHandler(IInventorySystem inventorySystem)
+        {
+            this._inventorySystem = inventorySystem;
         }
 
-        [PacketHandler(PacketType.DOEQUIP)]
-        public static void OnDoEquip(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Handles the move item request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.MOVEITEM)]
+        public void OnMoveItem(IWorldClient client, MoveItemPacket packet)
         {
-            var equipItemPacket = new EquipItemPacket(packet);
-            var inventoryEvent = new InventoryEquipEventArgs(equipItemPacket.UniqueId, equipItemPacket.Part);
-
-            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
+            this._inventorySystem.MoveItem(client.Player, packet.SourceSlot, packet.DestinationSlot);
         }
 
-        [PacketHandler(PacketType.DROPITEM)]
-        public static void OnDropItem(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Handles the equip/unequip request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.DOEQUIP)]
+        public void OnDoEquip(IWorldClient client, EquipItemPacket packet)
         {
-            var dropItemPacket = new DropItemPacket(packet);
-            var inventoryEvent = new InventoryDropItemEventArgs(dropItemPacket.ItemId, dropItemPacket.ItemQuantity);
-
-            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
+            this._inventorySystem.EquipItem(client.Player, packet.UniqueId, packet.Part);
         }
 
-        [PacketHandler(PacketType.DOUSEITEM)]
-        public static void OnUseItem(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Handles the drop item request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.DROPITEM)]
+        public void OnDropItem(IWorldClient client, DropItemPacket packet)
         {
-            var useItemPacket = new DoUseItemPacket(packet);
-            var inventoryEvent = new InventoryUseItemEventArgs(useItemPacket.UniqueItemId, useItemPacket.Part);
+            // TODO
+        }
 
-            SystemManager.Instance.Execute<InventorySystemOld>(client.Player, inventoryEvent);
+        /// <summary>
+        /// Handles the use item request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.DOUSEITEM)]
+        public void OnUseItem(IWorldClient client, DoUseItemPacket packet)
+        {
+            // TODO
         }
     }
 }

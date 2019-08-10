@@ -78,11 +78,11 @@ namespace Rhisis.World
         /// <inheritdoc />
         protected override void OnClientConnected(WorldClient client)
         {
-            this._logger.LogInformation("New client connected from {0}.", client.RemoteEndPoint);
-
             client.Initialize(this._serviceProvider.GetRequiredService<ILogger<WorldClient>>(),
                 this._serviceProvider.GetRequiredService<IHandlerInvoker>());
             CommonPacketFactory.SendWelcome(client, client.SessionId);
+
+            this._logger.LogInformation("New client connected from {0}.", client.RemoteEndPoint);
         }
 
         /// <inheritdoc />

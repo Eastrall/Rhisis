@@ -20,10 +20,5 @@ namespace Rhisis.World.Client
         /// Gets the remote end point (IP and port) for this client.
         /// </summary>
         string RemoteEndPoint { get; }
-
-        /// <summary>
-        /// Gets or sets the time the player has logged in.
-        /// </summary>
-        DateTime LoggedInAt { get; set; }
     }
 }

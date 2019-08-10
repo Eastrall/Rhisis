@@ -9,6 +9,8 @@ namespace Rhisis.World.Game.Entities
 {
     public abstract class WorldEntity : IWorldEntity
     {
+        private bool _disposedValue = false;
+
         /// <inheritdoc />
         public uint Id { get; }
 
@@ -56,10 +58,26 @@ namespace Rhisis.World.Game.Entities
         /// <inheritdoc />
         public int GetHashCode(IWorldEntity obj) => (obj.Id, obj.Type, obj.Object.Name, obj.Object.Type).GetHashCode();
 
-        /// <inheritdoc />
-        public void Dispose()
+        /// <summary>
+        /// Disposes the <see cref="WorldEntity"/> resources.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    this.Delayer.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
         }
+
+        /// <summary>
+        /// Dispose resources.
+        /// </summary>
+        public void Dispose() => this.Dispose(true);
     }
 }

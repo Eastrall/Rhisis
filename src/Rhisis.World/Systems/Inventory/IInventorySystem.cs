@@ -32,5 +32,21 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="quantity">Quantity to delete.</param>
         /// <returns>Deleted quantity.</returns>
         int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity);
+
+        /// <summary>
+        /// Moves an item in player's inventory from a source slot to a destination slot.
+        /// </summary>
+        /// <param name="player">Current player.</param>
+        /// <param name="sourceSlot">Source slot.</param>
+        /// <param name="destinationSlot">Destinatino slot.</param>
+        void MoveItem(IPlayerEntity player, byte sourceSlot, byte destinationSlot);
+
+        /// <summary>
+        /// Equip or unequip a player equipment item.
+        /// </summary>
+        /// <param name="player">Current player.</param>
+        /// <param name="itemUniqueId">Equip player unique id.</param>
+        /// <param name="equipPart">Equip part.</param>
+        void EquipItem(IPlayerEntity player, int itemUniqueId, int equipPart);
     }
 }

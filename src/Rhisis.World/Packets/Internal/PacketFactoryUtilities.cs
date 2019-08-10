@@ -6,7 +6,7 @@ using Rhisis.World.Game.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rhisis.World.Packets
+namespace Rhisis.World.Packets.Internal
 {
     [Injectable(ServiceLifetime.Singleton)]
     public sealed class PacketFactoryUtilities : IPacketFactoryUtilities

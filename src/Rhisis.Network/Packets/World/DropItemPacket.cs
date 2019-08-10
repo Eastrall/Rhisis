@@ -1,5 +1,4 @@
-﻿using System;
-using Ether.Network.Packets;
+﻿using Ether.Network.Packets;
 using Rhisis.Core.Structures;
 
 namespace Rhisis.Network.Packets.World
@@ -7,47 +6,35 @@ namespace Rhisis.Network.Packets.World
     /// <summary>
     /// Defines the <see cref="DropItemPacket"/> structure.
     /// </summary>
-    public struct DropItemPacket : IEquatable<DropItemPacket>
+    public class DropItemPacket : IPacketDeserializer
     {
         /// <summary>
         /// Gets the item type
         /// </summary>
-        public uint ItemType { get; set; }
+        public uint ItemType { get; private set; }
 
         /// <summary>
         /// Gets the unique item id.
         /// </summary>
-        public int ItemId { get; set; }
+        public int ItemId { get; private set; }
 
         /// <summary>
         /// Gets the item quantity.
         /// </summary>
-        public int ItemQuantity { get; set; }
+        public int ItemQuantity { get; private set; }
 
         /// <summary>
         /// Gets the position.
         /// </summary>
-        public Vector3 Position { get; set; }
+        public Vector3 Position { get; private set; }
 
-        /// <summary>
-        /// Creates a new <see cref="DropItemPacket"/> object.
-        /// </summary>
-        /// <param name="packet">Incoming packet</param>
-        public DropItemPacket(INetPacketStream packet)
+        /// <inhertidoc />
+        public void Deserialize(INetPacketStream packet)
         {
-            ItemType = packet.Read<uint>();
-            ItemId = packet.Read<int>();
-            ItemQuantity = packet.Read<short>();
-            Position = new Vector3(packet.Read<float>(), packet.Read<float>(), packet.Read<float>());
-        }
-
-        /// <summary>
-        /// Compares two <see cref="DropItemPacket"/>.
-        /// </summary>
-        /// <param name="other">Other <see cref="DropItemPacket"/></param>
-        public bool Equals(DropItemPacket other)
-        {
-            return this.ItemType == other.ItemType && this.ItemId == other.ItemId && this.ItemQuantity == other.ItemQuantity && this.Position == other.Position;
+            this.ItemType = packet.Read<uint>();
+            this.ItemId = packet.Read<int>();
+            this.ItemQuantity = packet.Read<short>();
+            this.Position = new Vector3(packet.Read<float>(), packet.Read<float>(), packet.Read<float>());
         }
     }
 }

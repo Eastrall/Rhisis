@@ -13,7 +13,7 @@ using Rhisis.World.Game.Maps;
 namespace Rhisis.World.Game.Factories.Internal
 {
     [Injectable(ServiceLifetime.Singleton)]
-    public class NpcFactory : INpcFactory
+    public sealed class NpcFactory : INpcFactory
     {
         private readonly IGameResources _gameResources;
         private readonly IBehaviorManager behaviorManager;
