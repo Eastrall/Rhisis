@@ -24,7 +24,7 @@ namespace Rhisis.Core.Structures.Game
         /// Gets or sets the shop items.
         /// </summary>
         [DataMember(Name = "items")]
-        public List<ItemBase>[] Items { get; set; }
+        public List<ItemDescriptor>[] Items { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="ShopData"/> instance.
@@ -34,11 +34,11 @@ namespace Rhisis.Core.Structures.Game
         public ShopData(string shopName, int shopTabs = DefaultTabCount)
         {
             this.Name = shopName;
-            this.Items = new List<ItemBase>[shopTabs];
+            this.Items = new List<ItemDescriptor>[shopTabs];
 
             for (var i = 0; i < shopTabs; i++)
             {
-                this.Items[i] = new List<ItemBase>();
+                this.Items[i] = new List<ItemDescriptor>();
             }
         }
     }

@@ -1,11 +1,11 @@
 ﻿using Ether.Network.Packets;
+using Rhisis.Core.Data;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using Rhisis.Core.Data;
 
 namespace Rhisis.World.Packets
 {

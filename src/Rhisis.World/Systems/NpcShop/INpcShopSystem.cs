@@ -8,8 +8,8 @@ namespace Rhisis.World.Systems.NpcShop
 
         void CloseShop(IPlayerEntity player);
 
-        void BuyItem(IPlayerEntity player);
+        void BuyItem(IPlayerEntity player, NpcShopItemInfo shopItemInfo, int quantity);
 
-        void SellItem(IPlayerEntity player);
+        void SellItem(IPlayerEntity player, int playerItemUniqueId, int quantity);
     }
 }

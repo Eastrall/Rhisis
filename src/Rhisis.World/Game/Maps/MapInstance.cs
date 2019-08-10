@@ -1,4 +1,5 @@
-﻿using Rhisis.Core.Resources;
+﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
@@ -15,10 +16,11 @@ namespace Rhisis.World.Game.Maps
     {
         private const int DefaultMapLayerId = 1;
         private const int MapLandSize = 128;
-        private const int FrameRate = 15;
+        private const int FrameRate = 60;
         private const double UpdateRate = 1000f / FrameRate;
 
         private readonly ConcurrentDictionary<int, IMapLayer> _layers;
+        private readonly ILogger<MapInstance> _logger;
         private readonly IMapFactory _mapFactory;
 
         /// <inheritdoc />
@@ -51,9 +53,10 @@ namespace Rhisis.World.Game.Maps
         /// <param name="id">Map Id.</param>
         /// <param name="name">Map name.</param>
         /// <param name="worldInformations">Map world informations.</param>
-        public MapInstance(IMapFactory mapFactory, int id, string name, WldFileInformations worldInformations)
+        public MapInstance(ILogger<MapInstance> logger, IMapFactory mapFactory, int id, string name, WldFileInformations worldInformations)
         {
             this.Id = id;
+            this._logger = logger;
             this._mapFactory = mapFactory;
             this.Name = name;
             this.MapInformation = worldInformations;
@@ -164,7 +167,7 @@ namespace Rhisis.World.Game.Maps
                     }
                     catch (Exception e)
                     {
-                        
+                        this._logger.LogError(e, $"An error occured on map {this.Name}.");
                     }
                 }
             });

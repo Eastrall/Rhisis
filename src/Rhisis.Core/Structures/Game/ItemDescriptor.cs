@@ -3,11 +3,12 @@
 namespace Rhisis.Core.Structures.Game
 {
     [DataContract]
-    public class ItemBase
+    public class ItemDescriptor
     {
         /// <summary>
         /// Gets the item database id.
         /// </summary>
+        [IgnoreDataMember]
         public int DbId { get; protected set; }
 
         /// <summary>
@@ -47,9 +48,9 @@ namespace Rhisis.Core.Structures.Game
         public ItemData Data { get; protected set; }
 
         /// <summary>
-        /// Creates a new <see cref="ItemBase"/> instance.
+        /// Creates a new <see cref="ItemDescriptor"/> instance.
         /// </summary>
-        protected ItemBase()
+        protected ItemDescriptor()
         {
         }
     }

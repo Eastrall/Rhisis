@@ -50,7 +50,14 @@ namespace Rhisis.World.Handlers
         [HandlerAction(PacketType.BUYITEM)]
         public void OnBuyItem(IWorldClient client, BuyItemPacket packet)
         {
-            this._npcShopSystem.BuyItem(client.Player);
+            var npcShopItem = new NpcShopItemInfo
+            {
+                ItemId = packet.ItemId,
+                Slot = packet.Slot,
+                Tab = packet.Tab
+            };
+
+            this._npcShopSystem.BuyItem(client.Player, npcShopItem, packet.Quantity);
         }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace Rhisis.World.Handlers
         [HandlerAction(PacketType.SELLITEM)]
         public void OnSellItem(IWorldClient client, SellItemPacket packet)
         {
-            this._npcShopSystem.SellItem(client.Player);
+            this._npcShopSystem.SellItem(client.Player, packet.ItemUniqueId, packet.Quantity);
         }
     }
 }

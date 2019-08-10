@@ -9,20 +9,27 @@ using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
-using Rhisis.World.Game.Structures;
 
-namespace Rhisis.World.Game.Factories
+namespace Rhisis.World.Game.Factories.Internal
 {
     [Injectable(ServiceLifetime.Singleton)]
     public class NpcFactory : INpcFactory
     {
         private readonly IGameResources _gameResources;
         private readonly IBehaviorManager behaviorManager;
+        private readonly IItemFactory _itemFactory;
 
-        public NpcFactory(IGameResources gameResources, IBehaviorManager behaviorManager)
+        /// <summary>
+        /// Creates a new <see cref="NpcFactory"/> instance.
+        /// </summary>
+        /// <param name="gameResources">Game resources.</param>
+        /// <param name="behaviorManager">Behavior manager.</param>
+        /// <param name="itemFactory">Item Factory.</param>
+        public NpcFactory(IGameResources gameResources, IBehaviorManager behaviorManager, IItemFactory itemFactory)
         {
             this._gameResources = gameResources;
             this.behaviorManager = behaviorManager;
+            this._itemFactory = itemFactory;
         }
 
         /// <inheritdoc />
@@ -63,10 +70,12 @@ namespace Rhisis.World.Game.Factories
 
                     for (var j = 0; j < npcShopData.Items[i].Count && j < npc.Shop[i].MaxCapacity; j++)
                     {
-                        ItemBase item = npcShopData.Items[i][j];
-                        ItemData itemData = this._gameResources.Items[item.Id];
+                        ItemDescriptor item = npcShopData.Items[i][j];
 
-                        npc.Shop[i].Items[j] = new Item(item.Id, itemData.PackMax, -1, j, j, item.Refine, item.Element, item.ElementRefine);
+                        npc.Shop[i].Items[j] = this._itemFactory.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine);
+                        npc.Shop[i].Items[j].Slot = j;
+                        npc.Shop[i].Items[j].UniqueId = j;
+                        npc.Shop[i].Items[j].Quantity = npc.Shop[i].Items[j].Data.PackMax;
                     }
                 }
             }

@@ -9,7 +9,7 @@ namespace Rhisis.World.Game.Structures
     /// <summary>
     /// FlyFF item structure.
     /// </summary>
-    public class Item : ItemBase
+    public class Item : ItemDescriptor
     {
         /// <summary>
         /// Flyff item refine table.
@@ -52,14 +52,6 @@ namespace Rhisis.World.Game.Structures
         {
         }
 
-        /// <summary>
-        /// Create an <see cref="Item"/> with an id.
-        /// </summary>
-        /// <param name="id">Item Id</param>
-        public Item(int id)
-            : this(id, 1, -1, -1, -1)
-        {
-        }
 
         /// <summary>
         /// Create an <see cref="Item"/> with an id and a quantity.
@@ -191,6 +183,17 @@ namespace Rhisis.World.Game.Structures
             this.DbId = dbItem.Id;
         }
 
+        public Item(int id, byte refine, byte element, byte elementRefine, ItemData itemData, int creatorId)
+        {
+            this.Id = id;
+            this.Quantity = 1;
+            this.Refine = refine;
+            this.Element = element;
+            this.ElementRefine = elementRefine;
+            this.Data = itemData;
+            this.CreatorId = creatorId;
+        }
+
         /// <summary>
         /// Serialize the item into the packet.
         /// </summary>
@@ -259,9 +262,6 @@ namespace Rhisis.World.Game.Structures
         /// Returns the current <see cref="Item"/> on string format
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{this.Data?.Name}";
-        }
+        public override string ToString() => $"{this.Data?.Name}";
     }
 }
