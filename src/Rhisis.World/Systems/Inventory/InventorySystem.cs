@@ -10,6 +10,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
+using Rhisis.World.Systems.Drop;
 using System;
 using System.Collections.Generic;
 
@@ -28,13 +29,15 @@ namespace Rhisis.World.Systems.Inventory
         private readonly IItemFactory _itemFactory;
         private readonly IInventoryPacketFactory _inventoryPacketFactory;
         private readonly IInventoryItemUsage _inventoryItemUsage;
+        private readonly IDropSystem _dropSystem;
 
-        public InventorySystem(ILogger<InventorySystem> logger, IItemFactory itemFactory, IInventoryPacketFactory inventoryPacketFactory, IInventoryItemUsage inventoryItemUsage)
+        public InventorySystem(ILogger<InventorySystem> logger, IItemFactory itemFactory, IInventoryPacketFactory inventoryPacketFactory, IInventoryItemUsage inventoryItemUsage, IDropSystem dropSystem)
         {
             this._logger = logger;
             this._itemFactory = itemFactory;
             this._inventoryPacketFactory = inventoryPacketFactory;
             this._inventoryItemUsage = inventoryItemUsage;
+            this._dropSystem = dropSystem;
         }
 
         /// <inheritdoc />
@@ -351,11 +354,9 @@ namespace Rhisis.World.Systems.Inventory
                 throw new InvalidOperationException("Cannot drop a zero or negative quantit.");
             }
 
-            itemToDrop = itemToDrop.Clone();
             itemToDrop.Quantity = quantityToDrop;
+            this._dropSystem.DropItem(player, itemToDrop, owner: null);
             this.DeleteItem(player, itemUniqueId, quantityToDrop);
-
-            // TODO: drop on map: Call Drop system
         }
 
         /// <summary>

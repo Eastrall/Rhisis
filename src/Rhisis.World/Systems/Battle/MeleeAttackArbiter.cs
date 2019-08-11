@@ -45,7 +45,7 @@ namespace Rhisis.World.Systems.Battle
             
             if (this._attacker is IPlayerEntity player)
             {
-                Item rightWeapon = player.Inventory.GetItem(x => x.Slot == InventorySystemOld.RightWeaponSlot) ?? InventorySystemOld.Hand;
+                Item rightWeapon = player.Inventory.GetItem(x => x.Slot == InventorySystem.RightWeaponSlot) ?? InventorySystem.Hand;
 
                 // TODO: GetDamagePropertyFactor()
                 int weaponAttack = BattleHelper.GetWeaponAttackDamages(rightWeapon.Data.WeaponType, player);
@@ -218,10 +218,10 @@ namespace Rhisis.World.Systems.Battle
 
             if (this._attacker is IPlayerEntity player)
             {
-                var weapon = player.Inventory[InventorySystemOld.RightWeaponSlot];
+                var weapon = player.Inventory[InventorySystem.RightWeaponSlot];
 
                 if (weapon == null)
-                    weapon = InventorySystemOld.Hand;
+                    weapon = InventorySystem.Hand;
                 if (weapon.Data.WeaponType == WeaponType.MELEE_YOYO || attackerAttackFlags.HasFlag(AttackFlags.AF_FORCE))
                     return false;
             }

@@ -4,8 +4,6 @@ using Rhisis.Core.Data;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
-using Rhisis.World.Systems.Inventory;
-using Rhisis.World.Systems.Inventory.EventArgs;
 
 namespace Rhisis.World.Game.Chat
 {
@@ -45,8 +43,8 @@ namespace Rhisis.World.Game.Chat
             if (parameters.Length >= 2)
                 int.TryParse(parameters[1], out quantity);
 
-            var createItemEvent = new InventoryCreateItemEventArgs(itemId, quantity, player.PlayerData.Id);
-            SystemManager.Instance.Execute<InventorySystemOld>(player, createItemEvent);
+            //var createItemEvent = new InventoryCreateItemEventArgs(itemId, quantity, player.PlayerData.Id);
+            //SystemManager.Instance.Execute<InventorySystemOld>(player, createItemEvent);
         }
     }
 }

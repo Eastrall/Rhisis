@@ -92,7 +92,7 @@ namespace Rhisis.World.Packets.Internal
                 packet.Write(-1); // titles
 
                 // Serialize visible effects
-                IEnumerable<Item> equippedItems = player.Inventory.Items.GetRange(InventorySystemOld.EquipOffset, InventorySystemOld.MaxItems - InventorySystemOld.EquipOffset);
+                IEnumerable<Item> equippedItems = player.Inventory.Items.GetRange(InventorySystem.EquipOffset, InventorySystem.MaxItems - InventorySystem.EquipOffset);
 
                 foreach (var item in equippedItems)
                     packet.Write(item.Refines);
@@ -281,7 +281,7 @@ namespace Rhisis.World.Packets.Internal
                     packet.Write(-1); // titles
 
                     // Serialize visible effects
-                    IEnumerable<Item> equipedItems = playerEntity.Inventory.Items.GetRange(InventorySystemOld.EquipOffset, InventorySystemOld.MaxItems - InventorySystemOld.EquipOffset);
+                    IEnumerable<Item> equipedItems = playerEntity.Inventory.Items.GetRange(InventorySystem.EquipOffset, InventorySystem.MaxItems - InventorySystem.EquipOffset);
 
                     foreach (var item in equipedItems)
                         packet.Write(item.Refines);
@@ -293,12 +293,14 @@ namespace Rhisis.World.Packets.Internal
                     packet.Write((byte)equipedItems.Count(x => x.Id != -1));
 
                     foreach (var item in equipedItems)
+                    {
                         if (item != null && item.Id > 0)
                         {
-                            packet.Write((byte)(item.Slot - InventorySystemOld.EquipOffset));
+                            packet.Write((byte)(item.Slot - InventorySystem.EquipOffset));
                             packet.Write((short)item.Id);
                             packet.Write<byte>(0);
                         }
+                    }
 
                     packet.Write(-1); // pet ?
                     packet.Write(0); // buffs ?

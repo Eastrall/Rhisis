@@ -13,7 +13,6 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Drop;
-using Rhisis.World.Systems.Drop.EventArgs;
 using Rhisis.World.Systems.Leveling;
 using Rhisis.World.Systems.Leveling.EventArgs;
 using System.Linq;
@@ -120,7 +119,7 @@ namespace Rhisis.World.Systems.Battle
                         {
                             var item = new Item(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
 
-                            SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropItemEventArgs(item, attacker));
+                            //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropItemEventArgs(item, attacker));
                             itemCount++;
                         }
                     }
@@ -146,7 +145,7 @@ namespace Rhisis.World.Systems.Battle
                             {
                                 var item = new Item(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
 
-                                SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropItemEventArgs(item, attacker));
+                                //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropItemEventArgs(item, attacker));
                                 break;
                             }
                         }
@@ -154,7 +153,7 @@ namespace Rhisis.World.Systems.Battle
 
                     // Drop gold
                     int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
-                    SystemManager.Instance.Execute<DropSystem>(deadMonster, new DropGoldEventArgs(goldDropped, attacker));
+                    //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropGoldEventArgs(goldDropped, attacker));
 
                     // Give experience
                     long experience = deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience;

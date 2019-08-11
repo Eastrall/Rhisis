@@ -88,7 +88,7 @@ namespace Rhisis.World.Systems.Teleport
                 player.Moves.DestinationPosition = player.Object.Position.Clone();
 
                 WorldPacketFactory.SendReplaceObject(player);
-                WorldPacketFactory.SendPlayerSpawn(player);
+                //WorldPacketFactory.SendPlayerSpawn(player);
                 player.Object.Spawned = true;
             }
             else

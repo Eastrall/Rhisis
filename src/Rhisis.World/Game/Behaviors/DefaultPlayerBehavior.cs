@@ -3,12 +3,10 @@ using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
-using Rhisis.World.Systems.Inventory.EventArgs;
 using Rhisis.World.Systems.Mobility;
-using Rhisis.World.Systems.Recovery;
-using Rhisis.World.Systems.Recovery.EventArgs;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -17,11 +15,13 @@ namespace Rhisis.World.Game.Behaviors
     {
         private readonly IPlayerEntity _player;
         private readonly IMobilitySystem _mobilitySystem;
+        private readonly IInventorySystem _inventorySystem;
 
-        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem)
+        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem)
         {
             this._player = player;
             this._mobilitySystem = mobilitySystem;
+            this._inventorySystem = inventorySystem;
         }
 
         /// <inheritdoc />
@@ -75,8 +75,9 @@ namespace Rhisis.World.Game.Behaviors
             }
             else
             {
-                var inventoryItemCreationEvent = new InventoryCreateItemEventArgs(droppedItem.Drop.Item.Id, droppedItem.Drop.Item.Quantity, -1, droppedItem.Drop.Item.Refine);
-                SystemManager.Instance.Execute<InventorySystemOld>(player, inventoryItemCreationEvent);
+                this._inventorySystem.CreateItem(player, droppedItem.Drop.Item, droppedItem.Drop.Item.Quantity);
+                //var inventoryItemCreationEvent = new InventoryCreateItemEventArgs(droppedItem.Drop.Item.Id, droppedItem.Drop.Item.Quantity, -1, droppedItem.Drop.Item.Refine);
+                //SystemManager.Instance.Execute<InventorySystemOld>(player, inventoryItemCreationEvent);
                 WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 

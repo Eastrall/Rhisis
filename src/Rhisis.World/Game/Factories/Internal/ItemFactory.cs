@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rhisis.Core.Common;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Game;
+using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Structures;
@@ -17,6 +19,7 @@ namespace Rhisis.World.Game.Factories.Internal
         private readonly IServiceProvider _serviceProvider;
         private readonly IGameResources _gameResources;
         private readonly ObjectFactory _itemFactory;
+        private readonly ObjectFactory _itemEntityFactory;
 
         /// <summary>
         /// Creates a new <see cref="ItemFactory"/> instance.
@@ -30,6 +33,7 @@ namespace Rhisis.World.Game.Factories.Internal
             this._serviceProvider = serviceProvider;
             this._gameResources = gameResources;
             this._itemFactory = ActivatorUtilities.CreateFactory(typeof(Item), new Type[] { typeof(int), typeof(byte), typeof(byte), typeof(byte), typeof(ItemData), typeof(int) });
+            this._itemEntityFactory = ActivatorUtilities.CreateFactory(typeof(ItemEntity), Type.EmptyTypes);
         }
 
         /// <inheritdoc />
@@ -44,9 +48,30 @@ namespace Rhisis.World.Game.Factories.Internal
         }
 
         /// <inheritdoc />
-        public IItemEntity CreateItemEntity(IMapContext context, Item item)
+        public IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemDescriptor item, IWorldEntity owner = null)
         {
-            throw new System.NotImplementedException();
+            var itemEntity = this._itemEntityFactory(this._serviceProvider, null) as IItemEntity;
+
+            itemEntity.Object = new ObjectComponent
+            {
+                CurrentMap = currentMapContext,
+                MapId = currentMapContext.Id,
+                LayerId = currentMapLayerContext.Id,
+                ModelId = item.Id,
+                Name = item.Data.Name,
+                Spawned = true,
+                Type = WorldObjectType.Item
+            };
+
+            itemEntity.Drop = new DropComponent
+            {
+                Owner = owner,
+                Item = this.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine)
+            };
+
+            currentMapLayerContext.AddEntity(itemEntity);
+
+            return itemEntity;
         }
     }
 }
