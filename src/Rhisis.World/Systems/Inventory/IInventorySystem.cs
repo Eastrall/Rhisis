@@ -39,7 +39,8 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="player">Current player.</param>
         /// <param name="sourceSlot">Source slot.</param>
         /// <param name="destinationSlot">Destinatino slot.</param>
-        void MoveItem(IPlayerEntity player, byte sourceSlot, byte destinationSlot);
+        /// <param name="sendToPlayer">Sends the packet to inform the player that an item has been moved.</param>
+        void MoveItem(IPlayerEntity player, byte sourceSlot, byte destinationSlot, bool sendToPlayer = true);
 
         /// <summary>
         /// Equip or unequip a player equipment item.
@@ -48,5 +49,24 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="itemUniqueId">Equip player unique id.</param>
         /// <param name="equipPart">Equip part.</param>
         void EquipItem(IPlayerEntity player, int itemUniqueId, int equipPart);
+
+        /// <summary>
+        /// Uses an item from player's inventory.
+        /// </summary>
+        /// <param name="player">Current player.</param>
+        /// <param name="itemUniqueId">Unique id of the item to use.</param>
+        /// <param name="part">Item part.</param>
+        void UseItem(IPlayerEntity player, int itemUniqueId, int part);
+
+        /// <summary>
+        /// Drops an item from player's inventory to the ground.
+        /// </summary>
+        /// <remarks>
+        /// Throwing away your stuff in the ground is bad. You should put them in trash. :-)
+        /// </remarks>
+        /// <param name="player">Current player.</param>
+        /// <param name="itemUniqueId">Item unique id to drop.</param>
+        /// <param name="quantity">Quantity to drop.</param>
+        void DropItem(IPlayerEntity player, int itemUniqueId, int quantity);
     }
 }

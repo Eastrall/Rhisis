@@ -6,6 +6,9 @@ using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
+    /// <summary>
+    /// Handles all inventory packets.
+    /// </summary>
     [Handler]
     public class InventoryHandler
     {
@@ -50,7 +53,7 @@ namespace Rhisis.World.Handlers
         [HandlerAction(PacketType.DROPITEM)]
         public void OnDropItem(IWorldClient client, DropItemPacket packet)
         {
-            // TODO
+            this._inventorySystem.DropItem(client.Player, packet.ItemUniqueId, packet.ItemQuantity);
         }
 
         /// <summary>
@@ -61,7 +64,7 @@ namespace Rhisis.World.Handlers
         [HandlerAction(PacketType.DOUSEITEM)]
         public void OnUseItem(IWorldClient client, DoUseItemPacket packet)
         {
-            // TODO
+            this._inventorySystem.UseItem(client.Player, packet.UniqueItemId, packet.Part);
         }
     }
 }

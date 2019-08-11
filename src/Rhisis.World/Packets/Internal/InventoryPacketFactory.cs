@@ -46,9 +46,7 @@ namespace Rhisis.World.Packets.Internal
                 packet.Write<byte>(0); // Guild id
                 packet.Write(equip ? (byte)0x01 : (byte)0x00);
                 packet.Write(item.Id);
-                packet.Write<short>(item.Refine); // Refine
-                packet.Write(item.Element); // element
-                packet.Write(item.ElementRefine); // element refine
+                packet.Write(item.Refines);
                 packet.Write(0); // flag
                 packet.Write(targetSlot);
 
