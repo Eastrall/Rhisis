@@ -9,7 +9,6 @@ using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.SpecialEffect;
-using Rhisis.World.Systems.SpecialEffect.EventArgs;
 using Rhisis.World.Systems.Teleport;
 using System;
 using System.Collections.Generic;
@@ -22,15 +21,17 @@ namespace Rhisis.World.Systems.Inventory
         private readonly ILogger<InventoryItemUsage> _logger;
         private readonly IInventoryPacketFactory _inventoryPacketFactory;
         private readonly IMapManager _mapManager;
+        private readonly ISpecialEffectSystem _specialEffectSystem;
 
         /// <summary>
         /// Creates a new <see cref="InventoryItemUsage"/> instance.
         /// </summary>
-        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager)
+        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem)
         {
             this._logger = logger;
             this._inventoryPacketFactory = inventoryPacketFactory;
             this._mapManager = mapManager;
+            this._specialEffectSystem = specialEffectSystem;
         }
 
         public void UseFoodItem(IPlayerEntity player, Item foodItemToUse)
@@ -140,12 +141,12 @@ namespace Rhisis.World.Systems.Inventory
             player.Inventory.ItemInUseActionId = player.Delayer.DelayAction(TimeSpan.FromMilliseconds(blinkwing.Data.SkillReadyType), () =>
             {
                 SystemManager.Instance.Execute<TeleportSystem>(player, teleportEvent);
-                SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+                this._specialEffectSystem.SetStateModeBaseMotion(player, StateModeBaseMotion.BASEMOTION_OFF);
                 player.Inventory.ItemInUseActionId = Guid.Empty;
                 this.DecreaseItem(player, blinkwing);
             });
 
-            SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_ON, blinkwing));
+            this._specialEffectSystem.SetStateModeBaseMotion(player, StateModeBaseMotion.BASEMOTION_ON, blinkwing);
         }
 
         /// <summary>
@@ -172,7 +173,7 @@ namespace Rhisis.World.Systems.Inventory
                 item.Reset();
 
             if (item.Data.SfxObject3 != 0)
-                SystemManager.Instance.Execute<SpecialEffectSystem>(player, new SpecialEffectEventArgs(item.Data.SfxObject3));
+                this._specialEffectSystem.StartSpecialEffect(player, (DefineSpecialEffects)item.Data.SfxObject3);
         }
     }
 }

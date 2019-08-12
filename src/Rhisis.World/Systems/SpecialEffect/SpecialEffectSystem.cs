@@ -1,77 +1,29 @@
-﻿using Microsoft.Extensions.Logging;
-using Rhisis.Core.Data;
+﻿using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
-using Rhisis.World.Systems.SpecialEffect.EventArgs;
 
 namespace Rhisis.World.Systems.SpecialEffect
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    [System(SystemType.Notifiable)]
-    public sealed class SpecialEffectSystem : ISystem
+    [Injectable]
+    public sealed class SpecialEffectSystem : ISpecialEffectSystem
     {
-        private readonly ILogger<SpecialEffectSystem> _logger;
-
-        /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Object;
+        private readonly ISpecialEffectPacketFactory _specialEffectPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="SpecialEffectSystem"/> instance.
         /// </summary>
-        public SpecialEffectSystem()
+        /// <param name="specialEffectPacketFactory"></param>
+        public SpecialEffectSystem(ISpecialEffectPacketFactory specialEffectPacketFactory)
         {
-            this._logger = DependencyContainer.Instance.Resolve<ILogger<SpecialEffectSystem>>();
+            this._specialEffectPacketFactory = specialEffectPacketFactory;
         }
 
         /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        public void SetStateModeBaseMotion(IWorldEntity entity, StateModeBaseMotion motionState, Item item = null)
         {
-            if (entity == null)
-            {
-                this._logger.LogError($"Cannot execute {nameof(SpecialEffectSystem)}. Entity is null.");
-                return;
-            }
-
-            if (!args.GetCheckArguments())
-            {
-                this._logger.LogError($"Cannot execute {nameof(SpecialEffectSystem)} action: {args.GetType()} due to invalid arguments.");
-                return;
-            }
-
-            switch (args)
-            {
-                case SpecialEffectEventArgs e:
-                    this.StartSpecialEffect(entity, e);
-                    break;
-                case SpecialEffectBaseMotionEventArgs e:
-                    this.SetStateModeBaseMotion(entity, e);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Starts a new special effect.
-        /// </summary>
-        /// <param name="entity">Entity that activates the special effect.</param>
-        /// <param name="e">Special effect event.</param>
-        private void StartSpecialEffect(IWorldEntity entity, SpecialEffectEventArgs e)
-        {
-            WorldPacketFactory.SendSpecialEffect(entity, e.SpecialEffect);
-        }
-
-        /// <summary>
-        /// Sets the player's state mode base motion.
-        /// </summary>
-        /// <param name="entity">Entity that activates or deactivates the state mode.</param>
-        /// <param name="e">Special effect base motion event.</param>
-        private void SetStateModeBaseMotion(IWorldEntity entity, SpecialEffectBaseMotionEventArgs e)
-        {
-            if (e.Motion == StateModeBaseMotion.BASEMOTION_ON)
+            if (motionState == StateModeBaseMotion.BASEMOTION_ON)
             {
                 entity.Object.StateMode |= StateMode.BASEMOTION_MODE;
             }
@@ -80,7 +32,13 @@ namespace Rhisis.World.Systems.SpecialEffect
                 entity.Object.StateMode &= ~StateMode.BASEMOTION_MODE;
             }
 
-            WorldPacketFactory.SendStateMode(entity, e.Motion, e.Item);
+            WorldPacketFactory.SendStateMode(entity, motionState, item);
+        }
+
+        /// <inheritdoc />
+        public void StartSpecialEffect(IWorldEntity entity, DefineSpecialEffects specialEffect)
+        {
+            this._specialEffectPacketFactory.SendSpecialEffect(entity, specialEffect);
         }
     }
 }

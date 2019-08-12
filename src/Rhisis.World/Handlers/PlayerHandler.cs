@@ -2,19 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.Core.Structures;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Game.Core.Systems;
-using Rhisis.World.Game.Maps.Regions;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Death;
 using Rhisis.World.Systems.Follow;
 using Rhisis.World.Systems.PlayerData;
 using Rhisis.World.Systems.PlayerData.EventArgs;
 using Rhisis.World.Systems.SpecialEffect;
-using Rhisis.World.Systems.SpecialEffect.EventArgs;
 using System;
 
 namespace Rhisis.World.Handlers
@@ -31,7 +28,7 @@ namespace Rhisis.World.Handlers
             var followEvent = new FollowEventArgs(targetObjectId, distance);
 
             // Cancel current item usage action and SFX
-            SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+            //SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
             client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
             client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
@@ -66,7 +63,7 @@ namespace Rhisis.World.Handlers
             }
 
             // Cancel current item usage action and SFX
-            SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
+            //SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
             client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
             client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
