@@ -4,25 +4,23 @@ using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
 using Rhisis.Core.Structures.Game.Dialogs;
+using Rhisis.Core.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Rhisis.World.Packets
+namespace Rhisis.World.Packets.Internal
 {
-    public static partial class WorldPacketFactory
+    [Injectable(ServiceLifetime.Singleton)]
+    public sealed class NpcDialogPacketFactory : INpcDialogPacketFactory
     {
-        /// <summary>
-        /// Sends a NPC dialog to a player.
-        /// </summary>
-        /// <param name="player">Player</param>
-        /// <param name="text">Npc dialog text</param>
-        /// <param name="dialogLinks">Npc dialog links</param>
-        public static void SendDialog(IPlayerEntity player, IEnumerable<string> dialogTexts, IEnumerable<DialogLink> dialogLinks)
+        /// <inheritdoc />
+        public void SendDialog(IPlayerEntity player, IEnumerable<string> dialogTexts, IEnumerable<DialogLink> dialogLinks)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(player.Id, SnapshotType.RUNSCRIPTFUNC);
                 packet.Write((short)DialogOptions.FUNCTYPE_REMOVEALLKEY);
 
-                foreach (string text in dialogTexts)
+                foreach (var text in dialogTexts)
                 {
                     packet.StartNewMergedPacket(player.Id, SnapshotType.RUNSCRIPTFUNC);
                     packet.Write((short)DialogOptions.FUNCTYPE_SAY);
@@ -44,11 +42,8 @@ namespace Rhisis.World.Packets
             }
         }
 
-        /// <summary>
-        /// Send a packet to close the NPC dialog box.
-        /// </summary>
-        /// <param name="player"></param>
-        public static void SendCloseDialog(IPlayerEntity player)
+        /// <inheritdoc />
+        public void SendCloseDialog(IPlayerEntity player)
         {
             using (var packet = new FFPacket())
             {

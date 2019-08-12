@@ -3,7 +3,7 @@ using System;
 
 namespace Rhisis.World.Game.Chat
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     internal class ChatCommandAttribute : Attribute
     {
         /// <summary>
@@ -14,17 +14,17 @@ namespace Rhisis.World.Game.Chat
         /// <summary>
         /// Gets the chat commands minimum authorization.
         /// </summary>
-        public AuthorityType MinAuthorization { get; }
+        public AuthorityType MinimumAuthorization { get; }
 
         /// <summary>
         /// Creates a new <see cref="ChatCommandAttribute"/> instance.
         /// </summary>
         /// <param name="command">Chat command</param>
-        /// <param name="minAuthorization">Minimum Authorization</param>
-        public ChatCommandAttribute(string command, AuthorityType minAuthorization)
+        /// <param name="minimumAuthorization">Minimum Authorization</param>
+        public ChatCommandAttribute(string command, AuthorityType minimumAuthorization)
         {
             this.Command = command;
-            this.MinAuthorization = minAuthorization;
+            this.MinimumAuthorization = minimumAuthorization;
         }
     }
 }

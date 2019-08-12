@@ -1,21 +1,37 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Client;
 using Rhisis.World.Systems.Chat;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    public static class ChatHandler
+    /// <summary>
+    /// Handles every packets related to the chat system.
+    /// </summary>
+    [Handler]
+    public sealed class ChatHandler
     {
-        [PacketHandler(PacketType.CHAT)]
-        public static void OnChat(WorldClient client, INetPacketStream packet)
-        {
-            var chatPacket = new ChatPacket(packet);
-            var chatEvent = new ChatEventArgs(chatPacket.Message);
+        private readonly IChatSystem _chatSystem;
 
-            SystemManager.Instance.Execute<ChatSystem>(client.Player, chatEvent);
+        /// <summary>
+        /// Creates a new <see cref="ChatHandler"/> instance.
+        /// </summary>
+        /// <param name="chatSystem">Chat system.</param>
+        public ChatHandler(IChatSystem chatSystem)
+        {
+            this._chatSystem = chatSystem;
+        }
+
+        /// <summary>
+        /// Handles a chat request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.CHAT)]
+        public void OnChat(IWorldClient client, ChatPacket packet)
+        {
+            this._chatSystem.Chat(client.Player, packet.Message);
         }
     }
 }

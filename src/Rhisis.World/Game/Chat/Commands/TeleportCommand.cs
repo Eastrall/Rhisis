@@ -7,13 +7,13 @@ using System;
 
 namespace Rhisis.World.Game.Chat
 {
-    public static class TeleportationCommand
+    [ChatCommand("/tp", AuthorityType.GameMaster)]
+    [ChatCommand("/teleport", AuthorityType.GameMaster)]
+    public class TeleportationCommand
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        [ChatCommand("/tp", AuthorityType.GameMaster)]
-        [ChatCommand("/teleport", AuthorityType.GameMaster)]
-        public static void TeleportCommand(IPlayerEntity player, string[] parameters)
+        public void TeleportCommand(IPlayerEntity player, string[] parameters)
         {
             switch (parameters.Length)
             {
@@ -32,7 +32,7 @@ namespace Rhisis.World.Game.Chat
             }
         }
 
-        private static void TeleportCommandTwoParam(IPlayerEntity player, string[] parameters)
+        private void TeleportCommandTwoParam(IPlayerEntity player, string[] parameters)
         {
             if (!float.TryParse(parameters[0], out float posXValue) || !float.TryParse(parameters[1], out float posZValue))
             {
@@ -42,7 +42,7 @@ namespace Rhisis.World.Game.Chat
             SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(player.Object.MapId, posXValue, posZValue));
         }
 
-        private static void TeleportCommandThreeParam(IPlayerEntity player, string[] parameters)
+        private void TeleportCommandThreeParam(IPlayerEntity player, string[] parameters)
         {
             if (!ushort.TryParse(parameters[0], out ushort mapIdValue) || !float.TryParse(parameters[1], out float posXValue)
                 || !float.TryParse(parameters[2], out float posZValue))
@@ -54,7 +54,7 @@ namespace Rhisis.World.Game.Chat
             SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(mapIdValue, posXValue, posZValue));
         }
 
-        private static void TeleportCommandFourParam(IPlayerEntity player, string[] parameters)
+        private void TeleportCommandFourParam(IPlayerEntity player, string[] parameters)
         {
             if (!ushort.TryParse(parameters[0], out ushort mapIdValue) || !float.TryParse(parameters[1], out float posXValue)
             || !float.TryParse(parameters[2], out float posYValue) || !float.TryParse(parameters[3], out float posZValue))

@@ -18,10 +18,12 @@ namespace Rhisis.World.Game.Behaviors
         private const float OralTextRadius = 50f;
 
         private readonly INpcEntity _npc;
+        private readonly IChatPacketFactory _chatPacketFactory;
 
-        public DefaultNpcBehavior(INpcEntity npcEntity)
+        public DefaultNpcBehavior(INpcEntity npcEntity, IChatPacketFactory chatPacketFactory)
         {
             this._npc = npcEntity;
+            this._chatPacketFactory = chatPacketFactory;
         }
 
         /// <inheritdoc />
@@ -57,7 +59,7 @@ namespace Rhisis.World.Game.Behaviors
                     {
                         string text = this._npc.Data.Dialog.OralText.Replace(DialogVariables.PlayerNameText, player.Object.Name);
 
-                        WorldPacketFactory.SendChatTo(this._npc, player, text);
+                        this._chatPacketFactory.SendChatTo(this._npc, player, text);
                     }
 
                     this._npc.Timers.LastSpeakTime = Time.TimeInSeconds() + RandomHelper.Random(10, 15);

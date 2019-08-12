@@ -9,6 +9,7 @@ using Rhisis.Core.Structures.Configuration;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Behaviors;
+using Rhisis.World.Game.Chat;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Sylver.HandlerInvoker;
@@ -29,6 +30,7 @@ namespace Rhisis.World
         private readonly IServiceProvider _serviceProvider;
         private readonly IMapManager _mapManager;
         private readonly IBehaviorManager _behaviorManager;
+        private readonly IChatCommandManager _chatCommandManager;
 
         /// <inheritdoc />
         protected override IPacketProcessor PacketProcessor { get; } = new FlyffPacketProcessor();
@@ -36,7 +38,7 @@ namespace Rhisis.World
         /// <summary>
         /// Creates a new <see cref="WorldServer"/> instance.
         /// </summary>
-        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IServiceProvider serviceProvider, IMapManager mapManager, IBehaviorManager behaviorManager)
+        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IServiceProvider serviceProvider, IMapManager mapManager, IBehaviorManager behaviorManager, IChatCommandManager chatCommandManager)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
@@ -44,6 +46,7 @@ namespace Rhisis.World
             this._serviceProvider = serviceProvider;
             this._mapManager = mapManager;
             this._behaviorManager = behaviorManager;
+            this._chatCommandManager = chatCommandManager;
             this.Configuration.Host = this._worldConfiguration.Host;
             this.Configuration.Port = this._worldConfiguration.Port;
             this.Configuration.MaximumNumberOfConnections = MaxConnections;
@@ -67,6 +70,7 @@ namespace Rhisis.World
                 typeof(PenalityLoader),
                 typeof(NpcLoader));
 
+            this._chatCommandManager.Load();
             this._behaviorManager.Load();
             this._mapManager.Load();
 

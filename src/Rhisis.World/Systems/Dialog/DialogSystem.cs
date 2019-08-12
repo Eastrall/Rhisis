@@ -12,10 +12,20 @@ namespace Rhisis.World.Systems.Dialog
     public sealed class DialogSystem : IDialogSystem
     {
         private readonly ILogger<DialogSystem> _logger;
+        private readonly IChatPacketFactory _chatPacketFactory;
+        private readonly INpcDialogPacketFactory _npcDialogPacketFactory;
 
-        public DialogSystem(ILogger<DialogSystem> logger)
+        /// <summary>
+        /// Creates a new <see cref="DialogSystem"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="chatPacketFactory">Chat packet factory.</param>
+        /// <param name="npcDialogPacketFactory">Dialog packet factory.</param>
+        public DialogSystem(ILogger<DialogSystem> logger, IChatPacketFactory chatPacketFactory, INpcDialogPacketFactory npcDialogPacketFactory)
         {
             this._logger = logger;
+            this._chatPacketFactory = chatPacketFactory;
+            this._npcDialogPacketFactory = npcDialogPacketFactory;
         }
 
         /// <inheritdoc />
@@ -41,8 +51,8 @@ namespace Rhisis.World.Systems.Dialog
             {
                 if (dialogKey == "BYE")
                 {
-                    WorldPacketFactory.SendChatTo(npcEntity, player, npcEntity.Data.Dialog.ByeText);
-                    WorldPacketFactory.SendCloseDialog(player);
+                    this._chatPacketFactory.SendChatTo(npcEntity, player, npcEntity.Data.Dialog.ByeText);
+                    this._npcDialogPacketFactory.SendCloseDialog(player);
                     return;
                 }
                 else
@@ -59,7 +69,7 @@ namespace Rhisis.World.Systems.Dialog
                 }
             }
 
-            WorldPacketFactory.SendDialog(player, dialogTexts, npcEntity.Data.Dialog.Links);
+            this._npcDialogPacketFactory.SendDialog(player, dialogTexts, npcEntity.Data.Dialog.Links);
         }
     }
 }

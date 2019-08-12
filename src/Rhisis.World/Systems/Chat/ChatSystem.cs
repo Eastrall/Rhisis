@@ -1,82 +1,58 @@
-﻿using NLog;
-using Rhisis.Core.Common;
-using Rhisis.Core.Helpers;
+﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.World.Game.Chat;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Rhisis.World.Systems.Chat
 {
-    [System(SystemType.Notifiable)]
-    public class ChatSystem : ISystem
+    [Injectable]
+    public sealed class ChatSystem : IChatSystem
     {
-        private sealed class ChatCommandDefinition
+        public const string ChatCommandPrefix = "/";
+        private readonly ILogger<ChatSystem> _logger;
+        private readonly IChatCommandManager _chatCommandManager;
+        private readonly IChatPacketFactory _chatPacketFactory;
+
+        /// <summary>
+        /// Creates a new <see cref="ChatSystem"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="chatCommandManager">Chat command manager.</param>
+        /// <param name="chatPacketFactory">Chat packet factory.</param>
+        public ChatSystem(ILogger<ChatSystem> logger, IChatCommandManager chatCommandManager, IChatPacketFactory chatPacketFactory)
         {
-            /// <summary>
-            /// The method to invoke.
-            /// </summary>
-            public Action<IPlayerEntity, string[]> Method { get; }
-
-            /// <summary>
-            /// The Minimum Authorization for this command.
-            /// </summary>
-            public AuthorityType MinAuthorization { get; }
-
-            /// <summary>
-            /// Creates a new <see cref="ChatCommandDefinition"/> instance.
-            /// </summary>
-            /// <param name="method"></param>
-            /// <param name="minAuthorization"></param>
-            public ChatCommandDefinition(Action<IPlayerEntity, string[]> method, AuthorityType minAuthorization)
-            {
-                Method = method;
-                MinAuthorization = minAuthorization;
-            }
+            this._logger = logger;
+            this._chatCommandManager = chatCommandManager;
+            this._chatPacketFactory = chatPacketFactory;
         }
 
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly IDictionary<string, ChatCommandDefinition> ChatCommands = new Dictionary<string, ChatCommandDefinition>();
-        private const string MsgUnableExecuteCmd = "Unable to execute chat command '{0}' for player '{1}'. Reason: {2}.";
-
         /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player;
-
-        /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs e)
+        public void Chat(IPlayerEntity player, string chatMessage)
         {
-            if (!(e is ChatEventArgs chatEvent) || !(entity is IPlayerEntity player))
-                return;
-            if (!chatEvent.GetCheckArguments())
-                return;
-
-            if (chatEvent.Message.StartsWith("/") || chatEvent.Message.StartsWith("."))
+            if (string.IsNullOrEmpty(chatMessage))
             {
-                string commandName = chatEvent.Message.Split(' ').FirstOrDefault();
-                string[] commandParameters = GetCommandParameters(chatEvent.Message, commandName);
+                throw new ArgumentNullException(nameof(chatMessage), $"Cannot send an empty message for player {player.Object.Name}.");
+            }
 
-                if (ChatCommands.TryGetValue(commandName, out var command))
+            if (chatMessage.StartsWith(ChatCommandPrefix))
+            {
+                (string, string[]) commandInfo = this.GetCommandParameters(chatMessage);
+                IChatCommand chatCommand = this._chatCommandManager.GetChatCommand(commandInfo.Item1, player.PlayerData.Authority);
+
+                if (chatCommand == null)
                 {
-                    if (player.PlayerData.Authority < command.MinAuthorization)
-                        Logger.Warn(MsgUnableExecuteCmd, commandName, player.Object.Name, "player has no privileges");
-                    else
-                    {
-                        command.Method.Invoke(player, commandParameters);
-                        Logger.Info("Command '{0}' executed for player '{1}'.", commandName, player.Object.Name);
-                    }
+                    throw new ArgumentNullException(nameof(chatCommand), $"Cannot find chat command: ");
                 }
-                else
-                    Logger.Warn(MsgUnableExecuteCmd, commandName, player.Object.Name, "unknown command");
+
+                chatCommand.Execute(player, commandInfo.Item2);
             }
             else
             {
-                WorldPacketFactory.SendChat(player, chatEvent.Message);
+                this._chatPacketFactory.SendChat(player, chatMessage);
             }
         }
 
@@ -86,31 +62,12 @@ namespace Rhisis.World.Systems.Chat
         /// <param name="command">Command line</param>
         /// <param name="commandName">Command name</param>
         /// <returns></returns>
-        private static string[] GetCommandParameters(string command, string commandName)
+        private (string, string[]) GetCommandParameters(string command)
         {
+            string commandName = command.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             string commandParameters = command.Remove(0, commandName.Length);
 
-            return Regex.Matches(commandParameters, @"[\""].+?[\""]|[^ ]+").Select(m => m.Value.Trim('"')).ToArray();
-        }
-
-        /// <summary>
-        /// Initialize the system.
-        /// </summary>
-        public static void Initialize()
-        {
-            IEnumerable<MethodInfo> chatCommandsMethods = ReflectionHelper.GetMethodsWithAttributes<ChatCommandAttribute>();
-
-            foreach (MethodInfo chatMethod in chatCommandsMethods)
-            {
-                var action = chatMethod.CreateDelegate(typeof(Action<IPlayerEntity, string[]>)) as Action<IPlayerEntity, string[]>;
-                IEnumerable<ChatCommandAttribute> chatComandAttributes = chatMethod.GetCustomAttributes<ChatCommandAttribute>();
-
-                foreach (ChatCommandAttribute attribute in chatComandAttributes)
-                {
-                    if (!ChatCommands.ContainsKey(attribute.Command))
-                        ChatCommands.Add(attribute.Command, new ChatCommandDefinition(action, attribute.MinAuthorization));
-                }
-            }
+            return (commandName, Regex.Matches(commandParameters, @"[\""].+?[\""]|[^ ]+").Select(m => m.Value.Trim('"')).ToArray());
         }
     }
 }
