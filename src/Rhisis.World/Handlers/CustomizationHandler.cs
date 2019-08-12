@@ -1,31 +1,48 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Client;
 using Rhisis.World.Systems.Customization;
-using Rhisis.World.Systems.Customization.EventArgs;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    internal static class CustomizationHandler
+    /// <summary>
+    /// Handles requests related to the player customization system.
+    /// </summary>
+    [Handler]
+    public class CustomizationHandler
     {
-        [PacketHandler(PacketType.CHANGEFACE)]
-        public static void OnChangeFace(WorldClient client, INetPacketStream packet)
-        {
-            var changeFacePacket = new ChangeFacePacket(packet);
-            var changeFaceEventArgs = new ChangeFaceEventArgs(changeFacePacket.ObjectId, changeFacePacket.FaceNumber, changeFacePacket.UseCoupon);
+        private readonly ICustomizationSystem _customizationSystem;
 
-            SystemManager.Instance.Execute<CustomizationSystem>(client.Player, changeFaceEventArgs);
+        /// <summary>
+        /// Creates a new <see cref="CustomizationHandler"/> instance.
+        /// </summary>
+        /// <param name="customizationSystem">Customization system.</param>
+        public CustomizationHandler(ICustomizationSystem customizationSystem)
+        {
+            this._customizationSystem = customizationSystem;
         }
 
-        [PacketHandler(PacketType.SET_HAIR)]
-        public static void OnSetHair(WorldClient client, INetPacketStream packet)
+        /// <summary>
+        /// Changes the face of a player.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.CHANGEFACE)]
+        public void OnChangeFace(IWorldClient client, ChangeFacePacket packet)
         {
-            var setHairPacket = new SetHairPacket(packet);
-            var setHairEventArgs = new SetHairEventArgs(setHairPacket.HairId, setHairPacket.R, setHairPacket.G, setHairPacket.B, setHairPacket.UseCoupon);
+            this._customizationSystem.ChangeFace(client.Player, packet.ObjectId, packet.FaceNumber, packet.UseCoupon);
+        }
 
-            SystemManager.Instance.Execute<CustomizationSystem>(client.Player, setHairEventArgs);
+        /// <summary>
+        /// Changes the hair and color of a player.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.SET_HAIR)]
+        public void OnSetHair(IWorldClient client, SetHairPacket packet)
+        {
+            this._customizationSystem.ChangeHair(client.Player, packet.HairId, packet.R, packet.G, packet.B, packet.UseCoupon);
         }
     }
 }

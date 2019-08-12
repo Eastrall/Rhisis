@@ -43,5 +43,12 @@ namespace Rhisis.World.Game.Maps
                 this._visibilitySystem.Execute(layerEntity);
             }
         }
+
+        /// <inheritdoc />
+        public override void DeleteEntity(IWorldEntity entityToDelete)
+        {
+            base.DeleteEntity(entityToDelete);
+            this._visibilitySystem.DespawnEntity(entityToDelete);
+        }
     }
 }

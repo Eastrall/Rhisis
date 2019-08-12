@@ -10,5 +10,11 @@ namespace Rhisis.World.Systems.Visibility
         /// </summary>
         /// <param name="worldEntity">World entity.</param>
         void Execute(IWorldEntity worldEntity);
+
+        /// <summary>
+        /// Despawns an entity.
+        /// </summary>
+        /// <param name="worldEntity">Entity to despawn.</param>
+        void DespawnEntity(IWorldEntity worldEntity);
     }
 }

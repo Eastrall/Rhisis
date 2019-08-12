@@ -36,6 +36,23 @@ namespace Rhisis.World.Systems.Visibility
             this.UpdateVisibility(worldEntity, worldEntity.Object.CurrentLayer.Entities);
         }
 
+        /// <inheritdoc />
+        public void DespawnEntity(IWorldEntity worldEntity)
+        {
+            foreach (IWorldEntity entity in worldEntity.Object.Entities)
+            {
+                if (entity.Object.Entities.Contains(worldEntity))
+                {
+                    if (entity.Type == WorldEntityType.Player)
+                    {
+                        this._worldSpawnPacketFactory.SendDespawnObjectTo(entity as IPlayerEntity, worldEntity);
+                    }
+
+                    entity.Object.Entities.Remove(worldEntity);
+                }
+            }
+        }
+
         /// <summary>
         /// Updates the player's visibility.
         /// </summary>

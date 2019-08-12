@@ -24,13 +24,13 @@ namespace Rhisis.World.Game.Maps
         }
 
         /// <inheritdoc />
-        public void AddEntity(IWorldEntity entityToAdd)
+        public virtual void AddEntity(IWorldEntity entityToAdd)
         {
             this._entities.TryAdd(entityToAdd.Id, entityToAdd);
         }
 
         /// <inheritdoc />
-        public void DeleteEntity(IWorldEntity entityToDelete)
+        public virtual void DeleteEntity(IWorldEntity entityToDelete)
         {
             this._entities.TryRemove(entityToDelete.Id, out _);
         }

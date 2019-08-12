@@ -165,6 +165,12 @@ namespace Rhisis.World.Systems.Inventory
             if (itemToDelete == null)
                 throw new ArgumentNullException(nameof(itemToDelete), $"Cannot find item with unique id: '{itemUniqueId}' in '{player.Object.Name}''s inventory.");
 
+            return this.DeleteItem(player, itemToDelete, quantity);
+        }
+
+        /// <inheritdoc />
+        public int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity)
+        {
             int quantityToDelete = Math.Min(itemToDelete.Quantity, quantity);
 
             itemToDelete.Quantity -= quantityToDelete;

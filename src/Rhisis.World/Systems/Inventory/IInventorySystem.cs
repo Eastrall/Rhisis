@@ -1,6 +1,7 @@
 ﻿using Rhisis.Core.Structures.Game;
 using Rhisis.Database.Entities;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Systems.Inventory
@@ -32,6 +33,15 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="quantity">Quantity to delete.</param>
         /// <returns>Deleted quantity.</returns>
         int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity);
+
+        /// <summary>
+        /// Deletes an item in player's inventory.
+        /// </summary>
+        /// <param name="player">Current player.</param>
+        /// <param name="itemToDelete">Item to delete.</param>
+        /// <param name="quantity">Quantity to delete.</param>
+        /// <returns>Deleted quantity.</returns>
+        int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity);
 
         /// <summary>
         /// Moves an item in player's inventory from a source slot to a destination slot.
