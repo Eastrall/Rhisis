@@ -1,6 +1,6 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.Common;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.Core.Structures;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Systems.Teleport;
 using System;
@@ -9,60 +9,49 @@ namespace Rhisis.World.Game.Chat
 {
     [ChatCommand("/tp", AuthorityType.GameMaster)]
     [ChatCommand("/teleport", AuthorityType.GameMaster)]
-    public class TeleportationCommand
+    public class TeleportationCommand : IChatCommand
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger<TeleportationCommand> _logger;
+        private readonly ITeleportSystem _teleportSystem;
 
-        public void TeleportCommand(IPlayerEntity player, string[] parameters)
+        /// <summary>
+        /// Creates a new <see cref="TeleportationCommand"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="teleportSystem">Teleport system.</param>
+        public TeleportationCommand(ILogger<TeleportationCommand> logger, ITeleportSystem teleportSystem)
         {
+            this._logger = logger;
+            this._teleportSystem = teleportSystem;
+        }
+
+        /// <inheritdoc />
+        public void Execute(IPlayerEntity player, object[] parameters)
+        {
+            int destinationMapId = player.Object.MapId;
+            var destinationPosition = new Vector3();
+
             switch (parameters.Length)
             {
-                case 2: // when you write 2 parameters in the command
-                    TeleportCommandTwoParam(player, parameters);
+                case 2:
+                    destinationPosition.X = Convert.ToSingle(parameters[0]);
+                    destinationPosition.Z = Convert.ToSingle(parameters[1]);
                     break;
-                case 3: // when you write 3 parameters in the command
-                    TeleportCommandThreeParam(player, parameters);
+                case 3:
+                    destinationMapId = Convert.ToInt32(parameters[0]);
+                    destinationPosition.X = Convert.ToSingle(parameters[1]);
+                    destinationPosition.Z = Convert.ToSingle(parameters[2]);
                     break;
-                case 4: // when you write 4 parameters in the command
-                    TeleportCommandFourParam(player, parameters);
+                case 4:
+                    destinationMapId = Convert.ToInt32(parameters[0]);
+                    destinationPosition.X = Convert.ToSingle(parameters[1]);
+                    destinationPosition.Y = Convert.ToSingle(parameters[2]);
+                    destinationPosition.Z = Convert.ToSingle(parameters[3]);
                     break;
-                default: // when you write more than 4 or less than 2 parameters in the command
-                    Logger.Error("Chat: /teleport command must have 2, 3 or 4 parameters.");
-                    return;
-            }
-        }
-
-        private void TeleportCommandTwoParam(IPlayerEntity player, string[] parameters)
-        {
-            if (!float.TryParse(parameters[0], out float posXValue) || !float.TryParse(parameters[1], out float posZValue))
-            {
-                throw new ArgumentException("You must write numbers for teleport command's parameters");
+                default: throw new ArgumentException("Too many or not enough arguments.");
             }
 
-            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(player.Object.MapId, posXValue, posZValue));
-        }
-
-        private void TeleportCommandThreeParam(IPlayerEntity player, string[] parameters)
-        {
-            if (!ushort.TryParse(parameters[0], out ushort mapIdValue) || !float.TryParse(parameters[1], out float posXValue)
-                || !float.TryParse(parameters[2], out float posZValue))
-            {
-                throw new ArgumentException("You must write numbers for teleport command's parameters");
-            }
-
-
-            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(mapIdValue, posXValue, posZValue));
-        }
-
-        private void TeleportCommandFourParam(IPlayerEntity player, string[] parameters)
-        {
-            if (!ushort.TryParse(parameters[0], out ushort mapIdValue) || !float.TryParse(parameters[1], out float posXValue)
-            || !float.TryParse(parameters[2], out float posYValue) || !float.TryParse(parameters[3], out float posZValue))
-            {
-                throw new ArgumentException("You must write numbers for teleport command's parameters");
-            }
-
-            SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(mapIdValue, posXValue, posZValue));
+            this._teleportSystem.Teleport(player, destinationMapId, destinationPosition.X, destinationPosition.Y, destinationPosition.Z, player.Object.Angle);
         }
     }
 }

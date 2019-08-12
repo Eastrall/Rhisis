@@ -1,111 +1,89 @@
 ﻿using Microsoft.Extensions.Logging;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Structures;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Packets;
+using Rhisis.World.Systems.Visibility;
 
 namespace Rhisis.World.Systems.Teleport
 {
-    /// <summary>
-    /// Teleport system used to teleport player to a target map at a given position.
-    /// </summary>
-    [System(SystemType.Notifiable)]
-    public sealed class TeleportSystem : ISystem
+    [Injectable]
+    public sealed class TeleportSystem : ITeleportSystem
     {
         private readonly ILogger<TeleportSystem> _logger;
         private readonly IMapManager _mapManager;
+        private readonly IVisibilitySystem _visibilitySystem;
+        private readonly IPlayerPacketFactory _playerPacketFactory;
+        private readonly IWorldSpawnPacketFactory _worldSpawnPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="TeleportSystem"/> instance.
         /// </summary>
-        public TeleportSystem(ILogger<TeleportSystem> logger, IMapManager mapManager)
+        /// <param name="logger">Logger.</param>
+        /// <param name="mapManager">Map manager.</param>
+        /// <param name="visibilitySystem">Visibility System.</param>
+        /// <param name="playerPacketFactory">Player packet factory.</param>
+        /// <param name="worldSpawnPacketFactory">World spawn packet factory.</param>
+        public TeleportSystem(ILogger<TeleportSystem> logger, IMapManager mapManager, IVisibilitySystem visibilitySystem, IPlayerPacketFactory playerPacketFactory, IWorldSpawnPacketFactory worldSpawnPacketFactory)
         {
             this._logger = logger;
             this._mapManager = mapManager;
+            this._visibilitySystem = visibilitySystem;
+            this._playerPacketFactory = playerPacketFactory;
+            this._worldSpawnPacketFactory = worldSpawnPacketFactory;
         }
 
         /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player;
-
-        /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        public void Teleport(IPlayerEntity player, int mapId, float x, float? y, float z, float angle = 0)
         {
-            if (!(entity is IPlayerEntity player))
+            if (player.Object.MapId != mapId)
             {
-                this._logger.LogError($"Cannot execute {nameof(TeleportSystem)}. {entity.Object.Name} is not a player.");
-                return;
-            }
-
-            if (!args.GetCheckArguments())
-            {
-                this._logger.LogError($"Cannot execute {nameof(TeleportSystem)} action: {args.GetType()} due to invalid arguments.");
-                return;
-            }
-
-            switch (args)
-            {
-                case TeleportEventArgs e:
-                    this.Teleport(player, e);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Teleports the player to the given map and position.
-        /// </summary>
-        /// <param name="player">Player.</param>
-        /// <param name="e">Teleport args.</param>
-        private void Teleport(IPlayerEntity player, TeleportEventArgs e)
-        {
-            if (player.Object.MapId != e.MapId)
-            {
-                IMapInstance destinationMap = this._mapManager.GetMap(e.MapId);
+                IMapInstance destinationMap = this._mapManager.GetMap(mapId);
 
                 if (destinationMap == null)
                 {
-                    this._logger.LogError($"Cannot find map with id '{e.MapId}'.");
-                    WorldPacketFactory.SendSnoop(player, $"Cannot find map with id '{e.MapId}'.");
+                    this._logger.LogError($"Cannot find map with id '{mapId}'.");
+                    WorldPacketFactory.SendSnoop(player, $"Cannot find map with id '{mapId}'.");
                     return;
                 }
 
-                if (!destinationMap.ContainsPosition(new Vector3(e.PositionX, 0, e.PositionZ)))
+                if (!destinationMap.ContainsPosition(new Vector3(x, 0, z)))
                 {
                     this._logger.LogError($"Cannot teleport. Destination position is out of map bounds.");
                     return;
                 }
 
-                //player.SwitchContext(defaultMapLayer);
+                this._visibilitySystem.DespawnEntity(player);
                 player.Object.Spawned = false;
                 player.Object.CurrentMap = this._mapManager.GetMap(destinationMap.Id);
                 player.Object.MapId = destinationMap.Id;
                 player.Object.LayerId = destinationMap.DefaultMapLayer.Id;
 
                 // TODO: get map height at x/z position
-                float positionY = e.PositionY ?? 100;
-                player.Object.Position = new Vector3(e.PositionX, positionY, e.PositionZ);
+                float positionY = y ?? 100;
+                player.Object.Position = new Vector3(x, positionY, z);
                 player.Moves.DestinationPosition = player.Object.Position.Clone();
 
-                WorldPacketFactory.SendReplaceObject(player);
-                //WorldPacketFactory.SendPlayerSpawn(player);
+                this._playerPacketFactory.SendPlayerReplace(player);
+                this._worldSpawnPacketFactory.SendPlayerSpawn(player);
                 player.Object.Spawned = true;
             }
             else
             {
-                if (!player.Object.CurrentMap.ContainsPosition(new Vector3(e.PositionX, 0, e.PositionZ)))
+                if (!player.Object.CurrentMap.ContainsPosition(new Vector3(x, 0, z)))
                 {
                     this._logger.LogError($"Cannot teleport. Destination position is out of map bounds.");
                     return;
                 }
 
                 // TODO: get map height at x/z position
-                float positionY = e.PositionY ?? 100;
-                player.Object.Position = new Vector3(e.PositionX, positionY, e.PositionZ);
+                float positionY = y ?? 100;
+                player.Object.Position = new Vector3(x, positionY, z);
                 player.Moves.DestinationPosition = player.Object.Position.Clone();
             }
 
-            WorldPacketFactory.SendPlayerTeleport(player);
+            this._playerPacketFactory.SendPlayerTeleport(player);
         }
     }
 }

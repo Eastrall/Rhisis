@@ -5,6 +5,7 @@ using Rhisis.Core.DependencyInjection;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Client;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Death;
@@ -12,13 +13,37 @@ using Rhisis.World.Systems.Follow;
 using Rhisis.World.Systems.PlayerData;
 using Rhisis.World.Systems.PlayerData.EventArgs;
 using Rhisis.World.Systems.SpecialEffect;
+using Sylver.HandlerInvoker.Attributes;
 using System;
 
 namespace Rhisis.World.Handlers
 {
-    internal class PlayerHandler
+    [Handler]
+    public sealed class PlayerHandler
     {
         private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<PlayerHandler>>();
+        private readonly ILogger<PlayerHandler> _logger;
+        private readonly ISpecialEffectSystem _specialEffectSystem;
+
+        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem)
+        {
+            this._logger = logger;
+            this._specialEffectSystem = specialEffectSystem;
+        }
+
+        [HandlerAction(PacketType.STATEMODE)]
+        public void OnStateMode(IWorldClient client, StateModePacket packet)
+        {
+            if (client.Player.Object.StateMode == packet.StateMode)
+            {
+                if (packet.Flag == StateModeBaseMotion.BASEMOTION_CANCEL)
+                {
+                    this._specialEffectSystem.SetStateModeBaseMotion(client.Player, packet.Flag);
+                    client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
+                    client.Player.Inventory.ItemInUseActionId = Guid.Empty;
+                }
+            }
+        }
 
         [PacketHandler(PacketType.PLAYERSETDESTOBJ)]
         public static void OnPlayerSetDestObject(WorldClient client, INetPacketStream packet)

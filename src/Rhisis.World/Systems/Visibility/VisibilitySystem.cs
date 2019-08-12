@@ -3,7 +3,6 @@ using Rhisis.Core.DependencyInjection;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
-using System;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Systems.Visibility
@@ -51,6 +50,8 @@ namespace Rhisis.World.Systems.Visibility
                     entity.Object.Entities.Remove(worldEntity);
                 }
             }
+
+            worldEntity.Object.Entities.Clear();
         }
 
         /// <summary>

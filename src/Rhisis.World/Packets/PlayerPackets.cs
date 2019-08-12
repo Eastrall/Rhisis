@@ -21,20 +21,6 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendReplaceObject(IPlayerEntity player)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(player.Id, SnapshotType.REPLACE);
-                packet.Write(player.Object.MapId);
-                packet.Write(player.Object.Position.X);
-                packet.Write(player.Object.Position.Y);
-                packet.Write(player.Object.Position.Z);
-
-                player.Connection.Send(packet);
-            }
-        }
-
         /// <summary>
         /// Send player update level.
         /// </summary>

@@ -32,7 +32,7 @@ namespace Rhisis.World.Systems
 
                 if (triggerRegion != null && triggerRegion.IsWrapzone)
                 {
-                    SystemManager.Instance.Execute<TeleportSystem>(player, new TeleportEventArgs(triggerRegion.DestinationMapId, triggerRegion.DestinationMapPosition));
+                    //SystemManager.Instance.Execute<TeleportSystemOld>(player, new TeleportEventArgs(triggerRegion.DestinationMapId, triggerRegion.DestinationMapPosition));
                 }
             }
         }

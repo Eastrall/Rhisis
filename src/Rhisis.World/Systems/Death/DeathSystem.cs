@@ -71,8 +71,8 @@ namespace Rhisis.World.Systems.Death
                 revivalRegion = revivalMap.GetRevivalRegion(revivalRegion.Key);
             }
 
-            var teleportEvent = new TeleportEventArgs(revivalRegion.MapId, revivalRegion.RevivalPosition.X, revivalRegion.RevivalPosition.Z);
-            SystemManager.Instance.Execute<TeleportSystem>(player, teleportEvent);
+            //var teleportEvent = new TeleportEventArgs(revivalRegion.MapId, revivalRegion.RevivalPosition.X, revivalRegion.RevivalPosition.Z);
+            //SystemManager.Instance.Execute<TeleportSystemOld>(player, teleportEvent);
 
             WorldPacketFactory.SendMotion(player, ObjectMessageType.OBJMSG_ACC_STOP | ObjectMessageType.OBJMSG_STOP_TURN | ObjectMessageType.OBJMSG_STAND);
             WorldPacketFactory.SendPlayerRevival(player);

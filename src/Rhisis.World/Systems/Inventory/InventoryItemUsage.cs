@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Helpers;
 using Rhisis.World.Game.Maps;
@@ -22,16 +21,18 @@ namespace Rhisis.World.Systems.Inventory
         private readonly IInventoryPacketFactory _inventoryPacketFactory;
         private readonly IMapManager _mapManager;
         private readonly ISpecialEffectSystem _specialEffectSystem;
+        private readonly ITeleportSystem _teleportSystem;
 
         /// <summary>
         /// Creates a new <see cref="InventoryItemUsage"/> instance.
         /// </summary>
-        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem)
+        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem, ITeleportSystem teleportSystem)
         {
             this._logger = logger;
             this._inventoryPacketFactory = inventoryPacketFactory;
             this._mapManager = mapManager;
             this._specialEffectSystem = specialEffectSystem;
+            this._teleportSystem = teleportSystem;
         }
 
         public void UseFoodItem(IPlayerEntity player, Item foodItemToUse)
@@ -140,7 +141,7 @@ namespace Rhisis.World.Systems.Inventory
 
             player.Inventory.ItemInUseActionId = player.Delayer.DelayAction(TimeSpan.FromMilliseconds(blinkwing.Data.SkillReadyType), () =>
             {
-                SystemManager.Instance.Execute<TeleportSystem>(player, teleportEvent);
+                this._teleportSystem.Teleport(player, teleportEvent.MapId, teleportEvent.PositionX, teleportEvent.PositionY, teleportEvent.PositionZ, teleportEvent.Angle);
                 this._specialEffectSystem.SetStateModeBaseMotion(player, StateModeBaseMotion.BASEMOTION_OFF);
                 player.Inventory.ItemInUseActionId = Guid.Empty;
                 this.DecreaseItem(player, blinkwing);
