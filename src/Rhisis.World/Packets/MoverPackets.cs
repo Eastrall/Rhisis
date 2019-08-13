@@ -98,18 +98,6 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMoverPosition(IWorldEntity entity)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.SETPOS);
-                packet.Write(entity.Object.Position.X);
-                packet.Write(entity.Object.Position.Y);
-                packet.Write(entity.Object.Position.Z);
-
-                SendToVisible(packet, entity, sendToPlayer: true);
-            }
-        }
 
         public static void SendDestinationAngle(IWorldEntity entity, bool left)
         {
@@ -120,21 +108,6 @@ namespace Rhisis.World.Packets
                 packet.Write(left);
 
                 SendToVisible(packet, entity);
-            }
-        }
-
-        public static void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.STATEMODE);
-                packet.Write((int)entity.Object.StateMode);
-                packet.Write((byte)flags);
-
-                if (flags == StateModeBaseMotion.BASEMOTION_ON && item != null)
-                    packet.Write(item.Id);
-
-                SendToVisible(packet, entity, sendToPlayer: true);
             }
         }
     }

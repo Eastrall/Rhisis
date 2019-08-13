@@ -10,6 +10,7 @@ using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Death;
 using Rhisis.World.Systems.Follow;
+using Rhisis.World.Systems.Interaction;
 using Rhisis.World.Systems.PlayerData;
 using Rhisis.World.Systems.PlayerData.EventArgs;
 using Rhisis.World.Systems.SpecialEffect;
@@ -24,11 +25,13 @@ namespace Rhisis.World.Handlers
         private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<PlayerHandler>>();
         private readonly ILogger<PlayerHandler> _logger;
         private readonly ISpecialEffectSystem _specialEffectSystem;
+        private readonly IInteractionSystem _interationSystem;
 
-        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem)
+        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem)
         {
             this._logger = logger;
             this._specialEffectSystem = specialEffectSystem;
+            this._interationSystem = interationSystem;
         }
 
         [HandlerAction(PacketType.STATEMODE)]
@@ -45,17 +48,18 @@ namespace Rhisis.World.Handlers
             }
         }
 
+        [HandlerAction(PacketType.SETTARGET)]
+        public void OnSetTarget(IWorldClient client, SetTargetPacket packet)
+        {
+            this._interationSystem.SetTarget(client.Player, packet.TargetId, packet.TargetMode);
+        }
+
         [PacketHandler(PacketType.PLAYERSETDESTOBJ)]
         public static void OnPlayerSetDestObject(WorldClient client, INetPacketStream packet)
         {
             var targetObjectId = packet.Read<uint>();
             var distance = packet.Read<float>();
             var followEvent = new FollowEventArgs(targetObjectId, distance);
-
-            // Cancel current item usage action and SFX
-            //SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
-            client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
-            client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
             SystemManager.Instance.Execute<FollowSystem>(client.Player, followEvent);
         }
@@ -86,11 +90,6 @@ namespace Rhisis.World.Handlers
                 Logger.LogError($"Player {client.Player.Object.Name} is dead, he cannot move with keyboard.");
                 return;
             }
-
-            // Cancel current item usage action and SFX
-            //SystemManager.Instance.Execute<SpecialEffectSystem>(client.Player, new SpecialEffectBaseMotionEventArgs(StateModeBaseMotion.BASEMOTION_OFF));
-            client.Player.Delayer.CancelAction(client.Player.Inventory.ItemInUseActionId);
-            client.Player.Inventory.ItemInUseActionId = Guid.Empty;
 
             // TODO: Check if player is flying
 

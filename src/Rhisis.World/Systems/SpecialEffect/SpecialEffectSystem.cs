@@ -10,14 +10,16 @@ namespace Rhisis.World.Systems.SpecialEffect
     public sealed class SpecialEffectSystem : ISpecialEffectSystem
     {
         private readonly ISpecialEffectPacketFactory _specialEffectPacketFactory;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="SpecialEffectSystem"/> instance.
         /// </summary>
         /// <param name="specialEffectPacketFactory"></param>
-        public SpecialEffectSystem(ISpecialEffectPacketFactory specialEffectPacketFactory)
+        public SpecialEffectSystem(ISpecialEffectPacketFactory specialEffectPacketFactory, IMoverPacketFactory moverPacketFactory)
         {
             this._specialEffectPacketFactory = specialEffectPacketFactory;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -32,7 +34,7 @@ namespace Rhisis.World.Systems.SpecialEffect
                 entity.Object.StateMode &= ~StateMode.BASEMOTION_MODE;
             }
 
-            WorldPacketFactory.SendStateMode(entity, motionState, item);
+            this._moverPacketFactory.SendStateMode(entity, motionState, item);
         }
 
         /// <inheritdoc />

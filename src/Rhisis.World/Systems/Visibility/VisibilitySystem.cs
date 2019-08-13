@@ -13,16 +13,18 @@ namespace Rhisis.World.Systems.Visibility
         public const float VisibilityRange = 75f;
         private readonly ILogger<VisibilitySystem> _logger;
         private readonly IWorldSpawnPacketFactory _worldSpawnPacketFactory;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="VisibilitySystem"/> instance.
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="worldSpawnPacketFactory">World spawn packet factory.</param>
-        public VisibilitySystem(ILogger<VisibilitySystem> logger, IWorldSpawnPacketFactory worldSpawnPacketFactory)
+        public VisibilitySystem(ILogger<VisibilitySystem> logger, IWorldSpawnPacketFactory worldSpawnPacketFactory, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._worldSpawnPacketFactory = worldSpawnPacketFactory;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -101,7 +103,7 @@ namespace Rhisis.World.Systems.Visibility
             if (otherEntity is IMovableEntity movableEntity &&
                 movableEntity.Moves.DestinationPosition != movableEntity.Object.Position)
             {
-                WorldPacketFactory.SendDestinationPosition(movableEntity);
+                this._moverPacketFactory.SendDestinationPosition(movableEntity);
             }
         }
 

@@ -173,12 +173,12 @@ namespace Rhisis.World.Systems.Mailbox
                     if (futureQuantity == 0)
                         player.Inventory.Items.Remove(inventoryItem);
                     inventoryItem.Quantity = futureQuantity;
-                    WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, futureQuantity);
+                    //WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, futureQuantity);
                 }
                 else // Not stackable so always remove it
                 {
                     player.Inventory.Items.Remove(inventoryItem);
-                    WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, 0);
+                    //WorldPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.Slot, 0);
                 }
             }
 

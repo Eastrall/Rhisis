@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Structures;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 
 namespace Rhisis.World.Packets.Internal
 {
@@ -79,6 +81,22 @@ namespace Rhisis.World.Packets.Internal
                 packet.Write(entity.Object.Position.X);
                 packet.Write(entity.Object.Position.Y);
                 packet.Write(entity.Object.Position.Z);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: true);
+            }
+        }
+
+        /// <inheritdoc />
+        public void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.STATEMODE);
+                packet.Write((int)entity.Object.StateMode);
+                packet.Write((byte)flags);
+
+                if (flags == StateModeBaseMotion.BASEMOTION_ON && item != null)
+                    packet.Write(item.Id);
 
                 this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: true);
             }

@@ -1,5 +1,7 @@
-﻿using Rhisis.Core.Structures;
+﻿using Rhisis.Core.Data;
+using Rhisis.Core.Structures;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Structures;
 
 namespace Rhisis.World.Packets
 {
@@ -44,5 +46,13 @@ namespace Rhisis.World.Packets
         /// <param name="entity"></param>
         /// <param name="left"></param>
         void SendDestinationAngle(IWorldEntity entity, bool left);
+
+        /// <summary>
+        /// Sends the state mode to a specified entity.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="flags">StateMode flags.</param>
+        /// <param name="item">Optional item.</param>
+        void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null);
     }
 }
