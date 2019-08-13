@@ -1,53 +1,46 @@
-﻿using NLog;
-using Rhisis.Core.Data;
-using Rhisis.Core.IO;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
+﻿using Rhisis.Core.Data;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
+using System;
 
 namespace Rhisis.World.Systems.Follow
 {
-    [System(SystemType.Notifiable)]
-    public sealed class FollowSystem : ISystem
+    [Injectable]
+    public sealed class FollowSystem : IFollowSystem
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
-        /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player | WorldEntityType.Monster;
-
-        /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs e)
+        /// <summary>
+        /// Creates a new <see cref="FollowSystem"/> instance.
+        /// </summary>
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        public FollowSystem(IMoverPacketFactory moverPacketFactory)
         {
-            if (!(entity is IMovableEntity movableEntity) || !e.GetCheckArguments())
-            {
-                Logger.Error("FollowSystem: Invalid arguments");
-                return;
-            }
-
-            switch (e)
-            {
-                case FollowEventArgs followEvent:
-                    this.OnFollow(movableEntity, followEvent);
-                    break;
-            }
+            this._moverPacketFactory = moverPacketFactory;
         }
 
-        private void OnFollow(IMovableEntity entity, FollowEventArgs e)
+        /// <inheritdoc />
+        public void Follow(ILivingEntity livingEntity, ILivingEntity targetEntity, float distance = 1f)
         {
-            var entityToFollow = entity.FindEntity<IWorldEntity>(e.TargetId);
+            livingEntity.Follow.Target = targetEntity;
+            livingEntity.Moves.DestinationPosition = targetEntity.Object.Position.Clone();
+            livingEntity.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
+
+            this._moverPacketFactory.SendFollowTarget(livingEntity, targetEntity, distance);
+        }
+
+        /// <inheritdoc />
+        public void Follow(ILivingEntity livingEntity, uint targetId, float distance = 1f)
+        {
+            var entityToFollow = livingEntity.FindEntity<ILivingEntity>(targetId);
 
             if (entityToFollow == null)
             {
-                Logger.Error($"Cannot find entity with object id: {e.TargetId} around {entity.Object.Name}");
-                return;
+                throw new ArgumentNullException(nameof(entityToFollow), $"Cannot find entity with object id: {targetId} around {livingEntity.Object.Name}");
             }
 
-            entity.Follow.Target = entityToFollow;
-            entity.Moves.DestinationPosition = entityToFollow.Object.Position.Clone();
-            entity.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
-
-            WorldPacketFactory.SendFollowTarget(entity, entityToFollow, e.Distance);
+            this.Follow(livingEntity, entityToFollow, distance);
         }
     }
 }

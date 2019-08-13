@@ -26,12 +26,14 @@ namespace Rhisis.World.Handlers
         private readonly ILogger<PlayerHandler> _logger;
         private readonly ISpecialEffectSystem _specialEffectSystem;
         private readonly IInteractionSystem _interationSystem;
+        private readonly IFollowSystem _followSystem;
 
-        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem)
+        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem, IFollowSystem followSystem)
         {
             this._logger = logger;
             this._specialEffectSystem = specialEffectSystem;
             this._interationSystem = interationSystem;
+            this._followSystem = followSystem;
         }
 
         [HandlerAction(PacketType.STATEMODE)]
@@ -54,14 +56,10 @@ namespace Rhisis.World.Handlers
             this._interationSystem.SetTarget(client.Player, packet.TargetId, packet.TargetMode);
         }
 
-        [PacketHandler(PacketType.PLAYERSETDESTOBJ)]
-        public static void OnPlayerSetDestObject(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.PLAYERSETDESTOBJ)]
+        public void OnPlayerSetDestObject(WorldClient client, PlayerDestObjectPacket packet)
         {
-            var targetObjectId = packet.Read<uint>();
-            var distance = packet.Read<float>();
-            var followEvent = new FollowEventArgs(targetObjectId, distance);
-
-            SystemManager.Instance.Execute<FollowSystem>(client.Player, followEvent);
+            this._followSystem.Follow(client.Player, packet.TargetObjectId, packet.Distance);
         }
 
         [PacketHandler(PacketType.QUERY_PLAYER_DATA)]

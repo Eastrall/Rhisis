@@ -54,5 +54,21 @@ namespace Rhisis.World.Packets
         /// <param name="flags">StateMode flags.</param>
         /// <param name="item">Optional item.</param>
         void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null);
+
+        /// <summary>
+        /// Sends the entity following a target.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="targetEntity">Target entity to follow.</param>
+        /// <param name="distance">Distance.</param>
+        void SendFollowTarget(IWorldEntity entity, IWorldEntity targetEntity, float distance);
+
+        /// <summary>
+        /// Sends the update of an attribute.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="attribute">Attribute to update.</param>
+        /// <param name="newValue">New attribute value.</param>
+        void SendUpdateAttributes(IWorldEntity entity, DefineAttributes attribute, int newValue);
     }
 }

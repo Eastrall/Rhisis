@@ -47,7 +47,7 @@ namespace Rhisis.World.Handlers
                     WorldPacketFactory.SendSpeedFactor(target, target.Moves.SpeedFactor);
                 }
 
-                SystemManager.Instance.Execute<FollowSystem>(target, new FollowEventArgs(client.Player.Id, 1f));
+                //SystemManager.Instance.Execute<FollowSystem>(target, new FollowEventArgs(client.Player.Id, 1f));
             }
 
             SystemManager.Instance.Execute<BattleSystem>(client.Player, new MeleeAttackEventArgs(meleePacket.AttackMessage, target, meleePacket.WeaponAttackSpeed));

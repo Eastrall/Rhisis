@@ -101,5 +101,31 @@ namespace Rhisis.World.Packets.Internal
                 this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: true);
             }
         }
+
+        /// <inheritdoc />
+        public void SendFollowTarget(IWorldEntity entity, IWorldEntity targetEntity, float distance)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOVERSETDESTOBJ);
+                packet.Write(targetEntity.Id);
+                packet.Write(distance);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity);
+            }
+        }
+
+        /// <inheritdoc />
+        public void SendUpdateAttributes(IWorldEntity entity, DefineAttributes attribute, int newValue)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.SETPOINTPARAM);
+                packet.Write((int)attribute);
+                packet.Write(newValue);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity, true);
+            }
+        }
     }
 }

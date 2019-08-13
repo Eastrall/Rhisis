@@ -121,7 +121,7 @@ namespace Rhisis.World.Game.Behaviors
                 if (!monster.Object.Position.IsInCircle(monster.Moves.DestinationPosition, 1f))
                 {
                     monster.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
-                    WorldPacketFactory.SendFollowTarget(monster, monster.Follow.Target, 1f);
+                    //WorldPacketFactory.SendFollowTarget(monster, monster.Follow.Target, 1f);
                 }
                 else
                 {
