@@ -18,6 +18,6 @@ namespace Rhisis.World.Systems.Follow
         /// <param name="livingEntity">Current living entity.</param>
         /// <param name="targetEntity">Target entity to follow.</param>
         /// <param name="distance">Distance.</param>
-        void Follow(ILivingEntity livingEntity, ILivingEntity targetEntity, float distance = 1f);
+        void Follow(ILivingEntity livingEntity, IWorldEntity targetEntity, float distance = 1f);
     }
 }

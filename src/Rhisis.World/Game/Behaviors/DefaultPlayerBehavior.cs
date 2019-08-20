@@ -1,12 +1,11 @@
 ﻿using Rhisis.Core.Data;
 using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Mobility;
+using System;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -34,6 +33,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <inheritdoc />
         public void OnArrived()
         {
+            Console.WriteLine($"{this._player.Object.Name} arrived.");
             if (this._player.Follow.IsFollowing && this._player.Follow.Target.Type == WorldEntityType.Drop)
             {
                 this.PickUpDroppedItem(this._player, this._player.Follow.Target as IItemEntity);
@@ -76,8 +76,6 @@ namespace Rhisis.World.Game.Behaviors
             else
             {
                 this._inventorySystem.CreateItem(player, droppedItem.Drop.Item, droppedItem.Drop.Item.Quantity);
-                //var inventoryItemCreationEvent = new InventoryCreateItemEventArgs(droppedItem.Drop.Item.Id, droppedItem.Drop.Item.Quantity, -1, droppedItem.Drop.Item.Refine);
-                //SystemManager.Instance.Execute<InventorySystemOld>(player, inventoryItemCreationEvent);
                 WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 

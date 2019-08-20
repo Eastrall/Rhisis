@@ -1,8 +1,6 @@
 ﻿using Ether.Network.Packets;
 using Microsoft.Extensions.Logging;
 using Rhisis.Core.Data;
-using Rhisis.Core.DependencyInjection;
-using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Client;
@@ -22,18 +20,19 @@ namespace Rhisis.World.Handlers
     [Handler]
     public sealed class PlayerHandler
     {
-        private static readonly ILogger Logger = DependencyContainer.Instance.Resolve<ILogger<PlayerHandler>>();
         private readonly ILogger<PlayerHandler> _logger;
         private readonly ISpecialEffectSystem _specialEffectSystem;
         private readonly IInteractionSystem _interationSystem;
         private readonly IFollowSystem _followSystem;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
-        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem, IFollowSystem followSystem)
+        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem, IFollowSystem followSystem, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._specialEffectSystem = specialEffectSystem;
             this._interationSystem = interationSystem;
             this._followSystem = followSystem;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         [HandlerAction(PacketType.STATEMODE)]
@@ -62,7 +61,7 @@ namespace Rhisis.World.Handlers
             this._followSystem.Follow(client.Player, packet.TargetObjectId, packet.Distance);
         }
 
-        [PacketHandler(PacketType.QUERY_PLAYER_DATA)]
+        //[HandlerAction(PacketType.QUERY_PLAYER_DATA)]
         public static void OnQueryPlayerData(WorldClient client, INetPacketStream packet)
         {
             var onQueryPlayerDataPacket = new QueryPlayerDataPacket(packet);
@@ -70,7 +69,7 @@ namespace Rhisis.World.Handlers
             SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerDataEvent);
         }
 
-        [PacketHandler(PacketType.QUERY_PLAYER_DATA2)]
+        //[HandlerAction(PacketType.QUERY_PLAYER_DATA2)]
         public static void OnQueryPlayerData2(WorldClient client, INetPacketStream packet)
         {
             var onQueryPlayerData2Packet = new QueryPlayerData2Packet(packet);
@@ -78,14 +77,12 @@ namespace Rhisis.World.Handlers
             SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerData2Event);
         }
 
-        [PacketHandler(PacketType.PLAYERMOVED)]
-        public static void OnPlayerMoved(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.PLAYERMOVED)]
+        public void OnPlayerMoved(WorldClient client, PlayerMovedPacket packet)
         {
-            var playerMovedPacket = new PlayerMovedPacket(packet);
-
             if (client.Player.Health.IsDead)
             {
-                Logger.LogError($"Player {client.Player.Object.Name} is dead, he cannot move with keyboard.");
+                this._logger.LogError($"Player {client.Player.Object.Name} is dead, he cannot move with keyboard.");
                 return;
             }
 
@@ -93,67 +90,65 @@ namespace Rhisis.World.Handlers
 
             client.Player.Follow.Reset();
             client.Player.Battle.Reset();
-            client.Player.Object.Position = playerMovedPacket.BeginPosition + playerMovedPacket.DestinationPosition;
-            client.Player.Object.Angle = playerMovedPacket.Angle;
-            client.Player.Object.MovingFlags = (ObjectState)playerMovedPacket.State;
-            client.Player.Object.MotionFlags = (StateFlags)playerMovedPacket.StateFlag;
+            client.Player.Object.Position = packet.BeginPosition + packet.DestinationPosition;
+            client.Player.Object.Angle = packet.Angle;
+            client.Player.Object.MovingFlags = (ObjectState)packet.State;
+            client.Player.Object.MotionFlags = (StateFlags)packet.StateFlag;
             client.Player.Moves.IsMovingWithKeyboard = client.Player.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE) || 
                 client.Player.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_BMOVE);
-            client.Player.Moves.DestinationPosition = playerMovedPacket.BeginPosition + playerMovedPacket.DestinationPosition;
+            client.Player.Moves.DestinationPosition = packet.BeginPosition + packet.DestinationPosition;
 
-            WorldPacketFactory.SendMoverMoved(client.Player,
-                playerMovedPacket.BeginPosition, 
-                playerMovedPacket.DestinationPosition,
+            this._moverPacketFactory.SendMoverMoved(client.Player,
+                packet.BeginPosition,
+                packet.DestinationPosition,
                 client.Player.Object.Angle, 
                 (uint)client.Player.Object.MovingFlags, 
-                (uint)client.Player.Object.MotionFlags, 
-                playerMovedPacket.Motion, 
-                playerMovedPacket.MotionEx, 
-                playerMovedPacket.Loop, 
-                playerMovedPacket.MotionOption, 
-                playerMovedPacket.TickCount);
+                (uint)client.Player.Object.MotionFlags,
+                packet.Motion,
+                packet.MotionEx,
+                packet.Loop,
+                packet.MotionOption,
+                packet.TickCount);
         }
 
-        [PacketHandler(PacketType.PLAYERBEHAVIOR)]
-        public static void OnPlayerBehavior(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.PLAYERBEHAVIOR)]
+        public void OnPlayerBehavior(WorldClient client, PlayerBehaviorPacket packet)
         {
-            var playerBehaviorPacket = new PlayerBehaviorPacket(packet);
-
             if (client.Player.Health.IsDead)
             {
-                Logger.LogError($"Player {client.Player.Object.Name} is dead, he cannot move with keyboard.");
+                this._logger.LogError($"Player {client.Player.Object.Name} is dead, he cannot move with keyboard.");
                 return;
             }
 
             // TODO: check if player is flying
 
-            client.Player.Object.Position = playerBehaviorPacket.BeginPosition + playerBehaviorPacket.DestinationPosition;
-            client.Player.Object.Angle = playerBehaviorPacket.Angle;
-            client.Player.Object.MovingFlags = (ObjectState)playerBehaviorPacket.State;
-            client.Player.Object.MotionFlags = (StateFlags)playerBehaviorPacket.StateFlag;
+            client.Player.Object.Position = packet.BeginPosition + packet.DestinationPosition;
+            client.Player.Object.Angle = packet.Angle;
+            client.Player.Object.MovingFlags = (ObjectState)packet.State;
+            client.Player.Object.MotionFlags = (StateFlags)packet.StateFlag;
             client.Player.Moves.IsMovingWithKeyboard = client.Player.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE) ||
                 client.Player.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_BMOVE);
-            client.Player.Moves.DestinationPosition = playerBehaviorPacket.BeginPosition + playerBehaviorPacket.DestinationPosition;
+            client.Player.Moves.DestinationPosition = packet.BeginPosition + packet.DestinationPosition;
 
-            WorldPacketFactory.SendMoverBehavior(client.Player,
-                playerBehaviorPacket.BeginPosition,
-                playerBehaviorPacket.DestinationPosition,
+            this._moverPacketFactory.SendMoverBehavior(client.Player,
+                packet.BeginPosition,
+                packet.DestinationPosition,
                 client.Player.Object.Angle,
                 (uint)client.Player.Object.MovingFlags,
                 (uint)client.Player.Object.MotionFlags,
-                playerBehaviorPacket.Motion,
-                playerBehaviorPacket.MotionEx,
-                playerBehaviorPacket.Loop,
-                playerBehaviorPacket.MotionOption,
-                playerBehaviorPacket.TickCount);
+                packet.Motion,
+                packet.MotionEx,
+                packet.Loop,
+                packet.MotionOption,
+                packet.TickCount);
         }
 
-        [PacketHandler(PacketType.REVIVAL_TO_LODESTAR)]
-        public static void OnRevivalToLodestar(WorldClient client, INetPacketStream _)
+        //[HandlerAction(PacketType.REVIVAL_TO_LODESTAR)]
+        public void OnRevivalToLodestar(WorldClient client, INetPacketStream _)
         {
             if (!client.Player.Health.IsDead)
             {
-                Logger.LogWarning($"Player '{client.Player.Object.Name}' tried to revival to lodestar without being dead.");
+                this._logger.LogWarning($"Player '{client.Player.Object.Name}' tried to revival to lodestar without being dead.");
                 return;
             }
 

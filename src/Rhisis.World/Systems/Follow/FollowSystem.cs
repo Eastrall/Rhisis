@@ -21,7 +21,7 @@ namespace Rhisis.World.Systems.Follow
         }
 
         /// <inheritdoc />
-        public void Follow(ILivingEntity livingEntity, ILivingEntity targetEntity, float distance = 1f)
+        public void Follow(ILivingEntity livingEntity, IWorldEntity targetEntity, float distance = 1f)
         {
             livingEntity.Follow.Target = targetEntity;
             livingEntity.Moves.DestinationPosition = targetEntity.Object.Position.Clone();
@@ -33,7 +33,7 @@ namespace Rhisis.World.Systems.Follow
         /// <inheritdoc />
         public void Follow(ILivingEntity livingEntity, uint targetId, float distance = 1f)
         {
-            var entityToFollow = livingEntity.FindEntity<ILivingEntity>(targetId);
+            var entityToFollow = livingEntity.FindEntity<IWorldEntity>(targetId);
 
             if (entityToFollow == null)
             {

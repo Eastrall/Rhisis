@@ -1,4 +1,5 @@
-﻿using Rhisis.Core.Structures.Game;
+﻿using Rhisis.Core.Structures;
+using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Structures;
@@ -13,6 +14,7 @@ namespace Rhisis.World.Game.Factories
         /// <param name="currentMapContext">Map context.</param>
         /// <param name="currentMapLayerContext">Map layer context.</param>
         /// <param name="item">Item model.</param>
+        /// <param name="owner">Item owner.</param>
         /// <returns>New item entity.</returns>
         IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemDescriptor item, IWorldEntity owner = null);
 

@@ -3,6 +3,7 @@ using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Game.Maps;
 using System;
 
 namespace Rhisis.World.Systems.Mobility
@@ -61,15 +62,15 @@ namespace Rhisis.World.Systems.Mobility
                 entity.Object.MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
                 entity.Object.MovingFlags |= ObjectState.OBJSTA_STAND;
 
-                if (entity is IMonsterEntity monster)
-                    monster.Behavior.OnArrived();
-                else if (entity is IPlayerEntity player)
-                    player.Behavior.OnArrived();
+                if (entity is ILivingEntity livingEntity)
+                    livingEntity.Behavior.OnArrived();
             }
             else
             {
                 entity.Moves.HasArrived = false;
-                float entitySpeed = entity.Moves.Speed * entity.Moves.SpeedFactor; // TODO: Add speed bonuses
+                //float entitySpeed = entity.Moves.Speed * entity.Moves.SpeedFactor; // TODO: Add speed bonuses
+
+                float entitySpeed = ((entity.Moves.Speed * entity.Moves.SpeedFactor * 100)) * ((float)MapInstance.UpdateRate / 1000f); // TODO: Add speed bonuses
 
                 if (entity.Object.MotionFlags.HasFlag(StateFlags.OBJSTAF_WALK))
                     entitySpeed /= 5f;

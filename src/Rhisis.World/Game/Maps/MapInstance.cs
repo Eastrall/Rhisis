@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps.Regions;
-using Rhisis.World.Packets;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rhisis.World.Game.Maps
@@ -18,12 +17,14 @@ namespace Rhisis.World.Game.Maps
     {
         private const int DefaultMapLayerId = 1;
         private const int MapLandSize = 128;
-        private const int FrameRate = 60;
-        private const double UpdateRate = 1000f / FrameRate;
+        private const int FrameRate = 15;
+        public const double UpdateRate = 1000f / FrameRate;
 
         private readonly ConcurrentDictionary<int, IMapLayer> _layers;
         private readonly ILogger<MapInstance> _logger;
         private readonly IMapFactory _mapFactory;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly CancellationToken _cancellationToken;
 
         /// <inheritdoc />
         public string Name { get; }
@@ -63,6 +64,8 @@ namespace Rhisis.World.Game.Maps
             this.Name = name;
             this.MapInformation = worldInformations;
             this._layers = new ConcurrentDictionary<int, IMapLayer>();
+            this._cancellationTokenSource = new CancellationTokenSource();
+            this._cancellationToken = this._cancellationTokenSource.Token;
         }
 
         // <inheritdoc />
@@ -148,7 +151,7 @@ namespace Rhisis.World.Game.Maps
         {
             Task.Run(async () =>
             {
-                while (true)
+                while (!this._cancellationToken.IsCancellationRequested)
                 {
                     try
                     {
@@ -165,21 +168,19 @@ namespace Rhisis.World.Game.Maps
                             layer.Value.Update();
                         }
 
-                        await Task.Delay((int)UpdateRate);
+                        await Task.Delay(50, this._cancellationToken).ConfigureAwait(false);
+                        //await Task.Delay((int)UpdateRate).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
                         this._logger.LogError(e, $"An error occured on map {this.Name}.");
                     }
                 }
-            });
+            }, this._cancellationToken);
         }
 
         /// <inheritdoc />
-        public void StopUpdateTask()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void StopUpdateTask() => this._cancellationTokenSource.Cancel();
 
         /// <summary>
         /// Sets the map regions.

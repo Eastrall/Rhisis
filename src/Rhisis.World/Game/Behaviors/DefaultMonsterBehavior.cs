@@ -2,11 +2,11 @@
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
 using Rhisis.Core.Structures;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
-using Rhisis.World.Systems;
 using Rhisis.World.Systems.Battle;
+using Rhisis.World.Systems.Follow;
+using Rhisis.World.Systems.Mobility;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -19,10 +19,16 @@ namespace Rhisis.World.Game.Behaviors
         private const float MovingRange = 40f;
 
         private readonly IMonsterEntity _monster;
+        private readonly IMobilitySystem _mobilitySystem;
+        private readonly IBattleSystem _battleSystem;
+        private readonly IFollowSystem _followSystem;
 
-        public DefaultMonsterBehavior(IMonsterEntity monster)
+        public DefaultMonsterBehavior(IMonsterEntity monster, IMobilitySystem mobilitySystem, IBattleSystem battleSystem, IFollowSystem followSystem)
         {
             this._monster = monster;
+            this._mobilitySystem = mobilitySystem;
+            this._battleSystem = battleSystem;
+            this._followSystem = followSystem;
         }
 
         /// <inheritdoc />
@@ -33,6 +39,8 @@ namespace Rhisis.World.Game.Behaviors
 
             if (this._monster.Timers.LastAICheck > Time.GetElapsedTime())
                 return;
+
+            this._mobilitySystem.CalculatePosition(this._monster);
 
             if (this._monster.Battle.IsFighting)
                 this.ProcessMonsterFight(this._monster);
@@ -121,7 +129,7 @@ namespace Rhisis.World.Game.Behaviors
                 if (!monster.Object.Position.IsInCircle(monster.Moves.DestinationPosition, 1f))
                 {
                     monster.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
-                    //WorldPacketFactory.SendFollowTarget(monster, monster.Follow.Target, 1f);
+                    this._followSystem.Follow(monster, monster.Battle.Target);
                 }
                 else
                 {
@@ -129,8 +137,7 @@ namespace Rhisis.World.Game.Behaviors
                     {
                         monster.Timers.NextAttackTime = (long)(Time.TimeInMilliseconds() + monster.Data.ReAttackDelay);
 
-                        var meleeAttack = new MeleeAttackEventArgs(ObjectMessageType.OBJMSG_ATK1, monster.Battle.Target, monster.Data.AttackSpeed);
-                        SystemManager.Instance.Execute<BattleSystem>(monster, meleeAttack);
+                        this._battleSystem.MeleeAttack(monster, monster.Battle.Target, ObjectMessageType.OBJMSG_ATK1, monster.Data.AttackSpeed);
                     }
                 }
             }

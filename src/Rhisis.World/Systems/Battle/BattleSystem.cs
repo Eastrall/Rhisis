@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rhisis.Core.Data;
+using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Common;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
@@ -19,55 +19,32 @@ using System.Linq;
 
 namespace Rhisis.World.Systems.Battle
 {
-    [System(SystemType.Notifiable)]
-    public class BattleSystem : ISystem
+    [Injectable]
+    public class BattleSystem : IBattleSystem
     {
         private readonly ILogger<BattleSystem> _logger;
         private readonly IGameResources _gameResources;
+        private readonly IDropSystem _dropSystem;
         private readonly WorldConfiguration _worldConfiguration;
 
-        /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player | WorldEntityType.Monster;
-
-        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources)
+        /// <summary>
+        /// Creates a new <see cref="BattleSystem"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="worldConfiguration">World server configuration.</param>
+        /// <param name="gameResources">Game resources.</param>
+        /// <param name="dropSystem">Drop system.</param>
+        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IDropSystem dropSystem)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
             this._gameResources = gameResources;
+            this._dropSystem = dropSystem;
         }
-
+        
         /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        public void MeleeAttack(ILivingEntity attacker, ILivingEntity defender, ObjectMessageType attackType, float attackSpeed)
         {
-            if (!args.GetCheckArguments())
-            {
-                this._logger.LogError("Cannot execute battle action: {0} due to invalid arguments.", args.GetType());
-                return;
-            }
-
-            if (!(entity is ILivingEntity livingEntity))
-            {
-                this._logger.LogError($"The non living entity {entity.Object.Name} tried to execute a battle action.");
-                return;
-            }
-
-            switch (args)
-            {
-                case MeleeAttackEventArgs meleeAttackEventArgs:
-                    this.ProcessMeleeAttack(livingEntity, meleeAttackEventArgs);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Process the melee attack algorithm.
-        /// </summary>
-        /// <param name="attacker">Attacker</param>
-        /// <param name="e">Melee attack event arguments</param>
-        private void ProcessMeleeAttack(ILivingEntity attacker, MeleeAttackEventArgs e)
-        {
-            ILivingEntity defender = e.Target;
-
             if (defender.Health.IsDead)
             {
                 this._logger.LogError($"{attacker.Object.Name} cannot attack {defender.Object.Name} because target is already dead.");
@@ -87,7 +64,7 @@ namespace Rhisis.World.Systems.Battle
                 BattleHelper.KnockbackEntity(defender);
 
             WorldPacketFactory.SendAddDamage(defender, attacker, meleeAttackResult.Flags, meleeAttackResult.Damages);
-            WorldPacketFactory.SendMeleeAttack(attacker, e.AttackType, defender.Id, e.UnknownParameter, meleeAttackResult.Flags);
+            WorldPacketFactory.SendMeleeAttack(attacker, attackType, defender.Id, unknwonParam: 0, meleeAttackResult.Flags);
 
             defender.Health.Hp -= meleeAttackResult.Damages;
             WorldPacketFactory.SendUpdateAttributes(defender, DefineAttributes.HP, defender.Health.Hp);
@@ -102,7 +79,7 @@ namespace Rhisis.World.Systems.Battle
 
                 if (defender is IMonsterEntity deadMonster && attacker is IPlayerEntity player)
                 {
-                    WorldPacketFactory.SendDie(player, defender, attacker, e.AttackType);
+                    WorldPacketFactory.SendDie(player, defender, attacker, attackType);
 
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5; // Configure this timer on world configuration
 
@@ -119,7 +96,7 @@ namespace Rhisis.World.Systems.Battle
                         {
                             var item = new Item(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
 
-                            //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropItemEventArgs(item, attacker));
+                            this._dropSystem.DropItem(defender, item, attacker);
                             itemCount++;
                         }
                     }
@@ -145,7 +122,7 @@ namespace Rhisis.World.Systems.Battle
                             {
                                 var item = new Item(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
 
-                                //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropItemEventArgs(item, attacker));
+                                this._dropSystem.DropItem(defender, item, attacker);
                                 break;
                             }
                         }
@@ -153,7 +130,7 @@ namespace Rhisis.World.Systems.Battle
 
                     // Drop gold
                     int goldDropped = RandomHelper.Random(deadMonster.Data.DropGoldMin, deadMonster.Data.DropGoldMax);
-                    //SystemManager.Instance.Execute<DropSystemOld>(deadMonster, new DropGoldEventArgs(goldDropped, attacker));
+                    this._dropSystem.DropGold(deadMonster, goldDropped, attacker);
 
                     // Give experience
                     long experience = deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience;
@@ -161,7 +138,7 @@ namespace Rhisis.World.Systems.Battle
                 }
                 else if (defender is IPlayerEntity deadPlayer)
                 {
-                    WorldPacketFactory.SendDie(deadPlayer, defender, attacker, e.AttackType);
+                    WorldPacketFactory.SendDie(deadPlayer, defender, attacker, attackType);
                 }
             }
         }

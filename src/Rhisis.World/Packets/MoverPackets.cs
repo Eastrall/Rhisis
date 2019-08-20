@@ -32,58 +32,6 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMoverMoved(IWorldEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
-            float angle, uint state, uint stateFlag, uint motion, int motionEx, int loop, uint motionOption,
-            long tickCount)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOVERMOVED);
-                packet.Write(beginPosition.X);
-                packet.Write(beginPosition.Y);
-                packet.Write(beginPosition.Z);
-                packet.Write(destinationPosition.X);
-                packet.Write(destinationPosition.Y);
-                packet.Write(destinationPosition.Z);
-                packet.Write(angle);
-                packet.Write(state);
-                packet.Write(stateFlag);
-                packet.Write(motion);
-                packet.Write(motionEx);
-                packet.Write(loop);
-                packet.Write(motionOption);
-                packet.Write(tickCount);
-
-                SendToVisible(packet, entity, sendToPlayer: false);
-            }
-        }
-
-        public static void SendMoverBehavior(IWorldEntity entity, Vector3 beginPosition, Vector3 destinationPosition,
-            float angle, uint state, uint stateFlag, uint motion, int motionEx, int loop, uint motionOption,
-            long tickCount)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOVERBEHAVIOR);
-                packet.Write(beginPosition.X);
-                packet.Write(beginPosition.Y);
-                packet.Write(beginPosition.Z);
-                packet.Write(destinationPosition.X);
-                packet.Write(destinationPosition.Y);
-                packet.Write(destinationPosition.Z);
-                packet.Write(angle);
-                packet.Write(state);
-                packet.Write(stateFlag);
-                packet.Write(motion);
-                packet.Write(motionEx);
-                packet.Write(loop);
-                packet.Write(motionOption);
-                packet.Write(tickCount);
-
-                SendToVisible(packet, entity, sendToPlayer: false);
-            }
-        }
-
         public static void SendDestinationPosition(IMovableEntity movableEntity)
         {
             using (var packet = new FFPacket())

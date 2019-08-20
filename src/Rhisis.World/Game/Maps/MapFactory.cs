@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Resources.Dyo;
+using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps.Regions;
 using System;
@@ -18,6 +19,8 @@ namespace Rhisis.World.Game.Maps
         private readonly ILogger<MapFactory> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly INpcFactory _npcFactory;
+        private readonly IItemFactory _itemFactory;
+        private readonly IMonsterFactory _monsterFactory;
 
         /// <summary>
         /// Creates a new <see cref="MapFactory"/> instance.
@@ -25,11 +28,13 @@ namespace Rhisis.World.Game.Maps
         /// <param name="logger"></param>
         /// <param name="serviceProvider"></param>
         /// <param name="npcFactory"></param>
-        public MapFactory(ILogger<MapFactory> logger, IServiceProvider serviceProvider, INpcFactory npcFactory)
+        public MapFactory(ILogger<MapFactory> logger, IServiceProvider serviceProvider, INpcFactory npcFactory, IItemFactory itemFactory, IMonsterFactory monsterFactory)
         {
             this._logger = logger;
             this._serviceProvider = serviceProvider;
             this._npcFactory = npcFactory;
+            this._itemFactory = itemFactory;
+            this._monsterFactory = monsterFactory;
         }
 
         /// <inheritdoc />
@@ -49,6 +54,36 @@ namespace Rhisis.World.Game.Maps
         public IMapLayer CreateLayer(IMapInstance parentMapInstance, int layerId)
         {
             var mapLayer = ActivatorUtilities.CreateInstance<MapLayer>(this._serviceProvider, parentMapInstance, layerId);
+
+            foreach (IMapRegion region in parentMapInstance.Regions)
+            {
+                if (region is IMapRespawnRegion respawnRegion)
+                {
+                    if (respawnRegion.ObjectType == Rhisis.Core.Common.WorldObjectType.Mover)
+                    {
+                        for (int i = 0; i < respawnRegion.Count; i++)
+                        {
+                            IMonsterEntity monster = this._monsterFactory.CreateMonster(parentMapInstance, mapLayer, respawnRegion.ModelId, respawnRegion.GetRandomPosition());
+
+                            monster.Region = respawnRegion;
+                                
+                            mapLayer.AddEntity(monster);
+                        }
+                    }
+                    else if (respawnRegion.ObjectType == Rhisis.Core.Common.WorldObjectType.Item)
+                    {
+                        var item = this._itemFactory.CreateItem(respawnRegion.ModelId, 0, 0, 0);
+
+                        for (int i = 0; i < respawnRegion.Count; ++i)
+                        {
+                            IItemEntity itemEntity = this._itemFactory.CreateItemEntity(parentMapInstance, mapLayer, item);
+                            itemEntity.Object.Position = respawnRegion.GetRandomPosition();
+
+                            mapLayer.AddEntity(itemEntity);
+                        }
+                    }
+                }
+            }
 
             return mapLayer;
         }

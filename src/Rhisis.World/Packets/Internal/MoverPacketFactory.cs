@@ -45,6 +45,31 @@ namespace Rhisis.World.Packets.Internal
         }
 
         /// <inheritdoc />
+        public void SendMoverBehavior(IWorldEntity entity, Vector3 beginPosition, Vector3 destinationPosition, float angle, uint state, uint stateFlag, uint motion, int motionEx, int loop, uint motionOption, long tickCount)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOVERBEHAVIOR);
+                packet.Write(beginPosition.X);
+                packet.Write(beginPosition.Y);
+                packet.Write(beginPosition.Z);
+                packet.Write(destinationPosition.X);
+                packet.Write(destinationPosition.Y);
+                packet.Write(destinationPosition.Z);
+                packet.Write(angle);
+                packet.Write(state);
+                packet.Write(stateFlag);
+                packet.Write(motion);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tickCount);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: false);
+            }
+        }
+
+        /// <inheritdoc />
         public void SendDestinationAngle(IWorldEntity entity, bool left)
         {
             using (var packet = new FFPacket())
