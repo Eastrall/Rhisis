@@ -9,7 +9,7 @@ namespace Rhisis.World.Game.Entities
 {
     public abstract class WorldEntity : IWorldEntity
     {
-        private bool _disposedValue = false;
+        private bool _disposedValue;
 
         /// <inheritdoc />
         public uint Id { get; }

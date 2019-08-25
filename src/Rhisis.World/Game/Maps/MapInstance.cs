@@ -169,7 +169,6 @@ namespace Rhisis.World.Game.Maps
                         }
 
                         await Task.Delay(50, this._cancellationToken).ConfigureAwait(false);
-                        //await Task.Delay((int)UpdateRate).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -198,6 +197,13 @@ namespace Rhisis.World.Game.Maps
             this.Regions = regions;
         }
 
+        /// <inheritdoc />
         public override string ToString() => this.Name;
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            this._cancellationTokenSource.Dispose();
+        }
     }
 }

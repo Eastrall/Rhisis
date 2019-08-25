@@ -8,13 +8,11 @@ using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Common;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Drop;
 using Rhisis.World.Systems.Leveling;
-using Rhisis.World.Systems.Leveling.EventArgs;
 using System.Linq;
 
 namespace Rhisis.World.Systems.Battle
@@ -25,6 +23,7 @@ namespace Rhisis.World.Systems.Battle
         private readonly ILogger<BattleSystem> _logger;
         private readonly IGameResources _gameResources;
         private readonly IDropSystem _dropSystem;
+        private readonly IExperienceSystem _experienceSystem;
         private readonly WorldConfiguration _worldConfiguration;
 
         /// <summary>
@@ -34,12 +33,13 @@ namespace Rhisis.World.Systems.Battle
         /// <param name="worldConfiguration">World server configuration.</param>
         /// <param name="gameResources">Game resources.</param>
         /// <param name="dropSystem">Drop system.</param>
-        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IDropSystem dropSystem)
+        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IDropSystem dropSystem, IExperienceSystem experienceSystem)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
             this._gameResources = gameResources;
             this._dropSystem = dropSystem;
+            this._experienceSystem = experienceSystem;
         }
         
         /// <inheritdoc />
@@ -133,8 +133,7 @@ namespace Rhisis.World.Systems.Battle
                     this._dropSystem.DropGold(deadMonster, goldDropped, attacker);
 
                     // Give experience
-                    long experience = deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience;
-                    SystemManager.Instance.Execute<LevelSystem>(player, new ExperienceEventArgs(experience));
+                    this._experienceSystem.GiveExeperience(player, deadMonster.Data.Experience * this._worldConfiguration.Rates.Experience);
                 }
                 else if (defender is IPlayerEntity deadPlayer)
                 {

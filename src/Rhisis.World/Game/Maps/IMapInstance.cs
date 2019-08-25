@@ -1,6 +1,7 @@
 ﻿using Rhisis.Core.Resources;
 using Rhisis.Core.Structures;
 using Rhisis.World.Game.Maps.Regions;
+using System;
 using System.Collections.Generic;
 
 namespace Rhisis.World.Game.Maps
@@ -8,7 +9,7 @@ namespace Rhisis.World.Game.Maps
     /// <summary>
     /// Describes the behavior of a Map instance.
     /// </summary>
-    public interface IMapInstance : IMapContext
+    public interface IMapInstance : IMapContext, IDisposable
     {
         /// <summary>
         /// Gets the map name.

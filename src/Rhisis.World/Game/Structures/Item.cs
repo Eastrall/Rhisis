@@ -167,8 +167,6 @@ namespace Rhisis.World.Game.Structures
             this.Refine = refine;
             this.Element = element;
             this.ElementRefine = elementRefine;
-            // TODO: review this
-            //this.Data = GameResources.Instance.Items[this.Id];
             this.ExtraUsed = extraUsed;
         }
 

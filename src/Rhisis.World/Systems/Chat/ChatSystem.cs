@@ -65,6 +65,10 @@ namespace Rhisis.World.Systems.Chat
         private (string, string[]) GetCommandParameters(string command)
         {
             string commandName = command.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(commandName))
+                return (command, Enumerable.Empty<string>().ToArray());
+
             string commandParameters = command.Remove(0, commandName.Length);
 
             return (commandName, Regex.Matches(commandParameters, @"[\""].+?[\""]|[^ ]+").Select(m => m.Value.Trim('"')).ToArray());

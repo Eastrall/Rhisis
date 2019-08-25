@@ -33,7 +33,7 @@ namespace Rhisis.World.Game.Factories.Internal
             this._logger = logger;
             this._serviceProvider = serviceProvider;
             this._gameResources = gameResources;
-            this._itemFactory = ActivatorUtilities.CreateFactory(typeof(Item), new Type[] { typeof(int), typeof(byte), typeof(byte), typeof(byte), typeof(ItemData), typeof(int) });
+            this._itemFactory = ActivatorUtilities.CreateFactory(typeof(Item), new[] { typeof(int), typeof(byte), typeof(byte), typeof(byte), typeof(ItemData), typeof(int) });
             this._itemEntityFactory = ActivatorUtilities.CreateFactory(typeof(ItemEntity), Type.EmptyTypes);
         }
 

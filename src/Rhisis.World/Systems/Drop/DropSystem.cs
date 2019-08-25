@@ -55,20 +55,19 @@ namespace Rhisis.World.Systems.Drop
         public void DropGold(IWorldEntity entity, int goldAmount, IWorldEntity owner)
         {
             int goldItemId = DefineItem.II_GOLD_SEED1;
+            int gold = goldAmount * this._worldServerConfiguration.Rates.Gold;
 
-            goldAmount *= this._worldServerConfiguration.Rates.Gold;
-
-            if (goldAmount <= 0)
+            if (gold <= 0)
                 return;
 
-            if (goldAmount > (DropGoldLimit1 * this._worldServerConfiguration.Rates.Gold))
+            if (gold > (DropGoldLimit1 * this._worldServerConfiguration.Rates.Gold))
                 goldItemId = DefineItem.II_GOLD_SEED2;
-            else if (goldAmount > (DropGoldLimit2 * this._worldServerConfiguration.Rates.Gold))
+            else if (gold > (DropGoldLimit2 * this._worldServerConfiguration.Rates.Gold))
                 goldItemId = DefineItem.II_GOLD_SEED3;
-            else if (goldAmount > (DropGoldLimit3 * this._worldServerConfiguration.Rates.Gold))
+            else if (gold > (DropGoldLimit3 * this._worldServerConfiguration.Rates.Gold))
                 goldItemId = DefineItem.II_GOLD_SEED4;
 
-            this.DropItem(entity, new Item(goldItemId, goldAmount), owner);
+            this.DropItem(entity, new Item(goldItemId, gold), owner);
         }
     }
 }

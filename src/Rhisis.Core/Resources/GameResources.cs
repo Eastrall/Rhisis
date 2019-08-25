@@ -93,7 +93,7 @@ namespace Rhisis.Core.Resources
         /// <returns></returns>
         private T GetCacheValue<T>(object key, ref T value)
         {
-            if (value == null)
+            if (Equals(value, default(T)))
             {
                 this._cache.TryGetValue(key, out value);
             }

@@ -1,77 +1,35 @@
-﻿using Microsoft.Extensions.Logging;
-using Rhisis.Core.Common.Formulas;
+﻿using Rhisis.Core.Common.Formulas;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Game;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
-using Rhisis.World.Systems.Leveling.EventArgs;
 
 namespace Rhisis.World.Systems.Leveling
 {
-    /// <summary>
-    /// Leveling system.
-    /// </summary>
-    [System(SystemType.Notifiable)]
-    public sealed class LevelSystem : ISystem
+    [Injectable]
+    public sealed class ExperienceSystem : IExperienceSystem
     {
-        private readonly ILogger<LevelSystem> _logger;
         private readonly IGameResources _gameResources;
 
-        public LevelSystem(ILogger<LevelSystem> logger, IGameResources gameResources)
+        /// <summary>
+        /// Creates a new <see cref="ExperienceSystem"/> instance.
+        /// </summary>
+        /// <param name="gameResources">Game resources.</param>
+        public ExperienceSystem(IGameResources gameResources)
         {
-            this._logger = logger;
             this._gameResources = gameResources;
         }
 
         /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player;
-
-        /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        public void GiveExeperience(IPlayerEntity player, long experience)
         {
-            if (!(entity is IPlayerEntity player))
-            {
-                this._logger.LogError($"Cannot execute Level System. {entity.Object.Name} is not a player.");
-                return;
-            }
-
-            if (!args.GetCheckArguments())
-            {
-                this._logger.LogError($"Cannot execute Level System action: {args.GetType()} due to invalid arguments.");
-                return;
-            }
-
-            switch (args)
-            {
-                case ExperienceEventArgs e:
-                    this.GiveExperience(player, e);
-                    break;
-                default:
-                    this._logger.LogWarning("Unknown level system action type: {0} for player {1}", args.GetType(), entity.Object.Name);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Give experience to a player.
-        /// </summary>
-        /// <param name="player">Player entity.</param>
-        /// <param name="e">Experience event info.</param>
-        private void GiveExperience(IPlayerEntity player, ExperienceEventArgs e)
-        {
-            // Eastrall: Quick fix for not going beyond level 15. Will be removed with job system.
-            if (player.Object.Level >= 15)
-                return;
-
-            long experience = this.CalculateExtraExperience(player, e.Experience);
+            long exp = this.CalculateExtraExperience(player, experience);
 
             // TODO: experience to party
 
-            if (this.GiveExperienceToPlayer(player, experience))
+            if (this.GiveExperienceToPlayer(player, exp))
             {
                 WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
                 WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
@@ -101,7 +59,7 @@ namespace Rhisis.World.Systems.Leveling
                 long remainingExp = player.PlayerData.Experience - nextLevelExpTable.Exp;
 
                 this.ProcessLevelUp(player, (ushort)nextLevelExpTable.Gp);
-                
+
                 if (remainingExp > 0)
                     this.GiveExperienceToPlayer(player, remainingExp); // Multiple level up
 
