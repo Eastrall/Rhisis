@@ -2,32 +2,38 @@
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.IO;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 
 namespace Rhisis.World.Systems
 {
-    [System]
-    public sealed class RespawnSystem : ISystem
+    [Injectable]
+    public sealed class RespawnSystem : IRespawnSystem
     {
-        private static readonly ILogger<RespawnSystem> Logger = DependencyContainer.Instance.Resolve<ILogger<RespawnSystem>>();
+        private readonly ILogger<RespawnSystem> _logger;
 
-        public WorldEntityType Type => WorldEntityType.Monster | WorldEntityType.Drop;
+        /// <summary>
+        /// Creates a new <see cref="RespawnSystem"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        public RespawnSystem(ILogger<RespawnSystem> logger)
+        {
+            this._logger = logger;
+        }
 
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        /// <inheritdoc />
+        public void Execute(IWorldEntity entity)
         {
             if (entity is IMonsterEntity monster && monster.Health.IsDead)
             {
                 if (monster.Object.Spawned && monster.Timers.DespawnTime < Time.TimeInSeconds())
                 {
-                    Logger.LogDebug($"Despawning {monster.Object.Name}...");
+                    this._logger.LogDebug($"Despawning {monster.Object.Name}...");
                     monster.Object.Spawned = false;
                     monster.Timers.RespawnTime = Time.TimeInSeconds() + monster.Region.Time;
                 }
                 else if (!monster.Object.Spawned && monster.Timers.RespawnTime < Time.TimeInSeconds())
                 {
-                    Logger.LogDebug($"Respawning {monster.Object.Name}...");
+                    this._logger.LogDebug($"Respawning {monster.Object.Name}...");
                     this.ResetMonster(monster);
                 }
             }
@@ -54,6 +60,10 @@ namespace Rhisis.World.Systems
             }
         }
 
+        /// <summary>
+        /// Resets a monster.
+        /// </summary>
+        /// <param name="monster"></param>
         private void ResetMonster(IMonsterEntity monster)
         {
             monster.Timers.NextMoveTime = Time.TimeInSeconds() + RandomHelper.LongRandom(5, 15);
@@ -65,6 +75,10 @@ namespace Rhisis.World.Systems
             monster.Health.Mp = monster.Data.AddMp;
         }
 
+        /// <summary>
+        /// Resets a drop ownership.
+        /// </summary>
+        /// <param name="dropItem"></param>
         private void ResetDropOwnership(IItemEntity dropItem)
         {
             dropItem.Drop.Owner = null;
