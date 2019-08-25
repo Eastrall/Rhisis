@@ -152,5 +152,17 @@ namespace Rhisis.World.Packets.Internal
                 this._packetFactoryUtilities.SendToVisible(packet, entity, true);
             }
         }
+
+        /// <inheritdoc />
+        public void SendMotion(IWorldEntity entity, ObjectMessageType objectMessage)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOTION);
+                packet.Write((int)objectMessage);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: true);
+            }
+        }
     }
 }

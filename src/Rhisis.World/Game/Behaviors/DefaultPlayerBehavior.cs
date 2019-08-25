@@ -20,6 +20,7 @@ namespace Rhisis.World.Game.Behaviors
         private readonly IPlayerDataSystem _playerDataSystem;
         private readonly IRecoverySystem _recoverySystem;
         private readonly IRegionTriggerSystem _regionTriggerSystem;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="DefaultPlayerBehavior"/> instance.
@@ -28,7 +29,7 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="mobilitySystem">Mobility system.</param>
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="playerDataSystem">Player data system.</param>
-        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, IRecoverySystem recoverySystem, IRegionTriggerSystem regionTriggerSystem)
+        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, IRecoverySystem recoverySystem, IRegionTriggerSystem regionTriggerSystem, IMoverPacketFactory moverPacketFactory)
         {
             this._player = player;
             this._mobilitySystem = mobilitySystem;
@@ -36,6 +37,7 @@ namespace Rhisis.World.Game.Behaviors
             this._playerDataSystem = playerDataSystem;
             this._recoverySystem = recoverySystem;
             this._regionTriggerSystem = regionTriggerSystem;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -88,7 +90,7 @@ namespace Rhisis.World.Game.Behaviors
                 WorldPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 
-            WorldPacketFactory.SendMotion(this._player, ObjectMessageType.OBJMSG_PICKUP);
+            this._moverPacketFactory.SendMotion(this._player, ObjectMessageType.OBJMSG_PICKUP);
             droppedItem.Delete();
         }
 

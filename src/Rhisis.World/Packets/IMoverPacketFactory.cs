@@ -88,5 +88,12 @@ namespace Rhisis.World.Packets
         /// <param name="attribute">Attribute to update.</param>
         /// <param name="newValue">New attribute value.</param>
         void SendUpdateAttributes(IWorldEntity entity, DefineAttributes attribute, int newValue);
+
+        /// <summary>
+        /// Sends a motion to the given entity.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="objectMessage">Motion message.</param>
+        void SendMotion(IWorldEntity entity, ObjectMessageType objectMessage);
     }
 }

@@ -21,17 +21,6 @@ namespace Rhisis.World.Packets
             }
         }
 
-        public static void SendMotion(IWorldEntity entity, ObjectMessageType objectMessage)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(entity.Id, SnapshotType.MOTION);
-                packet.Write((int)objectMessage);
-
-                SendToVisible(packet, entity, sendToPlayer: true);
-            }
-        }
-
         public static void SendDestinationPosition(IMovableEntity movableEntity)
         {
             using (var packet = new FFPacket())

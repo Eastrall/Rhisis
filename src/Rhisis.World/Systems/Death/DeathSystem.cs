@@ -22,14 +22,18 @@ namespace Rhisis.World.Systems.Death
         private readonly IGameResources _gameResources;
         private readonly IMapManager _mapManager;
         private readonly ITeleportSystem _teleportSystem;
+        private readonly IPlayerPacketFactory _playerPacketFactory;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
-        public DeathSystem(ILogger<DeathSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IMapManager mapManager, ITeleportSystem teleportSystem)
+        public DeathSystem(ILogger<DeathSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IMapManager mapManager, ITeleportSystem teleportSystem, IPlayerPacketFactory playerPacketFactory, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
             this._gameResources = gameResources;
             this._mapManager = mapManager;
             this._teleportSystem = teleportSystem;
+            this._playerPacketFactory = playerPacketFactory;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -71,11 +75,11 @@ namespace Rhisis.World.Systems.Death
 
             this._teleportSystem.Teleport(player, revivalRegion.MapId, revivalRegion.RevivalPosition.X, null, revivalRegion.RevivalPosition.Z);
 
-            WorldPacketFactory.SendMotion(player, ObjectMessageType.OBJMSG_ACC_STOP | ObjectMessageType.OBJMSG_STOP_TURN | ObjectMessageType.OBJMSG_STAND);
-            WorldPacketFactory.SendPlayerRevival(player);
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
+            this._moverPacketFactory.SendMotion(player, ObjectMessageType.OBJMSG_ACC_STOP | ObjectMessageType.OBJMSG_STOP_TURN | ObjectMessageType.OBJMSG_STAND);
+            this._playerPacketFactory.SendPlayerRevival(player);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
 
             this.ProcessDeathPenality(player);
         }
@@ -111,7 +115,7 @@ namespace Rhisis.World.Systems.Death
                     }
                 }
 
-                WorldPacketFactory.SendPlayerExperience(player);
+                this._playerPacketFactory.SendPlayerExperience(player);
             }
         }
     }

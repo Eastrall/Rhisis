@@ -1,24 +1,34 @@
-﻿using Ether.Network.Packets;
-using Rhisis.Network;
-using Rhisis.Network.Packets;
+﻿using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Systems.Statistics;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    public static class StatisticsHandler
+    [Handler]
+    public class StatisticsHandler
     {
-        [PacketHandler(PacketType.MODIFY_STATUS)]
-        public static void OnModifyStatus(WorldClient client, INetPacketStream packet)
-        {
-            var modifyStatusPacket = new ModifyStatusPacket(packet);
-            var statisticsEventArgs = new StatisticsModifyEventArgs(modifyStatusPacket.Strenght,
-                modifyStatusPacket.Stamina,
-                modifyStatusPacket.Dexterity,
-                modifyStatusPacket.Intelligence);
+        private readonly IStatisticsSystem _statisticsSystem;
 
-            SystemManager.Instance.Execute<StatisticsSystem>(client.Player, statisticsEventArgs);
+        /// <summary>
+        /// Creates a new <see cref="StatisticsHandler"/> instance.
+        /// </summary>
+        /// <param name="statisticsSystem">Statistics system.</param>
+        public StatisticsHandler(IStatisticsSystem statisticsSystem)
+        {
+            this._statisticsSystem = statisticsSystem;
+        }
+
+        /// <summary>
+        /// Handles the MODIFY_STATUS for updating a player's statistics.
+        /// </summary>
+        /// <param name="client">Current client.</param>
+        /// <param name="packet">Incoming packet.</param>
+        [HandlerAction(PacketType.MODIFY_STATUS)]
+        public void OnModifyStatus(WorldClient client, ModifyStatusPacket packet)
+        {
+            this._statisticsSystem.UpdateStatistics(client.Player, 
+                packet.Strenght, packet.Stamina, packet.Dexterity, packet.Intelligence);
         }
     }
 }

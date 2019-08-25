@@ -2,17 +2,30 @@
 
 namespace Rhisis.Network.Packets.World
 {
-    public class ModifyStatusPacket
+    public class ModifyStatusPacket : IPacketDeserializer
     {
-        public ushort Strenght { get; }
+        /// <summary>
+        /// Gets the strength.
+        /// </summary>
+        public ushort Strenght { get; private set; }
 
-        public ushort Stamina { get; }
+        /// <summary>
+        /// Gets the stamina.
+        /// </summary>
+        public ushort Stamina { get; private set; }
 
-        public ushort Dexterity { get; }
+        /// <summary>
+        /// Gets the dexterity.
+        /// </summary>
+        public ushort Dexterity { get; private set; }
 
-        public ushort Intelligence { get; }
+        /// <summary>
+        /// Gets the intelligence.
+        /// </summary>
+        public ushort Intelligence { get; private set; }
 
-        public ModifyStatusPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
             this.Strenght = (ushort)packet.Read<int>();
             this.Stamina = (ushort)packet.Read<int>();

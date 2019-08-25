@@ -12,14 +12,19 @@ namespace Rhisis.World.Systems.Leveling
     public sealed class ExperienceSystem : IExperienceSystem
     {
         private readonly IGameResources _gameResources;
+        private readonly IMoverPacketFactory _moverPacketFactory;
+        private readonly IPlayerPacketFactory _playerPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="ExperienceSystem"/> instance.
         /// </summary>
         /// <param name="gameResources">Game resources.</param>
-        public ExperienceSystem(IGameResources gameResources)
+        /// <param name="playerPacketFactory">Player packet factory.</param>
+        public ExperienceSystem(IGameResources gameResources, IMoverPacketFactory moverPacketFactory, IPlayerPacketFactory playerPacketFactory)
         {
             this._gameResources = gameResources;
+            this._moverPacketFactory = moverPacketFactory;
+            this._playerPacketFactory = playerPacketFactory;
         }
 
         /// <inheritdoc />
@@ -31,14 +36,14 @@ namespace Rhisis.World.Systems.Leveling
 
             if (this.GiveExperienceToPlayer(player, exp))
             {
-                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
-                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
-                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
-                WorldPacketFactory.SendPlayerSetLevel(player, player.Object.Level);
-                WorldPacketFactory.SendPlayerStatsPoints(player);
+                this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
+                this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
+                this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
+                this._playerPacketFactory.SendPlayerSetLevel(player, player.Object.Level);
+                this._playerPacketFactory.SendPlayerStatsPoints(player);
             }
 
-            WorldPacketFactory.SendPlayerExperience(player);
+            this._playerPacketFactory.SendPlayerExperience(player);
             // TODO: send packet to friends, messenger, guild, couple, party, etc...
         }
 
