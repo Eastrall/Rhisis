@@ -3,6 +3,7 @@ using Rhisis.Core.IO;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
+using Rhisis.World.Systems;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Mobility;
 using Rhisis.World.Systems.PlayerData;
@@ -18,6 +19,7 @@ namespace Rhisis.World.Game.Behaviors
         private readonly IInventorySystem _inventorySystem;
         private readonly IPlayerDataSystem _playerDataSystem;
         private readonly IRecoverySystem _recoverySystem;
+        private readonly IRegionTriggerSystem _regionTriggerSystem;
 
         /// <summary>
         /// Creates a new <see cref="DefaultPlayerBehavior"/> instance.
@@ -26,19 +28,24 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="mobilitySystem">Mobility system.</param>
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="playerDataSystem">Player data system.</param>
-        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, IRecoverySystem recoverySystem)
+        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, IRecoverySystem recoverySystem, IRegionTriggerSystem regionTriggerSystem)
         {
             this._player = player;
             this._mobilitySystem = mobilitySystem;
             this._inventorySystem = inventorySystem;
             this._playerDataSystem = playerDataSystem;
             this._recoverySystem = recoverySystem;
+            this._regionTriggerSystem = regionTriggerSystem;
         }
 
         /// <inheritdoc />
         public void Update()
         {
+            if (!this._player.Object.Spawned || this._player.Health.IsDead)
+                return;
+
             this._mobilitySystem.CalculatePosition(this._player);
+            this._regionTriggerSystem.CheckWrapzones(this._player);
             this.ProcessIdleHeal();
         }
 
