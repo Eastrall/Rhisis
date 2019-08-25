@@ -65,17 +65,6 @@ namespace Rhisis.Core.Resources.Loaders
         }
 
         /// <summary>
-        /// Gets a dialog data.
-        /// </summary>
-        /// <param name="dialog">Dialog to retrieve</param>
-        /// <param name="lang">Language</param>
-        /// <returns></returns>
-        public DialogData GetDialogData(string dialog, string lang)
-            => null; //this._dialogs.TryGetValue(lang, out DialogSet dialogSet) && dialogSet.TryGetValue(dialog, out DialogData dialogData)
-                //? dialogData
-                //: null;
-
-        /// <summary>
         /// Adds a dialog to a given <see cref="DialogSet"/>.
         /// </summary>
         /// <param name="dialogSet">Dialog set</param>

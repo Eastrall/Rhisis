@@ -5,7 +5,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Mobility;
-using System;
+using Rhisis.World.Systems.PlayerData;
 
 namespace Rhisis.World.Game.Behaviors
 {
@@ -15,12 +15,21 @@ namespace Rhisis.World.Game.Behaviors
         private readonly IPlayerEntity _player;
         private readonly IMobilitySystem _mobilitySystem;
         private readonly IInventorySystem _inventorySystem;
+        private readonly IPlayerDataSystem _playerDataSystem;
 
-        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem)
+        /// <summary>
+        /// Creates a new <see cref="DefaultPlayerBehavior"/> instance.
+        /// </summary>
+        /// <param name="player">Current player.</param>
+        /// <param name="mobilitySystem">Mobility system.</param>
+        /// <param name="inventorySystem">Inventory system.</param>
+        /// <param name="playerDataSystem">Player data system.</param>
+        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem)
         {
             this._player = player;
             this._mobilitySystem = mobilitySystem;
             this._inventorySystem = inventorySystem;
+            this._playerDataSystem = playerDataSystem;
         }
 
         /// <inheritdoc />
@@ -33,7 +42,6 @@ namespace Rhisis.World.Game.Behaviors
         /// <inheritdoc />
         public void OnArrived()
         {
-            Console.WriteLine($"{this._player.Object.Name} arrived.");
             if (this._player.Follow.IsFollowing && this._player.Follow.Target.Type == WorldEntityType.Drop)
             {
                 this.PickUpDroppedItem(this._player, this._player.Follow.Target as IItemEntity);
@@ -59,18 +67,10 @@ namespace Rhisis.World.Game.Behaviors
             if (droppedItem.Drop.IsGold)
             {
                 int droppedGoldAmount = droppedItem.Drop.Item.Quantity;
-                long gold = player.PlayerData.Gold + droppedGoldAmount;
 
-                if (gold > int.MaxValue || gold < 0) // Check gold overflow
+                if (this._playerDataSystem.IncreaseGold(player, droppedGoldAmount))
                 {
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_TOOMANYMONEY_USE_PERIN);
-                    return;
-                }
-                else
-                {
-                    player.PlayerData.Gold = (int)gold;
-                    WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPMONEY, droppedGoldAmount.ToString("###,###,###,###"), gold.ToString("###,###,###,###"));
+                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPMONEY, droppedGoldAmount.ToString("###,###,###,###"), player.PlayerData.Gold.ToString("###,###,###,###"));
                 }
             }
             else
@@ -93,7 +93,7 @@ namespace Rhisis.World.Game.Behaviors
             {
                 if (!player.Battle.IsFighting)
                 {
-                    //SystemManager.Instance.Execute<RecoverySystem>(player, new IdleRecoveryEventArgs(isSitted: false));
+                    // TODO: Recovery system
                 }
             }
         }

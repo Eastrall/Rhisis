@@ -25,14 +25,16 @@ namespace Rhisis.World.Handlers
         private readonly IInteractionSystem _interationSystem;
         private readonly IFollowSystem _followSystem;
         private readonly IMoverPacketFactory _moverPacketFactory;
+        private readonly IDeathSystem _deathSystem;
 
-        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem, IFollowSystem followSystem, IMoverPacketFactory moverPacketFactory)
+        public PlayerHandler(ILogger<PlayerHandler> logger, ISpecialEffectSystem specialEffectSystem, IInteractionSystem interationSystem, IFollowSystem followSystem, IMoverPacketFactory moverPacketFactory, IDeathSystem deathSystem)
         {
             this._logger = logger;
             this._specialEffectSystem = specialEffectSystem;
             this._interationSystem = interationSystem;
             this._followSystem = followSystem;
             this._moverPacketFactory = moverPacketFactory;
+            this._deathSystem = deathSystem;
         }
 
         [HandlerAction(PacketType.STATEMODE)]
@@ -62,7 +64,7 @@ namespace Rhisis.World.Handlers
         }
 
         //[HandlerAction(PacketType.QUERY_PLAYER_DATA)]
-        public static void OnQueryPlayerData(WorldClient client, INetPacketStream packet)
+        public void OnQueryPlayerData(WorldClient client, INetPacketStream packet)
         {
             var onQueryPlayerDataPacket = new QueryPlayerDataPacket(packet);
             var queryPlayerDataEvent = new QueryPlayerDataEventArgs(onQueryPlayerDataPacket.PlayerId, onQueryPlayerDataPacket.Version);
@@ -70,7 +72,7 @@ namespace Rhisis.World.Handlers
         }
 
         //[HandlerAction(PacketType.QUERY_PLAYER_DATA2)]
-        public static void OnQueryPlayerData2(WorldClient client, INetPacketStream packet)
+        public void OnQueryPlayerData2(WorldClient client, INetPacketStream packet)
         {
             var onQueryPlayerData2Packet = new QueryPlayerData2Packet(packet);
             var queryPlayerData2Event = new QueryPlayerData2EventArgs(onQueryPlayerData2Packet.Size, onQueryPlayerData2Packet.PlayerDictionary);
@@ -143,7 +145,7 @@ namespace Rhisis.World.Handlers
                 packet.TickCount);
         }
 
-        //[HandlerAction(PacketType.REVIVAL_TO_LODESTAR)]
+        [HandlerAction(PacketType.REVIVAL_TO_LODESTAR)]
         public void OnRevivalToLodestar(WorldClient client, INetPacketStream _)
         {
             if (!client.Player.Health.IsDead)
@@ -152,7 +154,7 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            SystemManager.Instance.Execute<DeathSystem>(client.Player, null);
+            this._deathSystem.ResurectLodelight(client.Player);
         }
     }
 }

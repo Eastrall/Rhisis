@@ -67,7 +67,7 @@ namespace Rhisis.World.Game.Chat
             {
                 if (authority < chatCommandDefinition.Authority)
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException($"Player doesn't have enough authority to execute this command.");
                 }
 
                 return chatCommandDefinition.ChatCommandFactory(this._serviceProvider, null) as IChatCommand;

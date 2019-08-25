@@ -17,8 +17,6 @@ namespace Rhisis.Core.Helpers
             return from x in GetRhisisAssemblies().SelectMany(x => x.GetTypes())
                    where x.GetCustomAttribute(attributeType) != null
                    select x.GetTypeInfo();
-
-            //return GetRhisisAssemblies().SelectMany(y => y.GetTypes().Where(w => w.GetTypeInfo().GetCustomAttribute(attributeType) != null));
         }
 
         /// <summary>
@@ -57,10 +55,6 @@ namespace Rhisis.Core.Helpers
             return from x in GetRhisisAssemblies().SelectMany(a => a.GetTypes()).SelectMany(t => t.GetMethods())
                    where x.GetCustomAttributes(attributeType)?.Count() > 0
                    select x;
-            //return Assembly.GetEntryAssembly()
-            //    .GetTypes()
-            //    .SelectMany(x => x.GetMethods())
-            //    .Where(x => x.GetCustomAttributes(attributeType)?.Count() > 0);
         }
 
         /// <summary>

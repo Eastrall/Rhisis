@@ -13,23 +13,32 @@ namespace Rhisis.World.Game.Chat
         private readonly ILogger<GetGoldChatCommand> _logger;
         private readonly IPlayerDataSystem _playerDataSystem;
 
+        /// <summary>
+        /// Creates a new <see cref="GetGoldChatCommand"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="playerDataSystem">Player data system.</param>
         public GetGoldChatCommand(ILogger<GetGoldChatCommand> logger, IPlayerDataSystem playerDataSystem)
         {
             this._logger = logger;
             this._playerDataSystem = playerDataSystem;
         }
 
+        /// <inheritdoc />
         public void Execute(IPlayerEntity player, object[] parameters)
         {
             if (parameters.Length == 1)
             {
                 int gold = Convert.ToInt32(parameters[0]);
 
-                //if (int.TryParse(parameters[0], out int GoldByCommand))
-                //{
-                //    player.PlayerData.Gold += GoldByCommand;
-                //    WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
-                //}
+                if (!this._playerDataSystem.IncreaseGold(player, gold))
+                {
+                    this._logger.LogTrace($"Failed to create {gold} for player '{player.Object.Name}'.");
+                }
+                else
+                {
+                    this._logger.LogTrace($"Player '{player.Object.Name}' created {gold} gold.");
+                }
             }
         }
     }

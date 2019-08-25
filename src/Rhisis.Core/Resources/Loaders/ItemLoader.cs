@@ -67,20 +67,6 @@ namespace Rhisis.Core.Resources.Loaders
         }
 
         /// <summary>
-        /// Gets an <see cref="ItemData"/> by his id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ItemData GetItem(int id) => null; //this._itemsData.TryGetValue(id, out ItemData value) ? value : null;
-
-        /// <summary>
-        /// Gets items matching a predicate.
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public IEnumerable<ItemData> GetItems(Func<ItemData, bool> predicate) => null; //this._itemsData.Values.Where(predicate);
-
-        /// <summary>
         /// Applies custom transformation to an item.
         /// </summary>
         /// <param name="item">Item to transform.</param>

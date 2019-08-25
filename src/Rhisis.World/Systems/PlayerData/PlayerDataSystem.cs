@@ -4,6 +4,7 @@ using Rhisis.Core.DependencyInjection;
 using Rhisis.Database;
 using Rhisis.Database.Entities;
 using Rhisis.World.Game.Entities;
+using Rhisis.World.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,45 @@ namespace Rhisis.World.Systems.PlayerData
     public sealed class PlayerDataSystem : IPlayerDataSystem
     {
         private readonly IDatabase _database;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="PlayerDataSystem"/> instance.
         /// </summary>
         /// <param name="database"></param>
-        public PlayerDataSystem(IDatabase database)
+        public PlayerDataSystem(IDatabase database, IMoverPacketFactory moverPacketFactory)
         {
             this._database = database;
+            this._moverPacketFactory = moverPacketFactory;
+        }
+
+        /// <inheritdoc />
+        public bool IncreaseGold(IPlayerEntity player, int goldAmount)
+        {
+            long gold = player.PlayerData.Gold + goldAmount;
+
+            if (gold > int.MaxValue || gold < 0) // Check gold overflow
+            {
+                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_TOOMANYMONEY_USE_PERIN);
+                return false;
+            }
+            else
+            {
+                player.PlayerData.Gold = (int)gold;
+                this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool DecreaseGold(IPlayerEntity player, int goldAmount)
+        {
+            player.PlayerData.Gold = Math.Max(player.PlayerData.Gold - goldAmount, 0);
+
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+
+            return true;
         }
 
         /// <inheritdoc />

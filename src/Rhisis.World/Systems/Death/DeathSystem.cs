@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rhisis.Core.Common.Formulas;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.Resources;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Game;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Game.Maps.Regions;
@@ -15,28 +14,27 @@ using Rhisis.World.Systems.Teleport;
 
 namespace Rhisis.World.Systems.Death
 {
-    [System(SystemType.Notifiable)]
-    public sealed class DeathSystem : ISystem
+    [Injectable]
+    public sealed class DeathSystem : IDeathSystem
     {
-        // TODO: injection
+        private readonly ILogger<DeathSystem> _logger;
+        private readonly WorldConfiguration _worldConfiguration;
         private readonly IGameResources _gameResources;
         private readonly IMapManager _mapManager;
+        private readonly ITeleportSystem _teleportSystem;
 
-        private readonly ILogger<DeathSystem> _logger = DependencyContainer.Instance.Resolve<ILogger<DeathSystem>>();
-        private readonly WorldConfiguration _worldConfiguration = DependencyContainer.Instance.Resolve<WorldConfiguration>();
-
-        /// <inheritdoc />
-        public WorldEntityType Type => WorldEntityType.Player;
-
-        /// <inheritdoc />
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        public DeathSystem(ILogger<DeathSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IMapManager mapManager, ITeleportSystem teleportSystem)
         {
-            if (!(entity is IPlayerEntity player))
-            {
-                this._logger.LogError($"Cannot execute DeathSystem. {entity.Object.Name} is not a player.");
-                return;
-            }
+            this._logger = logger;
+            this._worldConfiguration = worldConfiguration.Value;
+            this._gameResources = gameResources;
+            this._mapManager = mapManager;
+            this._teleportSystem = teleportSystem;
+        }
 
+        /// <inheritdoc />
+        public void ResurectLodelight(IPlayerEntity player)
+        {
             IMapRevivalRegion revivalRegion = player.Object.CurrentMap.GetNearRevivalRegion(player.Object.Position);
 
             if (revivalRegion == null)
@@ -71,8 +69,7 @@ namespace Rhisis.World.Systems.Death
                 revivalRegion = revivalMap.GetRevivalRegion(revivalRegion.Key);
             }
 
-            //var teleportEvent = new TeleportEventArgs(revivalRegion.MapId, revivalRegion.RevivalPosition.X, revivalRegion.RevivalPosition.Z);
-            //SystemManager.Instance.Execute<TeleportSystemOld>(player, teleportEvent);
+            this._teleportSystem.Teleport(player, revivalRegion.MapId, revivalRegion.RevivalPosition.X, null, revivalRegion.RevivalPosition.Z);
 
             WorldPacketFactory.SendMotion(player, ObjectMessageType.OBJMSG_ACC_STOP | ObjectMessageType.OBJMSG_STOP_TURN | ObjectMessageType.OBJMSG_STAND);
             WorldPacketFactory.SendPlayerRevival(player);
