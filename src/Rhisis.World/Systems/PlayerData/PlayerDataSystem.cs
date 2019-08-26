@@ -147,17 +147,17 @@ namespace Rhisis.World.Systems.PlayerData
                 // Taskbar
                 character.TaskbarShortcuts.Clear();
 
-                foreach (var applet in player.Taskbar.Applets.Shortcuts)
+                foreach (var applet in player.Taskbar.Applets.Objects)
                 {
                     if (applet == null)
                         continue;
 
                     var dbApplet = new DbShortcut(ShortcutTaskbarTarget.Applet, applet.SlotIndex, applet.Type,
-                        applet.ObjId, applet.ObjectType, applet.ObjIndex, applet.UserId, applet.ObjData, applet.Text);
+                        applet.ObjectId, applet.ObjectType, applet.ObjectIndex, applet.UserId, applet.ObjectData, applet.Text);
 
                     if (applet.Type == ShortcutType.Item)
                     {
-                        var item = player.Inventory.GetItem((int)applet.ObjId);
+                        var item = player.Inventory.GetItem((int)applet.ObjectId);
                         dbApplet.ObjectId = (uint)item.Slot;
                     }
 
@@ -165,21 +165,21 @@ namespace Rhisis.World.Systems.PlayerData
                 }
 
 
-                for (int slotLevel = 0; slotLevel < player.Taskbar.Items.Shortcuts.Count; slotLevel++)
+                for (int slotLevel = 0; slotLevel < player.Taskbar.Items.Objects.Count; slotLevel++)
                 {
-                    for (int slot = 0; slot < player.Taskbar.Items.Shortcuts[slotLevel].Count; slot++)
+                    for (int slot = 0; slot < player.Taskbar.Items.Objects[slotLevel].Count; slot++)
                     {
-                        var itemShortcut = player.Taskbar.Items.Shortcuts[slotLevel][slot];
+                        var itemShortcut = player.Taskbar.Items.Objects[slotLevel][slot];
                         if (itemShortcut == null)
                             continue;
 
                         var dbItem = new DbShortcut(ShortcutTaskbarTarget.Item, slotLevel, itemShortcut.SlotIndex,
-                            itemShortcut.Type, itemShortcut.ObjId, itemShortcut.ObjectType, itemShortcut.ObjIndex,
-                            itemShortcut.UserId, itemShortcut.ObjData, itemShortcut.Text);
+                            itemShortcut.Type, itemShortcut.ObjectId, itemShortcut.ObjectType, itemShortcut.ObjectIndex,
+                            itemShortcut.UserId, itemShortcut.ObjectData, itemShortcut.Text);
 
                         if (itemShortcut.Type == ShortcutType.Item)
                         {
-                            var item = player.Inventory.GetItem((int)itemShortcut.ObjId);
+                            var item = player.Inventory.GetItem((int)itemShortcut.ObjectId);
                             dbItem.ObjectId = (uint)item.Slot;
                         }
 
@@ -193,8 +193,8 @@ namespace Rhisis.World.Systems.PlayerData
                         continue;
 
                     character.TaskbarShortcuts.Add(new DbShortcut(ShortcutTaskbarTarget.Queue, queueItem.SlotIndex,
-                        queueItem.Type, queueItem.ObjId, queueItem.ObjectType, queueItem.ObjIndex, queueItem.UserId,
-                        queueItem.ObjData, queueItem.Text));
+                        queueItem.Type, queueItem.ObjectId, queueItem.ObjectType, queueItem.ObjectIndex, queueItem.UserId,
+                        queueItem.ObjectData, queueItem.Text));
                 }
             }
 

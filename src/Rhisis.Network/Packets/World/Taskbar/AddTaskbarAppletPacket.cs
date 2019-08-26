@@ -1,53 +1,61 @@
 ﻿using Ether.Network.Packets;
 using Rhisis.Core.Common;
-using System;
 
 namespace Rhisis.Network.Packets.World.Taskbar
 {
-    public struct AddTaskbarAppletPacket : IEquatable<AddTaskbarAppletPacket>
+    public class AddTaskbarAppletPacket : IPacketDeserializer
     {
-        public int SlotIndex { get; }
+        /// <summary>
+        /// Gets the taskbar slot index.
+        /// </summary>
+        public int SlotIndex { get; private set; }
 
-        public ShortcutType Type { get; }
+        /// <summary>
+        /// Gets the taskbar shortcut type.
+        /// </summary>
+        public ShortcutType Type { get; private set; }
 
-        public uint ObjectId { get; }
+        /// <summary>
+        /// Gets the taskbar object id.
+        /// </summary>
+        public uint ObjectId { get; private set; }
 
-        public ShortcutObjectType ObjectType { get; }
+        /// <summary>
+        /// Gets the taskbar shortcut object type.
+        /// </summary>
+        public ShortcutObjectType ObjectType { get; private set; }
 
-        public uint ObjectIndex { get; }
+        /// <summary>
+        /// Gets the taskbar object index.
+        /// </summary>
+        public uint ObjectIndex { get; private set; }
 
-        public uint UserId { get; }
+        /// <summary>
+        /// Gets the user id.
+        /// </summary>
+        public uint UserId { get; private set; }
 
-        public uint ObjectData { get; }
+        /// <summary>
+        /// Gets the taskbar object data.
+        /// </summary>
+        public uint ObjectData { get; private set; }
 
-        public string Text { get; }
+        /// <summary>
+        /// Gets the taskbar text object.
+        /// </summary>
+        public string Text { get; private set; }
 
-        public AddTaskbarAppletPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public virtual void Deserialize(INetPacketStream packet)
         {
-            SlotIndex = packet.Read<byte>();
-            Type = (ShortcutType)packet.Read<uint>();
-            ObjectId = packet.Read<uint>();
-            ObjectType = (ShortcutObjectType)packet.Read<uint>();
-            ObjectIndex = packet.Read<uint>();
-            UserId = packet.Read<uint>();
-            ObjectData = packet.Read<uint>();
-            Text = null;
-
-            if (Type == ShortcutType.Chat)
-                Text = packet.Read<string>();
-        }
-
-        public bool Equals(AddTaskbarAppletPacket other)
-        {
-            return
-                SlotIndex == other.SlotIndex &&
-                Type == other.Type &&
-                ObjectId == other.ObjectId &&
-                ObjectType == other.ObjectType &&
-                ObjectIndex == other.ObjectIndex &&
-                UserId == other.UserId &&
-                ObjectData == other.ObjectData &&
-                Text == other.Text;
+            this.SlotIndex = packet.Read<byte>();
+            this.Type = (ShortcutType)packet.Read<uint>();
+            this.ObjectId = packet.Read<uint>();
+            this.ObjectType = (ShortcutObjectType)packet.Read<uint>();
+            this.ObjectIndex = packet.Read<uint>();
+            this.UserId = packet.Read<uint>();
+            this.ObjectData = packet.Read<uint>();
+            this.Text = this.Type == ShortcutType.Chat ? packet.Read<string>() : string.Empty;
         }
     }
 }

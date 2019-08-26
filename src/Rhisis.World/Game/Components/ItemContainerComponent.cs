@@ -34,6 +34,17 @@ namespace Rhisis.World.Game.Components
         public Guid ItemInUseActionId { get; set; }
 
         /// <summary>
+        /// Gets the item by slot.
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        public Item this[int slot]
+        {
+            get => this.Items[slot];
+            set => this.Items[slot] = value;
+        }
+
+        /// <summary>
         /// Creates a new <see cref="ItemContainerComponent"/> instance.
         /// </summary>
         public ItemContainerComponent(int maxCapacity) :
@@ -122,40 +133,6 @@ namespace Rhisis.World.Game.Components
                 return false;
 
             return item.Quantity > 0;
-        }
-
-        /// <summary>
-        /// Removes the specified amount of the specified item from container.
-        /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="amount"></param>
-        public void RemoveItems(int itemId, int amount = 1)
-        {
-            var item = GetItemById(itemId);
-            if (item == null)
-                return;
-
-            if (item.Quantity > amount)
-                item.Quantity -= amount;
-            else if (item.Quantity <= amount)
-            {
-                item.Quantity = 0;
-                this[item.Slot] = new Item()
-                {
-                    UniqueId = item.UniqueId
-                };
-            }
-        }
-
-        /// <summary>
-        /// Gets the item by slot.
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        public Item this[int slot]
-        {
-            get => Items[slot];
-            set => Items[slot] = value;
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rhisis.Core.Common;
-using Rhisis.Core.Common.Game.Structures;
 using Rhisis.Core.Data;
 using Rhisis.Core.DependencyInjection;
 using Rhisis.Core.IO;
@@ -13,9 +12,8 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Recovery;
+using Rhisis.World.Systems.Taskbar;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Rhisis.World.Game.Factories.Internal
 {
@@ -27,6 +25,7 @@ namespace Rhisis.World.Game.Factories.Internal
         private readonly IMapManager _mapManager;
         private readonly IBehaviorManager _behaviorManager;
         private readonly IInventorySystem _inventorySystem;
+        private readonly ITaskbarSystem _taskbarSystem;
         private readonly ObjectFactory _playerFactory;
 
         /// <summary>
@@ -37,13 +36,15 @@ namespace Rhisis.World.Game.Factories.Internal
         /// <param name="mapManager">Map manager.</param>
         /// <param name="behaviorManager">Behavior manager.</param>
         /// <param name="inventorySystem">Inventory system.</param>
-        public PlayerFactory(IServiceProvider serviceProvider, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager, IInventorySystem inventorySystem)
+        /// <param name="taskbarSystem">Taskbar system.</param>
+        public PlayerFactory(IServiceProvider serviceProvider, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager, IInventorySystem inventorySystem, ITaskbarSystem taskbarSystem)
         {
             this._serviceProvider = serviceProvider;
             this._gameResources = gameResources;
             this._mapManager = mapManager;
             this._behaviorManager = behaviorManager;
             this._inventorySystem = inventorySystem;
+            this._taskbarSystem = taskbarSystem;
             this._playerFactory = ActivatorUtilities.CreateFactory(typeof(PlayerEntity), Type.EmptyTypes);
         }
 
@@ -125,37 +126,7 @@ namespace Rhisis.World.Game.Factories.Internal
             this._inventorySystem.InitializeInventory(player, character.Items);
 
             // Taskbar
-            foreach (var applet in character.TaskbarShortcuts.Where(x => x.TargetTaskbar == ShortcutTaskbarTarget.Applet))
-            {
-                if (applet.Type == ShortcutType.Item)
-                {
-                    var item = player.Inventory.GetItem(x => x.Slot == applet.ObjectId);
-                    player.Taskbar.Applets.CreateShortcut(new Shortcut(applet.SlotIndex, applet.Type, (uint)item.UniqueId, applet.ObjectType, applet.ObjectIndex, applet.UserId, applet.ObjectData, applet.Text));
-
-                }
-                else
-                {
-                    player.Taskbar.Applets.CreateShortcut(new Shortcut(applet.SlotIndex, applet.Type, applet.ObjectId, applet.ObjectType, applet.ObjectIndex, applet.UserId, applet.ObjectData, applet.Text));
-                }
-            }
-
-            foreach (var item in character.TaskbarShortcuts.Where(x => x.TargetTaskbar == ShortcutTaskbarTarget.Item))
-            {
-                if (item.Type == ShortcutType.Item)
-                {
-                    var inventoryItem = player.Inventory.GetItem(x => x.Slot == item.ObjectId);
-                    player.Taskbar.Items.CreateShortcut(new Shortcut(item.SlotIndex, item.Type, (uint)inventoryItem.UniqueId, item.ObjectType, item.ObjectIndex, item.UserId, item.ObjectData, item.Text), item.SlotLevelIndex ?? -1);
-                }
-                else
-                    player.Taskbar.Items.CreateShortcut(new Shortcut(item.SlotIndex, item.Type, item.ObjectId, item.ObjectType, item.ObjectIndex, item.UserId, item.ObjectData, item.Text), item.SlotLevelIndex ?? -1);
-            }
-
-            var list = new List<Shortcut>();
-            foreach (var skill in character.TaskbarShortcuts.Where(x => x.TargetTaskbar == ShortcutTaskbarTarget.Queue))
-            {
-                list.Add(new Shortcut(skill.SlotIndex, skill.Type, skill.ObjectId, skill.ObjectType, skill.ObjectIndex, skill.UserId, skill.ObjectData, skill.Text));
-            }
-            player.Taskbar.Queue.CreateShortcuts(list);
+            this._taskbarSystem.InitializeTaskbar(player, character.TaskbarShortcuts);
 
             mapLayer.AddEntity(player);
 

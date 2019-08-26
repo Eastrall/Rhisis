@@ -2,86 +2,117 @@
 using Rhisis.Core.Common;
 using Rhisis.Core.Common.Game.Structures;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.World.Game.Core;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.Database.Entities;
+using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Entities;
-using Rhisis.World.Systems.Taskbar.EventArgs;
 using System;
+using System.Collections.Generic;
 
 namespace Rhisis.World.Systems.Taskbar
 {
-    [System(SystemType.Notifiable)]
-    public class TaskbarSystem : ISystem
+    [Injectable]
+    public sealed class TaskbarSystem : ITaskbarSystem
     {
-        private static ILogger Logger => DependencyContainer.Instance.Resolve<ILogger<TaskbarSystem>>();
-
         public const int MaxTaskbarApplets = 18;
         public const int MaxTaskbarItems = 9;
         public const int MaxTaskbarItemLevels = 8;
         public const int MaxTaskbarQueue = 5;
 
-        public WorldEntityType Type => WorldEntityType.Player;
+        private readonly ILogger<TaskbarSystem> _logger;
 
-        public void Execute(IWorldEntity entity, SystemEventArgs args)
+        /// <summary>
+        /// Creates a new <see cref="TaskbarSystem"/> instance.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        public TaskbarSystem(ILogger<TaskbarSystem> logger)
         {
-            if (!(entity is IPlayerEntity player))
+            this._logger = logger;
+        }
+
+        /// <inheritdoc />
+        public void InitializeTaskbar(IPlayerEntity player, IEnumerable<DbShortcut> shortcuts)
+        {
+            player.Taskbar.Applets = new TaskbarAppletContainerComponent(MaxTaskbarApplets);
+            player.Taskbar.Items = new TaskbarItemContainerComponent(MaxTaskbarItems, MaxTaskbarItemLevels);
+            player.Taskbar.Queue = new TaskbarQueueContainerComponent(MaxTaskbarQueue);
+
+            foreach (DbShortcut dbShortcut in shortcuts)
+            {
+                Shortcut shortcut = null;
+
+                if (dbShortcut.Type == ShortcutType.Item)
+                {
+                    var item = player.Inventory.GetItem(x => x.Slot == dbShortcut.ObjectId);
+
+                    shortcut = new Shortcut(dbShortcut.SlotIndex, dbShortcut.Type, (uint)item.UniqueId, dbShortcut.ObjectType, dbShortcut.ObjectIndex, dbShortcut.UserId, dbShortcut.ObjectData, dbShortcut.Text);
+                }
+                else
+                {
+                    shortcut = new Shortcut(dbShortcut.SlotIndex, dbShortcut.Type, dbShortcut.ObjectId, dbShortcut.ObjectType, dbShortcut.ObjectIndex, dbShortcut.UserId, dbShortcut.ObjectData, dbShortcut.Text);
+                }
+
+                if (dbShortcut.TargetTaskbar == ShortcutTaskbarTarget.Applet)
+                {
+                    this.AddApplet(player, shortcut);
+                }
+                else if (dbShortcut.TargetTaskbar == ShortcutTaskbarTarget.Item)
+                {
+                    this.AddItem(player, shortcut, dbShortcut.SlotLevelIndex.GetValueOrDefault(int.MaxValue));
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public void AddApplet(IPlayerEntity player, Shortcut shortcutToAdd)
+        {
+            if (shortcutToAdd.SlotIndex < 0 || shortcutToAdd.SlotIndex >= MaxTaskbarApplets)
                 return;
 
-            if (!args.GetCheckArguments())
-            {
-                Logger.LogWarning("Invalid arguments received.");
+            if (player.Taskbar.Applets.Objects[shortcutToAdd.SlotIndex] != null)
                 return;
-            }
 
-            switch (args)
-            {
-                case AddTaskbarAppletEventArgs e:
-                    HandleAddAppletTaskbarShortcut(player, e);
-                    break;
-                case RemoveTaskbarAppletEventArgs e:
-                    HandleRemoveAppletTaskbarShortcut(player, e);
-                    break;
-                case AddTaskbarItemEventArgs e:
-                    HandleAddItemTaskbarShortcut(player, e);
-                    break;
-                case RemoveTaskbarItemEventArgs e:
-                    HandleRemoveItemTaskbarShortcut(player, e);
-                    break;
-                case TaskbarSkillEventArgs e:
-                    HandleActionSlot(player, e);
-                    break;
-            }
+            player.Taskbar.Applets.Objects[shortcutToAdd.SlotIndex] = shortcutToAdd;
+
+            this._logger.LogDebug("Created Shortcut of type {0} on slot {1} for player {2} on the Applet Taskbar", Enum.GetName(typeof(ShortcutType), shortcutToAdd.Type), shortcutToAdd.SlotIndex, player.Object.Name);
         }
 
-        private void HandleAddAppletTaskbarShortcut(IPlayerEntity player, AddTaskbarAppletEventArgs e)
+        /// <inheritdoc />
+        public void AddItem(IPlayerEntity player, Shortcut shortcutToAdd, int slotLevelIndex)
         {
-            player.Taskbar.Applets.CreateShortcut(new Shortcut(e.SlotIndex, e.Type, e.ObjId, e.ObjectType, e.ObjIndex, e.UserId, e.ObjData, e.Text));
-            Logger.LogDebug("Created Shortcut of type {0} on slot {1} for player {2} on the Applet Taskbar", Enum.GetName(typeof(ShortcutType), e.Type), e.SlotIndex, player.Object.Name);
+            if (slotLevelIndex < 0 || slotLevelIndex >= MaxTaskbarItemLevels)
+                return;
+
+            if (shortcutToAdd.SlotIndex < 0 || shortcutToAdd.SlotIndex >= MaxTaskbarItems)
+                return;
+
+            player.Taskbar.Items.Objects[slotLevelIndex][shortcutToAdd.SlotIndex] = shortcutToAdd;
+
+            this._logger.LogDebug("Created Shortcut of type {0} on slot {1} for player {2} on the Item Taskbar", Enum.GetName(typeof(ShortcutType), shortcutToAdd.Type), shortcutToAdd.SlotIndex, player.Object.Name);
         }
 
-        private void HandleRemoveAppletTaskbarShortcut(IPlayerEntity player, RemoveTaskbarAppletEventArgs e)
+        /// <inheritdoc />
+        public void RemoveApplet(IPlayerEntity player, int slotIndex)
         {
-            player.Taskbar.Applets.RemoveShortcut(e.SlotIndex);
-            Logger.LogDebug("Removed Shortcut on slot {0} of player {1} on the Applet Taskbar", e.SlotIndex, player.Object.Name);
+            if (slotIndex < 0 || slotIndex >= MaxTaskbarApplets)
+                return;
+
+            player.Taskbar.Applets.Objects[slotIndex] = null;
+
+            this._logger.LogDebug("Removed Shortcut on slot {0} of player {1} on the Applet Taskbar", slotIndex, player.Object.Name);
         }
 
-        private void HandleAddItemTaskbarShortcut(IPlayerEntity player, AddTaskbarItemEventArgs e)
+        /// <inheritdoc />
+        public void RemoveItem(IPlayerEntity player, int slotLevelIndex, int slotIndex)
         {
-            player.Taskbar.Items.CreateShortcut(new Shortcut(e.SlotIndex, e.Type, e.ObjId, e.ObjectType, e.ObjIndex, e.UserId, e.ObjData, e.Text), e.SlotLevelIndex);
-            Logger.LogDebug("Created Shortcut of type {0} on slot {1} for player {2} on the Item Taskbar", Enum.GetName(typeof(ShortcutType), e.Type), e.SlotIndex, player.Object.Name);
-        }
+            if (slotLevelIndex < 0 || slotLevelIndex >= MaxTaskbarItemLevels)
+                return;
 
-        private void HandleRemoveItemTaskbarShortcut(IPlayerEntity player, RemoveTaskbarItemEventArgs e)
-        {
-            player.Taskbar.Items.RemoveShortcut(e.SlotLevelIndex, e.SlotIndex);
-            Logger.LogDebug("Removed Shortcut on slot {0}-{1} of player {2} on the Item Taskbar", e.SlotLevelIndex, e.SlotIndex, player.Object.Name);
-        }
+            if (slotIndex < 0 || slotIndex >= MaxTaskbarItems)
+                return;
 
-        private void HandleActionSlot(IPlayerEntity player, TaskbarSkillEventArgs e)
-        {
-            player.Taskbar.Queue.ClearQueue();
-            player.Taskbar.Queue.CreateShortcuts(e.Skills);
-            Logger.LogDebug("Handled Actionslot Shortcuts of player {0}", player.Object.Name);
+            player.Taskbar.Items.Objects[slotLevelIndex][slotIndex] = null;
+
+            this._logger.LogDebug($"Removed Shortcut on slot {slotLevelIndex}-{slotIndex} of player {player.Object.Name} on the Item Taskbar");
         }
     }
 }

@@ -1,23 +1,19 @@
 ﻿using Ether.Network.Packets;
-using System;
 
 namespace Rhisis.Network.Packets.World.Taskbar
 {
-    public struct RemoveTaskbarItemPacket : IEquatable<RemoveTaskbarItemPacket>
+    public class RemoveTaskbarItemPacket : RemoveTaskbarAppletPacket, IPacketDeserializer
     {
-        public int SlotLevelIndex { get; }
+        /// <summary>
+        ///  Gets the slot level index from the item taskbar to be removed.
+        /// </summary>
+        public int SlotLevelIndex { get; private set; }
 
-        public int SlotIndex { get; }
-
-        public RemoveTaskbarItemPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public override void Deserialize(INetPacketStream packet)
         {
-            SlotLevelIndex = packet.Read<byte>();
-            SlotIndex = packet.Read<byte>();
-        }
-
-        public bool Equals(RemoveTaskbarItemPacket other)
-        {
-            return SlotLevelIndex == other.SlotLevelIndex && SlotIndex == other.SlotIndex;
+            this.SlotLevelIndex = packet.Read<byte>();
+            base.Deserialize(packet);
         }
     }
 }
