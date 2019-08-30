@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Ether.Network.Packets;
+﻿using Ether.Network.Packets;
 
 namespace Rhisis.Network.Packets.World.Trade
 {
-    public class TradeRequestPacket
+    public sealed class TradeRequestPacket : IPacketDeserializer
     {
-        public uint Target { get; }
+        /// <summary>
+        /// Gets the target object id for trade.
+        /// </summary>
+        public uint TargetId { get; private set; }
 
-        public TradeRequestPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
-            this.Target = packet.Read<uint>();
+            this.TargetId = packet.Read<uint>();
         }
     }
 }

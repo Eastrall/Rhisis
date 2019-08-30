@@ -234,8 +234,13 @@ namespace Rhisis.World.Game.Structures
         /// <returns></returns>
         public Item Clone()
         {
-            return new Item(this.Id, this.Quantity, this.CreatorId, this.Slot, this.UniqueId, this.Refine, this.Element,
-                this.ElementRefine, this.ExtraUsed);
+            return new Item(this.Id, this.Refine, this.Element, this.ElementRefine, this.Data, this.CreatorId)
+            {
+                ExtraUsed = this.ExtraUsed,
+                Slot = this.Slot,
+                UniqueId = this.UniqueId,
+                Quantity = this.Quantity
+            };
         }
 
         public bool IsEquipped() => this.Slot > InventorySystem.EquipOffset;
@@ -254,6 +259,7 @@ namespace Rhisis.World.Game.Structures
             this.ElementRefine = 0;
             this.ExtraUsed = 0;
             this.Slot = -1;
+            this.Data = null;
         }
 
         /// <summary>

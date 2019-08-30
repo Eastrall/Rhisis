@@ -2,22 +2,35 @@
 
 namespace Rhisis.Network.Packets.World.Trade
 {
-    public class TradePutPacket
+    public class TradePutPacket : IPacketDeserializer
     {
-        public byte Position { get; }
+        /// <summary>
+        /// Gets the target position slot in the trade container.
+        /// </summary>
+        public byte Position { get; private set; }
 
-        public byte ItemType { get; }
+        /// <summary>
+        /// Gets the item type.
+        /// </summary>
+        public byte ItemType { get; private set; }
 
-        public byte ItemId { get; }
+        /// <summary>
+        /// Gets the item unique id.
+        /// </summary>
+        public byte ItemUniqueId { get; private set; }
 
-        public short Count { get; }
+        /// <summary>
+        /// Gets the amount of items to put into the trade.
+        /// </summary>
+        public short Count { get; private set; }
 
-        public TradePutPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
-            Position = packet.Read<byte>();
-            ItemType = packet.Read<byte>();
-            ItemId = packet.Read<byte>();
-            Count = packet.Read<short>();
+            this.Position = packet.Read<byte>();
+            this.ItemType = packet.Read<byte>();
+            this.ItemUniqueId = packet.Read<byte>();
+            this.Count = packet.Read<short>();
         }
     }
 }

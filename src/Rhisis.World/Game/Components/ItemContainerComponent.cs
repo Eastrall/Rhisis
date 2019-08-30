@@ -59,14 +59,7 @@ namespace Rhisis.World.Game.Components
             this.MaxCapacity = maxCapacity;
             this.MaxStorageCapacity = maxStorageCapacity;
             this.Items = new List<Item>(new Item[this.MaxCapacity]);
-
-            for (var i = 0; i < this.MaxCapacity; i++)
-            {
-                this.Items[i] = new Item
-                {
-                    UniqueId = i
-                };
-            }
+            this.Reset();
         }
 
         /// <summary>
@@ -77,9 +70,9 @@ namespace Rhisis.World.Game.Components
         {
             var count = 0;
 
-            for (var i = 0; i < MaxStorageCapacity; i++)
+            for (var i = 0; i < this.MaxStorageCapacity; i++)
             {
-                if (Items[i] != null && Items[i].Slot != -1)
+                if (this.Items[i] != null && this.Items[i].Slot != -1)
                     count++;
             }
 
@@ -128,11 +121,9 @@ namespace Rhisis.World.Game.Components
         /// <returns></returns>
         public bool HasItem(int itemId)
         {
-            var item = GetItemById(itemId);
-            if (item == null)
-                return false;
+            var item = this.GetItemById(itemId);
 
-            return item.Quantity > 0;
+            return item == null ? false : item.Quantity > 0;
         }
 
         /// <summary>
@@ -141,7 +132,7 @@ namespace Rhisis.World.Game.Components
         /// <returns></returns>
         public int GetAvailableSlot()
         {
-            for (var i = 0; i < MaxStorageCapacity; i++)
+            for (var i = 0; i < this.MaxStorageCapacity; i++)
             {
                 if (this.Items[i] != null && this.Items[i].Slot == -1)
                     return i;
@@ -155,6 +146,21 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <returns></returns>
         public bool HasAvailableSlots() => this.GetAvailableSlot() != -1;
+
+        /// <summary>
+        /// Checks if the given slot is available.
+        /// </summary>
+        /// <param name="slot">Slot.</param>
+        /// <returns>True if the slot is available; false otherwise.</returns>
+        public bool IsSlotAvailable(int slot)
+        {
+            if (slot < 0 || slot >= MaxStorageCapacity)
+            {
+                throw new ArgumentOutOfRangeException(nameof(slot), $"The slot '{slot}' is out of range.");
+            }
+
+            return this.Items[slot] != null && this.Items[slot].UniqueId != -1;
+        }
 
         /// <summary>
         /// Creates an item in this item container.
@@ -252,6 +258,20 @@ namespace Rhisis.World.Game.Components
 
             if (group.HasValue)
                 this._itemsCoolTimes[group.Value] = Time.GetElapsedTime() + cooltime;
+        }
+
+        /// <summary>
+        /// Resets the item container.
+        /// </summary>
+        public void Reset()
+        {
+            for (var i = 0; i < this.MaxCapacity; i++)
+            {
+                this.Items[i] = new Item
+                {
+                    UniqueId = i
+                };
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ using Rhisis.World.Game.Maps;
 using Rhisis.World.Systems.Inventory;
 using Rhisis.World.Systems.Recovery;
 using Rhisis.World.Systems.Taskbar;
+using Rhisis.World.Systems.Trade;
 using System;
 
 namespace Rhisis.World.Game.Factories.Internal
@@ -26,6 +27,7 @@ namespace Rhisis.World.Game.Factories.Internal
         private readonly IBehaviorManager _behaviorManager;
         private readonly IInventorySystem _inventorySystem;
         private readonly ITaskbarSystem _taskbarSystem;
+        private readonly ITradeSystem _tradeSystem;
         private readonly ObjectFactory _playerFactory;
 
         /// <summary>
@@ -37,7 +39,8 @@ namespace Rhisis.World.Game.Factories.Internal
         /// <param name="behaviorManager">Behavior manager.</param>
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="taskbarSystem">Taskbar system.</param>
-        public PlayerFactory(IServiceProvider serviceProvider, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager, IInventorySystem inventorySystem, ITaskbarSystem taskbarSystem)
+        /// <param name="tradeSystem">Trade system.</param>
+        public PlayerFactory(IServiceProvider serviceProvider, IGameResources gameResources, IMapManager mapManager, IBehaviorManager behaviorManager, IInventorySystem inventorySystem, ITaskbarSystem taskbarSystem, ITradeSystem tradeSystem)
         {
             this._serviceProvider = serviceProvider;
             this._gameResources = gameResources;
@@ -45,6 +48,7 @@ namespace Rhisis.World.Game.Factories.Internal
             this._behaviorManager = behaviorManager;
             this._inventorySystem = inventorySystem;
             this._taskbarSystem = taskbarSystem;
+            this._tradeSystem = tradeSystem;
             this._playerFactory = ActivatorUtilities.CreateFactory(typeof(PlayerEntity), Type.EmptyTypes);
         }
 
@@ -127,6 +131,9 @@ namespace Rhisis.World.Game.Factories.Internal
 
             // Taskbar
             this._taskbarSystem.InitializeTaskbar(player, character.TaskbarShortcuts);
+
+            // Trade
+            this._tradeSystem.Initialize(player);
 
             mapLayer.AddEntity(player);
 

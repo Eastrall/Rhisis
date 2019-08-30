@@ -22,8 +22,9 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="item">Item model to create.</param>
         /// <param name="quantity">Quantity to create.</param>
         /// <param name="creatorId">Id of the character that created the item. Used for GMs and admins.</param>
+        /// <param name="sendToPlayer">Sends the packet to the current player.</param>
         /// <returns>Number of items created.</returns>
-        int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1);
+        int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1, bool sendToPlayer = true);
 
         /// <summary>
         /// Deletes an item in player's inventory.
@@ -31,8 +32,9 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="player">Current player.</param>
         /// <param name="itemUniqueId">Item's unique id in inventory.</param>
         /// <param name="quantity">Quantity to delete.</param>
+        /// <param name="sendToPlayer">Sends the packet to the current player.</param>
         /// <returns>Deleted quantity.</returns>
-        int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity);
+        int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity, bool sendToPlayer = true);
 
         /// <summary>
         /// Deletes an item in player's inventory.
@@ -40,8 +42,9 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="player">Current player.</param>
         /// <param name="itemToDelete">Item to delete.</param>
         /// <param name="quantity">Quantity to delete.</param>
+        /// <param name="sendToPlayer">Sends the packet to the current player.</param>
         /// <returns>Deleted quantity.</returns>
-        int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity);
+        int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity, bool sendToPlayer = true);
 
         /// <summary>
         /// Moves an item in player's inventory from a source slot to a destination slot.

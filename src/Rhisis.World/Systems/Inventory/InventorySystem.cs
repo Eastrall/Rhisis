@@ -61,7 +61,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1)
+        public int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1, bool sendToPlayer = true)
         {
             int createdAmount = 0;
 
@@ -88,7 +88,8 @@ namespace Rhisis.World.Systems.Inventory
                             quantity = 0;
                         }
 
-                        this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.UniqueId, inventoryItem.Quantity);
+                        if (sendToPlayer)
+                            this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, inventoryItem.UniqueId, inventoryItem.Quantity);
                     }
                 }
 
@@ -114,7 +115,8 @@ namespace Rhisis.World.Systems.Inventory
                         newItem.Slot = availableSlot;
                         player.Inventory[availableSlot] = newItem;
 
-                        this._inventoryPacketFactory.SendItemCreation(player, newItem);
+                        if (sendToPlayer)
+                            this._inventoryPacketFactory.SendItemCreation(player, newItem);
 
                         createdAmount += quantity;
                     }
@@ -144,7 +146,8 @@ namespace Rhisis.World.Systems.Inventory
                     newItem.Slot = availableSlot;
                     player.Inventory[availableSlot] = newItem;
 
-                    this._inventoryPacketFactory.SendItemCreation(player, newItem);
+                    if (sendToPlayer)
+                        this._inventoryPacketFactory.SendItemCreation(player, newItem);
 
                     createdAmount++;
                     quantity--;
@@ -155,7 +158,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity)
+        public int DeleteItem(IPlayerEntity player, int itemUniqueId, int quantity, bool sendToPlayer = true)
         {
             if (quantity <= 0)
                 return 0;
@@ -165,17 +168,18 @@ namespace Rhisis.World.Systems.Inventory
             if (itemToDelete == null)
                 throw new ArgumentNullException(nameof(itemToDelete), $"Cannot find item with unique id: '{itemUniqueId}' in '{player.Object.Name}''s inventory.");
 
-            return this.DeleteItem(player, itemToDelete, quantity);
+            return this.DeleteItem(player, itemToDelete, quantity, sendToPlayer);
         }
 
         /// <inheritdoc />
-        public int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity)
+        public int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity, bool sendToPlayer = true)
         {
             int quantityToDelete = Math.Min(itemToDelete.Quantity, quantity);
 
             itemToDelete.Quantity -= quantityToDelete;
 
-            this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, itemToDelete.UniqueId, itemToDelete.Quantity);
+            if (sendToPlayer)
+                this._inventoryPacketFactory.SendItemUpdate(player, UpdateItemType.UI_NUM, itemToDelete.UniqueId, itemToDelete.Quantity);
 
             if (itemToDelete.Quantity <= 0)
                 itemToDelete.Reset();

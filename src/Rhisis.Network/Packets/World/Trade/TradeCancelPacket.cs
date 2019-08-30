@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Ether.Network.Packets;
+﻿using Ether.Network.Packets;
 
 namespace Rhisis.Network.Packets.World.Trade
 {
-    public class TradeCancelPacket
+    public class TradeCancelPacket : IPacketDeserializer
     {
-        public int Mode { get; }
+        /// <summary>
+        /// Gets the trade cancel mode.
+        /// </summary>
+        public int Mode { get; private set; }
 
-        public TradeCancelPacket(INetPacketStream packet)
+        /// <inheritdoc />
+        public void Deserialize(INetPacketStream packet)
         {
-            Mode = packet.Read<int>();
+            this.Mode = packet.Read<int>();
         }
     }
 }

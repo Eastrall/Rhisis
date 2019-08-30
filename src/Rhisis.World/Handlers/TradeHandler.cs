@@ -1,80 +1,68 @@
 ﻿using Ether.Network.Packets;
-using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World.Trade;
-using Rhisis.World.Game.Core.Systems;
+using Rhisis.World.Client;
 using Rhisis.World.Systems.Trade;
-using Rhisis.World.Systems.Trade.EventArgs;
+using Sylver.HandlerInvoker.Attributes;
 
 namespace Rhisis.World.Handlers
 {
-    internal static class TradeHandler
+    [Handler]
+    public class TradeHandler
     {
-        [PacketHandler(PacketType.CONFIRMTRADE)]
-        public static void OnTradeRequest(WorldClient client, INetPacketStream packet)
-        {
-            var tradePacket = new TradeRequestPacket(packet);
-            var tradeEvent = new TradeRequestEventArgs(tradePacket.Target);
+        private readonly ITradeSystem _tradeSystem;
 
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+        public TradeHandler(ITradeSystem tradeSystem)
+        {
+            this._tradeSystem = tradeSystem;
         }
 
-        [PacketHandler(PacketType.CONFIRMTRADECANCEL)]
-        public static void OnTradeRequestCancel(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.CONFIRMTRADE)]
+        public void OnTradeRequest(IWorldClient client, TradeRequestPacket packet)
         {
-            var tradePacket = new TradeRequestPacket(packet);
-            var tradeEvent = new TradeRequestCancelEventArgs(tradePacket.Target);
-
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+            this._tradeSystem.RequestTrade(client.Player, packet.TargetId);
         }
 
-        [PacketHandler(PacketType.TRADE)]
-        public static void OnTrade(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.CONFIRMTRADECANCEL)]
+        public void OnTradeRequestCancel(IWorldClient client, TradeRequestPacket packet)
         {
-            var tradePacket = new TradeRequestPacket(packet);
-            var tradeEvent = new TradeBeginEventArgs(tradePacket.Target);
-
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+            this._tradeSystem.DeclineTradeRequest(client.Player, packet.TargetId);
         }
 
-        [PacketHandler(PacketType.TRADEPUT)]
-        public static void OnTradePut(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.TRADE)]
+        public void OnTrade(IWorldClient client, TradeRequestPacket packet)
         {
-            var tradePacket = new TradePutPacket(packet);
-            var tradeEvent = new TradePutEventArgs(tradePacket.Position, tradePacket.ItemType, tradePacket.ItemId,
-                tradePacket.Count);
-
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+            this._tradeSystem.StartTrade(client.Player, packet.TargetId);
         }
 
-        [PacketHandler(PacketType.TRADEPUTGOLD)]
-        public static void OnTradePutGold(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.TRADEPUT)]
+        public void OnTradePut(IWorldClient client, TradePutPacket packet)
         {
-            var tradePacket = new TradePutGoldPacket(packet);
-            var tradeEvent = new TradePutGoldEventArgs(tradePacket.Gold);
-
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+            this._tradeSystem.PutItem(client.Player, packet.ItemUniqueId, packet.Count, packet.ItemType, packet.Position);
         }
 
-        [PacketHandler(PacketType.TRADECANCEL)]
-        public static void OnTradeCancel(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.TRADEPUTGOLD)]
+        public void OnTradePutGold(IWorldClient client, TradePutGoldPacket packet)
         {
-            var tradePacket = new TradeCancelPacket(packet);
-            var tradeEvent = new TradeCancelEventArgs(tradePacket.Mode);
-
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, tradeEvent);
+            this._tradeSystem.PutGold(client.Player, packet.Gold);
         }
 
-        [PacketHandler(PacketType.TRADEOK)]
-        public static void OnTradeOk(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.TRADECANCEL)]
+        public void OnTradeCancel(IWorldClient client, TradeCancelPacket packet)
         {
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, new TradeOkEventArgs());
+            this._tradeSystem.CancelTrade(client.Player, packet.Mode);
         }
 
-        [PacketHandler(PacketType.TRADECONFIRM)]
-        public static void OnTradeConfirm(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.TRADEOK)]
+        public void OnTradeOk(IWorldClient client)
         {
-            SystemManager.Instance.Execute<TradeSystem>(client.Player, new TradeConfirmEventArgs());
+            this._tradeSystem.ConfirmTrade(client.Player);
+        }
+
+        [HandlerAction(PacketType.TRADECONFIRM)]
+        public void OnTradeConfirm(IWorldClient client)
+        {
+            this._tradeSystem.LastConfirmTrade(client.Player);
         }
     }
 }

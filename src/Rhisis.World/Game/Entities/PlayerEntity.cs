@@ -69,7 +69,6 @@ namespace Rhisis.World.Game.Entities
         {
             this.Moves = new MovableComponent();
             this.PlayerData = new PlayerDataComponent();
-            this.Trade = new TradeComponent();
             this.Party = new PartyComponent();
             this.Taskbar = new TaskbarComponent();
             this.Follow = new FollowComponent();
@@ -90,5 +89,7 @@ namespace Rhisis.World.Game.Entities
             this._playerDataSystem.SavePlayer(this);
             base.Dispose(disposing);
         }
+
+        public override string ToString() => this.Object.Name;
     }
 }
