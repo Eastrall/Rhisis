@@ -23,11 +23,12 @@ namespace Rhisis.World.Systems.Inventory
         private readonly ISpecialEffectSystem _specialEffectSystem;
         private readonly ITeleportSystem _teleportSystem;
         private readonly IMoverPacketFactory _moverPacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="InventoryItemUsage"/> instance.
         /// </summary>
-        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem, ITeleportSystem teleportSystem, IMoverPacketFactory moverPacketFactory)
+        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem, ITeleportSystem teleportSystem, IMoverPacketFactory moverPacketFactory, ITextPacketFactory textPacketFactory)
         {
             this._logger = logger;
             this._inventoryPacketFactory = inventoryPacketFactory;
@@ -35,6 +36,7 @@ namespace Rhisis.World.Systems.Inventory
             this._specialEffectSystem = specialEffectSystem;
             this._teleportSystem = teleportSystem;
             this._moverPacketFactory = moverPacketFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         public void UseFoodItem(IPlayerEntity player, Item foodItemToUse)
@@ -61,9 +63,9 @@ namespace Rhisis.World.Systems.Inventory
                             {
                                 switch (parameter.Key)
                                 {
-                                    case DefineAttributes.HP: WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITHP); break;
-                                    case DefineAttributes.MP: WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITMP); break;
-                                    case DefineAttributes.FP: WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITFP); break;
+                                    case DefineAttributes.HP: this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITHP); break;
+                                    case DefineAttributes.MP: this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITMP); break;
+                                    case DefineAttributes.FP: this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LIMITFP); break;
                                 }
 
                                 currentPoints += (int)limitedRecovery;
@@ -82,7 +84,7 @@ namespace Rhisis.World.Systems.Inventory
                 {
                     // TODO: food triggers a skill.
                     this._logger.LogWarning($"Activating a skill throught food.");
-                    WorldPacketFactory.SendFeatureNotImplemented(player, "skill with food");
+                    this._textPacketFactory.SendFeatureNotImplemented(player, "skill with food");
                 }
             }
 
@@ -94,7 +96,7 @@ namespace Rhisis.World.Systems.Inventory
             if (player.Object.Level < blinkwing.Data.LimitLevel)
             {
                 this._logger.LogError($"Player {player.Object.Name} cannot use {blinkwing.Data.Name}. Level too low.");
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_USINGNOTLEVEL);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_USINGNOTLEVEL);
                 return;
             }
 

@@ -17,6 +17,7 @@ namespace Rhisis.World.Systems.Customization
         private readonly IInventorySystem _inventorySystem;
         private readonly ICustomizationPacketFactory _customizationPacketFactory;
         private readonly IPlayerDataSystem _playerDataSystem;
+        private readonly ITextPacketFactory _textPacketFactory;
         private readonly WorldConfiguration _worldServerConfiguration;
 
         /// <summary>
@@ -26,11 +27,13 @@ namespace Rhisis.World.Systems.Customization
         /// <param name="customizationPacketFactory">Customization packet factory.</param>
         /// <param name="worldServerConfiguration">World server configuration.</param>
         /// <param name="playerDataSystem">Player data system.</param>
-        public CustomizationSystem(IInventorySystem inventorySystem, ICustomizationPacketFactory customizationPacketFactory, IOptions<WorldConfiguration> worldServerConfiguration, IPlayerDataSystem playerDataSystem)
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public CustomizationSystem(IInventorySystem inventorySystem, ICustomizationPacketFactory customizationPacketFactory, IOptions<WorldConfiguration> worldServerConfiguration, IPlayerDataSystem playerDataSystem, ITextPacketFactory textPacketFactory)
         {
             this._inventorySystem = inventorySystem;
             this._customizationPacketFactory = customizationPacketFactory;
             this._playerDataSystem = playerDataSystem;
+            this._textPacketFactory = textPacketFactory;
             this._worldServerConfiguration = worldServerConfiguration.Value;
         }
 
@@ -41,7 +44,7 @@ namespace Rhisis.World.Systems.Customization
             {
                 if (player.PlayerData.Gold < this._worldServerConfiguration.Customization.ChangeFaceCost)
                 {
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
+                    this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
                 }
                 else
                 {
@@ -56,7 +59,7 @@ namespace Rhisis.World.Systems.Customization
 
                 if (couponItem == null)
                 {
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WARNNING_COUPON);
+                    this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WARNNING_COUPON);
                     return;
                 }
 
@@ -81,7 +84,7 @@ namespace Rhisis.World.Systems.Customization
 
                 if (player.PlayerData.Gold < costs)
                 {
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
+                    this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
                 }
                 else
                 {
@@ -97,7 +100,7 @@ namespace Rhisis.World.Systems.Customization
                 var couponItem = player.Inventory.GetItemById(DefineItem.II_SYS_SYS_SCR_HAIRCHANGE);
                 if (couponItem == null)
                 {
-                    WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WARNNING_COUPON);
+                    this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WARNNING_COUPON);
                     return;
                 }
 

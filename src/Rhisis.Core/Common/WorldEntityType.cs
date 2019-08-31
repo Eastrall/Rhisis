@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rhisis.World.Game.Core
+namespace Rhisis.Core.Common
 {
     /// <summary>
     /// Defines the different world entities.

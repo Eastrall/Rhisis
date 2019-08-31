@@ -2,7 +2,6 @@
 using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core;
 
 namespace Rhisis.World.Game.Entities
 {

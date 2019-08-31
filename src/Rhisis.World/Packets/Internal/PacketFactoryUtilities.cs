@@ -1,7 +1,7 @@
 ﻿using Ether.Network.Packets;
 using Microsoft.Extensions.DependencyInjection;
+using Rhisis.Core.Common;
 using Rhisis.Core.DependencyInjection;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using System.Collections.Generic;
 using System.Linq;

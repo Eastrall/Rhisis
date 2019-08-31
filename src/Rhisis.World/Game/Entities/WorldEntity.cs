@@ -1,7 +1,7 @@
-﻿using Rhisis.Core.Helpers;
+﻿using Rhisis.Core.Common;
+using Rhisis.Core.Helpers;
 using Rhisis.World.Game.Common;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core;
 using System;
 using System.Linq;
 

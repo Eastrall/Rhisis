@@ -1,6 +1,5 @@
 ﻿using Rhisis.Core.Common;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Maps.Regions;
 
 namespace Rhisis.World.Game.Entities

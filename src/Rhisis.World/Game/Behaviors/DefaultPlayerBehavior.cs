@@ -1,6 +1,6 @@
-﻿using Rhisis.Core.Data;
+﻿using Rhisis.Core.Common;
+using Rhisis.Core.Data;
 using Rhisis.Core.IO;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems;
@@ -21,6 +21,7 @@ namespace Rhisis.World.Game.Behaviors
         private readonly IRecoverySystem _recoverySystem;
         private readonly IRegionTriggerSystem _regionTriggerSystem;
         private readonly IMoverPacketFactory _moverPacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="DefaultPlayerBehavior"/> instance.
@@ -29,7 +30,18 @@ namespace Rhisis.World.Game.Behaviors
         /// <param name="mobilitySystem">Mobility system.</param>
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="playerDataSystem">Player data system.</param>
-        public DefaultPlayerBehavior(IPlayerEntity player, IMobilitySystem mobilitySystem, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, IRecoverySystem recoverySystem, IRegionTriggerSystem regionTriggerSystem, IMoverPacketFactory moverPacketFactory)
+        /// <param name="recoverySystem">Recovery system.</param>
+        /// <param name="regionTriggerSystem">Region trigger system.</param>
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public DefaultPlayerBehavior(IPlayerEntity player, 
+            IMobilitySystem mobilitySystem, 
+            IInventorySystem inventorySystem, 
+            IPlayerDataSystem playerDataSystem, 
+            IRecoverySystem recoverySystem, 
+            IRegionTriggerSystem regionTriggerSystem, 
+            IMoverPacketFactory moverPacketFactory, 
+            ITextPacketFactory textPacketFactory)
         {
             this._player = player;
             this._mobilitySystem = mobilitySystem;
@@ -38,6 +50,7 @@ namespace Rhisis.World.Game.Behaviors
             this._recoverySystem = recoverySystem;
             this._regionTriggerSystem = regionTriggerSystem;
             this._moverPacketFactory = moverPacketFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -71,7 +84,7 @@ namespace Rhisis.World.Game.Behaviors
 
             if (droppedItem.Drop.HasOwner && droppedItem.Drop.Owner != this._player)
             {
-                WorldPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_PRIORITYITEMPER, $"\"{droppedItem.Object.Name}\"");
+                this._textPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_PRIORITYITEMPER, $"\"{droppedItem.Object.Name}\"");
                 return;
             }
 
@@ -81,13 +94,13 @@ namespace Rhisis.World.Game.Behaviors
 
                 if (this._playerDataSystem.IncreaseGold(this._player, droppedGoldAmount))
                 {
-                    WorldPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_REAPMONEY, droppedGoldAmount.ToString("###,###,###,###"), this._player.PlayerData.Gold.ToString("###,###,###,###"));
+                    this._textPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_REAPMONEY, droppedGoldAmount.ToString("###,###,###,###"), this._player.PlayerData.Gold.ToString("###,###,###,###"));
                 }
             }
             else
             {
                 this._inventorySystem.CreateItem(this._player, droppedItem.Drop.Item, droppedItem.Drop.Item.Quantity);
-                WorldPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
+                this._textPacketFactory.SendDefinedText(this._player, DefineText.TID_GAME_REAPITEM, $"\"{droppedItem.Object.Name}\"");
             }
 
             this._moverPacketFactory.SendMotion(this._player, ObjectMessageType.OBJMSG_PICKUP);

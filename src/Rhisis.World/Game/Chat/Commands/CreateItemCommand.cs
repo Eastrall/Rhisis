@@ -18,6 +18,7 @@ namespace Rhisis.World.Game.Chat
         private readonly ILogger<CreateItemChatCommand> _logger;
         private readonly IInventorySystem _inventorySystem;
         private readonly IItemFactory _itemFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="CreateItemChatCommand"/> instance.
@@ -25,11 +26,13 @@ namespace Rhisis.World.Game.Chat
         /// <param name="logger">Logger.</param>
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="itemFactory">Item factory.</param>
-        public CreateItemChatCommand(ILogger<CreateItemChatCommand> logger, IInventorySystem inventorySystem, IItemFactory itemFactory)
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public CreateItemChatCommand(ILogger<CreateItemChatCommand> logger, IInventorySystem inventorySystem, IItemFactory itemFactory, ITextPacketFactory textPacketFactory)
         {
             this._logger = logger;
             this._inventorySystem = inventorySystem;
             this._itemFactory = itemFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -44,7 +47,7 @@ namespace Rhisis.World.Game.Chat
 
             if (!player.Inventory.HasAvailableSlots())
             {
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                 return;
             }
 

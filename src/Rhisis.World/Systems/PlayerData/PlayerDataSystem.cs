@@ -16,15 +16,19 @@ namespace Rhisis.World.Systems.PlayerData
     {
         private readonly IDatabase _database;
         private readonly IMoverPacketFactory _moverPacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="PlayerDataSystem"/> instance.
         /// </summary>
         /// <param name="database"></param>
-        public PlayerDataSystem(IDatabase database, IMoverPacketFactory moverPacketFactory)
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public PlayerDataSystem(IDatabase database, IMoverPacketFactory moverPacketFactory, ITextPacketFactory textPacketFactory)
         {
             this._database = database;
             this._moverPacketFactory = moverPacketFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -34,7 +38,7 @@ namespace Rhisis.World.Systems.PlayerData
 
             if (gold > int.MaxValue || gold < 0) // Check gold overflow
             {
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_TOOMANYMONEY_USE_PERIN);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_TOOMANYMONEY_USE_PERIN);
                 return false;
             }
             else

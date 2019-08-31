@@ -4,13 +4,10 @@ using Rhisis.Core.Data;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
 using Rhisis.World.Client;
-using Rhisis.World.Game.Core.Systems;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Death;
 using Rhisis.World.Systems.Follow;
 using Rhisis.World.Systems.Interaction;
-using Rhisis.World.Systems.PlayerData;
-using Rhisis.World.Systems.PlayerData.EventArgs;
 using Rhisis.World.Systems.SpecialEffect;
 using Sylver.HandlerInvoker.Attributes;
 using System;
@@ -58,29 +55,25 @@ namespace Rhisis.World.Handlers
         }
 
         [HandlerAction(PacketType.PLAYERSETDESTOBJ)]
-        public void OnPlayerSetDestObject(WorldClient client, PlayerDestObjectPacket packet)
+        public void OnPlayerSetDestObject(IWorldClient client, PlayerDestObjectPacket packet)
         {
             this._followSystem.Follow(client.Player, packet.TargetObjectId, packet.Distance);
         }
 
-        //[HandlerAction(PacketType.QUERY_PLAYER_DATA)]
-        public void OnQueryPlayerData(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.QUERY_PLAYER_DATA)]
+        public void OnQueryPlayerData(IWorldClient client, INetPacketStream packet)
         {
-            var onQueryPlayerDataPacket = new QueryPlayerDataPacket(packet);
-            var queryPlayerDataEvent = new QueryPlayerDataEventArgs(onQueryPlayerDataPacket.PlayerId, onQueryPlayerDataPacket.Version);
-            SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerDataEvent);
+            throw new NotImplementedException();
         }
 
-        //[HandlerAction(PacketType.QUERY_PLAYER_DATA2)]
-        public void OnQueryPlayerData2(WorldClient client, INetPacketStream packet)
+        [HandlerAction(PacketType.QUERY_PLAYER_DATA2)]
+        public void OnQueryPlayerData2(IWorldClient client, INetPacketStream packet)
         {
-            var onQueryPlayerData2Packet = new QueryPlayerData2Packet(packet);
-            var queryPlayerData2Event = new QueryPlayerData2EventArgs(onQueryPlayerData2Packet.Size, onQueryPlayerData2Packet.PlayerDictionary);
-            SystemManager.Instance.Execute<PlayerDataSystemOld>(client.Player, queryPlayerData2Event);
+            throw new NotImplementedException();
         }
 
         [HandlerAction(PacketType.PLAYERMOVED)]
-        public void OnPlayerMoved(WorldClient client, PlayerMovedPacket packet)
+        public void OnPlayerMoved(IWorldClient client, PlayerMovedPacket packet)
         {
             if (client.Player.Health.IsDead)
             {
@@ -114,7 +107,7 @@ namespace Rhisis.World.Handlers
         }
 
         [HandlerAction(PacketType.PLAYERBEHAVIOR)]
-        public void OnPlayerBehavior(WorldClient client, PlayerBehaviorPacket packet)
+        public void OnPlayerBehavior(IWorldClient client, PlayerBehaviorPacket packet)
         {
             if (client.Player.Health.IsDead)
             {
@@ -146,7 +139,7 @@ namespace Rhisis.World.Handlers
         }
 
         [HandlerAction(PacketType.REVIVAL_TO_LODESTAR)]
-        public void OnRevivalToLodestar(WorldClient client, INetPacketStream _)
+        public void OnRevivalToLodestar(IWorldClient client, INetPacketStream _)
         {
             if (!client.Player.Health.IsDead)
             {

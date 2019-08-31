@@ -20,6 +20,7 @@ namespace Rhisis.World.Systems.NpcShop
         private readonly IInventorySystem _inventorySystem;
         private readonly IPlayerDataSystem _playerDataSystem;
         private readonly INpcShopPacketFactory _npcShopPacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="NpcShopSystem"/> instance.
@@ -28,11 +29,14 @@ namespace Rhisis.World.Systems.NpcShop
         /// <param name="inventorySystem">Inventory System.</param>
         /// <param name="playerDataSystem">Player data system.</param>
         /// <param name="npcShopPacketFactory">Npc shop packet factory.</param>
-        public NpcShopSystem(ILogger<NpcShopSystem> logger, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, INpcShopPacketFactory npcShopPacketFactory)
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public NpcShopSystem(ILogger<NpcShopSystem> logger, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, INpcShopPacketFactory npcShopPacketFactory, ITextPacketFactory textPacketFactory)
         {
             this._logger = logger;
             this._inventorySystem = inventorySystem;
             this._playerDataSystem = playerDataSystem;
+            this._npcShopPacketFactory = npcShopPacketFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -105,7 +109,7 @@ namespace Rhisis.World.Systems.NpcShop
             if (player.PlayerData.Gold < shopItem.Data.Cost)
             {
                 this._logger.LogTrace($"ShopSystem: {player.Object.Name} doens't have enough gold to buy item {shopItem.Data.Name} at {shopItem.Data.Cost}.");
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKMONEY);
                 return;
             }
 

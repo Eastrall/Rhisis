@@ -1,7 +1,7 @@
-﻿using Rhisis.Core.Data;
+﻿using Rhisis.Core.Common;
+using Rhisis.Core.Data;
 using Rhisis.Core.Helpers;
 using Rhisis.World.Game.Common;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Systems.Inventory;

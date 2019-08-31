@@ -16,6 +16,7 @@ namespace Rhisis.World.Systems.Teleport
         private readonly IVisibilitySystem _visibilitySystem;
         private readonly IPlayerPacketFactory _playerPacketFactory;
         private readonly IWorldSpawnPacketFactory _worldSpawnPacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="TeleportSystem"/> instance.
@@ -25,13 +26,15 @@ namespace Rhisis.World.Systems.Teleport
         /// <param name="visibilitySystem">Visibility System.</param>
         /// <param name="playerPacketFactory">Player packet factory.</param>
         /// <param name="worldSpawnPacketFactory">World spawn packet factory.</param>
-        public TeleportSystem(ILogger<TeleportSystem> logger, IMapManager mapManager, IVisibilitySystem visibilitySystem, IPlayerPacketFactory playerPacketFactory, IWorldSpawnPacketFactory worldSpawnPacketFactory)
+        /// <param name="textPacketFactory">Text packet factory.</param>
+        public TeleportSystem(ILogger<TeleportSystem> logger, IMapManager mapManager, IVisibilitySystem visibilitySystem, IPlayerPacketFactory playerPacketFactory, IWorldSpawnPacketFactory worldSpawnPacketFactory, ITextPacketFactory textPacketFactory)
         {
             this._logger = logger;
             this._mapManager = mapManager;
             this._visibilitySystem = visibilitySystem;
             this._playerPacketFactory = playerPacketFactory;
             this._worldSpawnPacketFactory = worldSpawnPacketFactory;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -44,7 +47,7 @@ namespace Rhisis.World.Systems.Teleport
                 if (destinationMap == null)
                 {
                     this._logger.LogError($"Cannot find map with id '{mapId}'.");
-                    WorldPacketFactory.SendSnoop(player, $"Cannot find map with id '{mapId}'.");
+                    this._textPacketFactory.SendSnoop(player, $"Cannot find map with id '{mapId}'.");
                     return;
                 }
 

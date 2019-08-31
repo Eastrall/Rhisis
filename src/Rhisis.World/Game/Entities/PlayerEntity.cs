@@ -1,7 +1,7 @@
 ﻿using Ether.Network.Common;
+using Rhisis.Core.Common;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
-using Rhisis.World.Game.Core;
 using Rhisis.World.Systems.PlayerData;
 
 namespace Rhisis.World.Game.Entities

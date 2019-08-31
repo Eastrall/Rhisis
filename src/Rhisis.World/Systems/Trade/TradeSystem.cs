@@ -24,6 +24,7 @@ namespace Rhisis.World.Systems.Trade
 
         private readonly ILogger<TradeSystem> _logger;
         private readonly ITradePacketFactory _tradePacketFactory;
+        private readonly ITextPacketFactory _textPacketFactory;
         private readonly IPlayerDataSystem _playerDataSystem;
         private readonly IInventorySystem _inventorySystem;
 
@@ -32,12 +33,14 @@ namespace Rhisis.World.Systems.Trade
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="tradePacketFactory">Trade packet factory.</param>
+        /// <param name="textPacketFactory">Text packet factory.</param>
         /// <param name="playerDataSystem">Player data system.</param>
         /// <param name="inventorySystem">Inventory system.</param>
-        public TradeSystem(ILogger<TradeSystem> logger, ITradePacketFactory tradePacketFactory, IPlayerDataSystem playerDataSystem, IInventorySystem inventorySystem)
+        public TradeSystem(ILogger<TradeSystem> logger, ITradePacketFactory tradePacketFactory, ITextPacketFactory textPacketFactory, IPlayerDataSystem playerDataSystem, IInventorySystem inventorySystem)
         {
             this._logger = logger;
             this._tradePacketFactory = tradePacketFactory;
+            this._textPacketFactory = textPacketFactory;
             this._playerDataSystem = playerDataSystem;
             this._inventorySystem = inventorySystem;
         }
@@ -137,7 +140,7 @@ namespace Rhisis.World.Systems.Trade
 
             if (!this.IsTradeItemValid(inventoryItem, out DefineText errorText))
             {
-                WorldPacketFactory.SendDefinedText(player, errorText);
+                this._textPacketFactory.SendDefinedText(player, errorText);
             }
 
             int tradingQuantity = Math.Min(quantity, inventoryItem.Quantity);

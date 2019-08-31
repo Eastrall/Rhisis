@@ -30,14 +30,16 @@ namespace Rhisis.World.Systems.Inventory
         private readonly IInventoryPacketFactory _inventoryPacketFactory;
         private readonly IInventoryItemUsage _inventoryItemUsage;
         private readonly IDropSystem _dropSystem;
+        private readonly ITextPacketFactory _textPacketFactory;
 
-        public InventorySystem(ILogger<InventorySystem> logger, IItemFactory itemFactory, IInventoryPacketFactory inventoryPacketFactory, IInventoryItemUsage inventoryItemUsage, IDropSystem dropSystem)
+        public InventorySystem(ILogger<InventorySystem> logger, IItemFactory itemFactory, IInventoryPacketFactory inventoryPacketFactory, IInventoryItemUsage inventoryItemUsage, IDropSystem dropSystem, ITextPacketFactory textPacketFactory)
         {
             this._logger = logger;
             this._itemFactory = itemFactory;
             this._inventoryPacketFactory = inventoryPacketFactory;
             this._inventoryItemUsage = inventoryItemUsage;
             this._dropSystem = dropSystem;
+            this._textPacketFactory = textPacketFactory;
         }
 
         /// <inheritdoc />
@@ -97,7 +99,7 @@ namespace Rhisis.World.Systems.Inventory
                 {
                     if (!player.Inventory.HasAvailableSlots())
                     {
-                        WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                        this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                     }
                     else
                     {
@@ -128,7 +130,7 @@ namespace Rhisis.World.Systems.Inventory
                 {
                     if (!player.Inventory.HasAvailableSlots())
                     {
-                        WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                        this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                         break;
                     }
 
@@ -254,7 +256,7 @@ namespace Rhisis.World.Systems.Inventory
 
             if (!player.Inventory.HasAvailableSlots())
             {
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_LACKSPACE);
                 return;
             }
 
@@ -335,7 +337,7 @@ namespace Rhisis.World.Systems.Inventory
                             break;
                         default:
                             this._logger.LogDebug($"Item usage for {itemToUse.Data.ItemKind2} is not implemented.");
-                            WorldPacketFactory.SendSnoop(player, $"Item usage for {itemToUse.Data.ItemKind2} is not implemented.");
+                            this._textPacketFactory.SendSnoop(player, $"Item usage for {itemToUse.Data.ItemKind2} is not implemented.");
                             break;
                     }
                 }
@@ -380,14 +382,14 @@ namespace Rhisis.World.Systems.Inventory
             if (item.Data.ItemSex != int.MaxValue && item.Data.ItemSex != player.VisualAppearance.Gender)
             {
                 this._logger.LogDebug("Wrong sex for armor");
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WRONGSEX, item.Data.Name);
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_WRONGSEX, item.Data.Name);
                 return false;
             }
 
             if (player.Object.Level < item.Data.LimitLevel)
             {
                 this._logger.LogDebug("Player level to low");
-                WorldPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REQLEVEL, item.Data.LimitLevel.ToString());
+                this._textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REQLEVEL, item.Data.LimitLevel.ToString());
                 return false;
             }
 
