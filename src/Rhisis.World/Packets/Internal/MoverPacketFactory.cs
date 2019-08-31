@@ -164,5 +164,17 @@ namespace Rhisis.World.Packets.Internal
                 this._packetFactoryUtilities.SendToVisible(packet, entity, sendToPlayer: true);
             }
         }
+
+        /// <inheritdoc />
+        public void SendSpeedFactor(IWorldEntity entity, float speedFactor)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.SET_SPEED_FACTOR);
+                packet.Write(speedFactor);
+
+                this._packetFactoryUtilities.SendToVisible(packet, entity);
+            }
+        }
     }
 }

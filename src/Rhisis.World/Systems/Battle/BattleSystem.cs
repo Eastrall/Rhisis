@@ -24,6 +24,8 @@ namespace Rhisis.World.Systems.Battle
         private readonly IGameResources _gameResources;
         private readonly IDropSystem _dropSystem;
         private readonly IExperienceSystem _experienceSystem;
+        private readonly IBattlePacketFactory _battlePacketFactory;
+        private readonly IMoverPacketFactory _moverPacketFactory;
         private readonly WorldConfiguration _worldConfiguration;
 
         /// <summary>
@@ -33,13 +35,18 @@ namespace Rhisis.World.Systems.Battle
         /// <param name="worldConfiguration">World server configuration.</param>
         /// <param name="gameResources">Game resources.</param>
         /// <param name="dropSystem">Drop system.</param>
-        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IDropSystem dropSystem, IExperienceSystem experienceSystem)
+        /// <param name="experienceSystem">Experience system.</param>
+        /// <param name="battlePacketFactory">Battle packet factory.</param>
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        public BattleSystem(ILogger<BattleSystem> logger, IOptions<WorldConfiguration> worldConfiguration, IGameResources gameResources, IDropSystem dropSystem, IExperienceSystem experienceSystem, IBattlePacketFactory battlePacketFactory, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._worldConfiguration = worldConfiguration.Value;
             this._gameResources = gameResources;
             this._dropSystem = dropSystem;
             this._experienceSystem = experienceSystem;
+            this._battlePacketFactory = battlePacketFactory;
+            this._moverPacketFactory = moverPacketFactory;
         }
         
         /// <inheritdoc />
@@ -63,11 +70,11 @@ namespace Rhisis.World.Systems.Battle
             if (meleeAttackResult.Flags.HasFlag(AttackFlags.AF_FLYING))
                 BattleHelper.KnockbackEntity(defender);
 
-            WorldPacketFactory.SendAddDamage(defender, attacker, meleeAttackResult.Flags, meleeAttackResult.Damages);
-            WorldPacketFactory.SendMeleeAttack(attacker, attackType, defender.Id, unknwonParam: 0, meleeAttackResult.Flags);
+            this._battlePacketFactory.SendAddDamage(defender, attacker, meleeAttackResult.Flags, meleeAttackResult.Damages);
+            this._battlePacketFactory.SendMeleeAttack(attacker, attackType, defender.Id, unknwonParam: 0, meleeAttackResult.Flags);
 
             defender.Health.Hp -= meleeAttackResult.Damages;
-            WorldPacketFactory.SendUpdateAttributes(defender, DefineAttributes.HP, defender.Health.Hp);
+            this._moverPacketFactory.SendUpdateAttributes(defender, DefineAttributes.HP, defender.Health.Hp);
 
             if (defender.Health.IsDead)
             {
@@ -75,11 +82,11 @@ namespace Rhisis.World.Systems.Battle
                 defender.Health.Hp = 0;
                 this.ClearBattleTargets(defender);
                 this.ClearBattleTargets(attacker);
-                WorldPacketFactory.SendUpdateAttributes(defender, DefineAttributes.HP, defender.Health.Hp);
+                this._moverPacketFactory.SendUpdateAttributes(defender, DefineAttributes.HP, defender.Health.Hp);
 
                 if (defender is IMonsterEntity deadMonster && attacker is IPlayerEntity player)
                 {
-                    WorldPacketFactory.SendDie(player, defender, attacker, attackType);
+                    this._battlePacketFactory.SendDie(player, defender, attacker, attackType);
 
                     deadMonster.Timers.DespawnTime = Time.TimeInSeconds() + 5; // Configure this timer on world configuration
 
@@ -137,7 +144,7 @@ namespace Rhisis.World.Systems.Battle
                 }
                 else if (defender is IPlayerEntity deadPlayer)
                 {
-                    WorldPacketFactory.SendDie(deadPlayer, defender, attacker, attackType);
+                    this._battlePacketFactory.SendDie(deadPlayer, defender, attacker, attackType);
                 }
             }
         }

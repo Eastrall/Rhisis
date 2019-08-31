@@ -1,23 +1,27 @@
-﻿using Rhisis.Network;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Rhisis.Core.DependencyInjection;
+using Rhisis.Network;
 using Rhisis.Network.Packets;
 using Rhisis.World.Game.Entities;
 
-namespace Rhisis.World.Packets
+namespace Rhisis.World.Packets.Internal
 {
-    public static partial class WorldPacketFactory
+    [Injectable(ServiceLifetime.Singleton)]
+    internal sealed class PlayerDataPacketFactory : IPlayerDataPacketFactory
     {
+        private readonly IPacketFactoryUtilities _packetFactoryUtilities;
+
         /// <summary>
-        /// Write data of a single player. Can contain data of multiplate players when filled with send = false.
+        /// Creates a new <see cref="PlayerDataPacketFactory"/> instance.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="playerId"></param>
-        /// <param name="name"></param>
-        /// <param name="jobId"></param>
-        /// <param name="level"></param>
-        /// <param name="gender"></param>
-        /// <param name="online"></param>
-        /// <param name="send">Decides if the packet gets send to the player</param>
-        public static void SendPlayerData(IPlayerEntity entity, uint playerId, string name, byte jobId, byte level, byte gender, int version, bool online, bool send = true)
+        /// <param name="packetFactoryUtilities">Packet factory utilities.</param>
+        public PlayerDataPacketFactory(IPacketFactoryUtilities packetFactoryUtilities)
+        {
+            this._packetFactoryUtilities = packetFactoryUtilities;
+        }
+
+        /// <inheritdoc />
+        public void SendPlayerData(IPlayerEntity entity, uint playerId, string name, byte jobId, byte level, byte gender, int version, bool online, bool send = true)
         {
             using (var packet = new FFPacket())
             {
@@ -35,20 +39,20 @@ namespace Rhisis.World.Packets
                 packet.Write((byte)0); // padding
                 packet.Write((byte)0); // padding
 
-                if (send) 
+                if (send)
                     entity.Connection.Send(packet);
             }
         }
 
-        public static void SendModifyMode(IPlayerEntity entity)
+        /// <inheritdoc />
+        public void SendModifyMode(IPlayerEntity entity)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(entity.Id, SnapshotType.MODIFYMODE);
-
                 packet.Write((uint)entity.PlayerData.Mode);
 
-                SendToVisible(packet, entity, true);
+                this._packetFactoryUtilities.SendToVisible(packet, entity, true);
             }
         }
     }

@@ -25,14 +25,17 @@ namespace Rhisis.World.Systems.Recovery
         public const int NextIdleHealStand = 3;
 
         private readonly ILogger<RecoverySystem> _logger;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="RecoverySystem"/> instance.
         /// </summary>
         /// <param name="logger">Logger.</param>
-        public RecoverySystem(ILogger<RecoverySystem> logger)
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        public RecoverySystem(ILogger<RecoverySystem> logger, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -68,9 +71,9 @@ namespace Rhisis.World.Systems.Recovery
             if (player.Health.Fp > maxFp)
                 player.Health.Fp = maxFp;
 
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.HP, player.Health.Hp);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.MP, player.Health.Mp);
+            this._moverPacketFactory.SendUpdateAttributes(player, DefineAttributes.FP, player.Health.Fp);
         }
     }
 }

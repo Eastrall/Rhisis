@@ -7,6 +7,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
+using Rhisis.World.Systems.PlayerData;
 using System;
 using System.Linq;
 
@@ -17,6 +18,7 @@ namespace Rhisis.World.Systems.NpcShop
     {
         private readonly ILogger<NpcShopSystem> _logger;
         private readonly IInventorySystem _inventorySystem;
+        private readonly IPlayerDataSystem _playerDataSystem;
         private readonly INpcShopPacketFactory _npcShopPacketFactory;
 
         /// <summary>
@@ -24,12 +26,13 @@ namespace Rhisis.World.Systems.NpcShop
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="inventorySystem">Inventory System.</param>
+        /// <param name="playerDataSystem">Player data system.</param>
         /// <param name="npcShopPacketFactory">Npc shop packet factory.</param>
-        public NpcShopSystem(ILogger<NpcShopSystem> logger, IInventorySystem inventorySystem, INpcShopPacketFactory npcShopPacketFactory)
+        public NpcShopSystem(ILogger<NpcShopSystem> logger, IInventorySystem inventorySystem, IPlayerDataSystem playerDataSystem, INpcShopPacketFactory npcShopPacketFactory)
         {
             this._logger = logger;
             this._inventorySystem = inventorySystem;
-            this._npcShopPacketFactory = npcShopPacketFactory;
+            this._playerDataSystem = playerDataSystem;
         }
 
         /// <inheritdoc />
@@ -110,9 +113,7 @@ namespace Rhisis.World.Systems.NpcShop
 
             if (itemsCreatedCount > 0)
             {
-                player.PlayerData.Gold -= shopItem.Data.Cost * itemsCreatedCount;
-
-                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+                this._playerDataSystem.DecreaseGold(player, shopItem.Data.Cost * itemsCreatedCount);
             }
         }
 
@@ -143,8 +144,7 @@ namespace Rhisis.World.Systems.NpcShop
 
             if (deletedQuantity > 0)
             {
-                player.PlayerData.Gold += sellPrice * deletedQuantity;
-                WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+                this._playerDataSystem.IncreaseGold(player, sellPrice * deletedQuantity);
             }
         }
     }

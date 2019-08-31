@@ -87,5 +87,16 @@ namespace Rhisis.World.Packets
         /// <param name="feature">Feature name.</param>
         public static void SendFeatureNotImplemented(IPlayerEntity player, string feature) 
             => SendSnoop(player, $"Not implemented: {feature}");
+
+        public static void SendWorldMsg(IPlayerEntity entity, string text)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(entity.Id, SnapshotType.WORLDMSG, 0xFFFFFF00);
+                packet.Write(text);
+
+                entity.Connection.Send(packet);
+            }
+        }
     }
 }

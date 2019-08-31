@@ -22,13 +22,15 @@ namespace Rhisis.World.Game.Behaviors
         private readonly IMobilitySystem _mobilitySystem;
         private readonly IBattleSystem _battleSystem;
         private readonly IFollowSystem _followSystem;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
-        public DefaultMonsterBehavior(IMonsterEntity monster, IMobilitySystem mobilitySystem, IBattleSystem battleSystem, IFollowSystem followSystem)
+        public DefaultMonsterBehavior(IMonsterEntity monster, IMobilitySystem mobilitySystem, IBattleSystem battleSystem, IFollowSystem followSystem, IMoverPacketFactory moverPacketFactory)
         {
             this._monster = monster;
             this._mobilitySystem = mobilitySystem;
             this._battleSystem = battleSystem;
             this._followSystem = followSystem;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <inheritdoc />
@@ -73,7 +75,7 @@ namespace Rhisis.World.Game.Behaviors
                 if (monster.Moves.ReturningToOriginalPosition)
                 {
                     monster.Health.Hp = monster.Data.AddHp;
-                    WorldPacketFactory.SendUpdateAttributes(monster, DefineAttributes.HP, monster.Health.Hp);
+                    this._moverPacketFactory.SendUpdateAttributes(monster, DefineAttributes.HP, monster.Health.Hp);
                     monster.Moves.ReturningToOriginalPosition = false;
                 }
                 else
@@ -81,7 +83,7 @@ namespace Rhisis.World.Game.Behaviors
                     if (monster.Moves.SpeedFactor >= 2f)
                     {
                         monster.Moves.SpeedFactor = 1f;
-                        WorldPacketFactory.SendSpeedFactor(monster, monster.Moves.SpeedFactor);
+                        this._moverPacketFactory.SendSpeedFactor(monster, monster.Moves.SpeedFactor);
                     }
                 }
             }
@@ -98,8 +100,8 @@ namespace Rhisis.World.Game.Behaviors
             monster.Object.MovingFlags = ObjectState.OBJSTA_FMOVE;
             monster.Moves.DestinationPosition = destPosition.Clone();
 
-            WorldPacketFactory.SendDestinationPosition(monster);
-            WorldPacketFactory.SendDestinationAngle(monster, false);
+            this._moverPacketFactory.SendDestinationPosition(monster);
+            this._moverPacketFactory.SendDestinationAngle(monster, false);
         }
 
         /// <summary>
@@ -123,7 +125,7 @@ namespace Rhisis.World.Game.Behaviors
                 if (monster.Moves.SpeedFactor != 2f)
                 {
                     monster.Moves.SpeedFactor = 2;
-                    WorldPacketFactory.SendSpeedFactor(monster, monster.Moves.SpeedFactor);
+                    this._moverPacketFactory.SendSpeedFactor(monster, monster.Moves.SpeedFactor);
                 }
 
                 if (!monster.Object.Position.IsInCircle(monster.Moves.DestinationPosition, 1f))

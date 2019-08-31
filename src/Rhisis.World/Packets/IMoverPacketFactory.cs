@@ -95,5 +95,12 @@ namespace Rhisis.World.Packets
         /// <param name="entity">Entity.</param>
         /// <param name="objectMessage">Motion message.</param>
         void SendMotion(IWorldEntity entity, ObjectMessageType objectMessage);
+
+        /// <summary>
+        /// Sends the entity speed factory.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="speedFactor">Speed factor.</param>
+        void SendSpeedFactor(IWorldEntity entity, float speedFactor);
     }
 }

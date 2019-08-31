@@ -6,6 +6,7 @@ using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
 using Rhisis.World.Packets;
 using Rhisis.World.Systems.Inventory;
+using Rhisis.World.Systems.PlayerData;
 using System.Drawing;
 
 namespace Rhisis.World.Systems.Customization
@@ -15,6 +16,7 @@ namespace Rhisis.World.Systems.Customization
     {
         private readonly IInventorySystem _inventorySystem;
         private readonly ICustomizationPacketFactory _customizationPacketFactory;
+        private readonly IPlayerDataSystem _playerDataSystem;
         private readonly WorldConfiguration _worldServerConfiguration;
 
         /// <summary>
@@ -23,10 +25,12 @@ namespace Rhisis.World.Systems.Customization
         /// <param name="inventorySystem">Inventory system.</param>
         /// <param name="customizationPacketFactory">Customization packet factory.</param>
         /// <param name="worldServerConfiguration">World server configuration.</param>
-        public CustomizationSystem(IInventorySystem inventorySystem, ICustomizationPacketFactory customizationPacketFactory, IOptions<WorldConfiguration> worldServerConfiguration)
+        /// <param name="playerDataSystem">Player data system.</param>
+        public CustomizationSystem(IInventorySystem inventorySystem, ICustomizationPacketFactory customizationPacketFactory, IOptions<WorldConfiguration> worldServerConfiguration, IPlayerDataSystem playerDataSystem)
         {
             this._inventorySystem = inventorySystem;
             this._customizationPacketFactory = customizationPacketFactory;
+            this._playerDataSystem = playerDataSystem;
             this._worldServerConfiguration = worldServerConfiguration.Value;
         }
 
@@ -41,10 +45,8 @@ namespace Rhisis.World.Systems.Customization
                 }
                 else
                 {
-                    player.PlayerData.Gold -= (int)this._worldServerConfiguration.Customization.ChangeFaceCost;
                     player.VisualAppearance.FaceId = (int)faceId;
-
-                    WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+                    this._playerDataSystem.DecreaseGold(player, (int)this._worldServerConfiguration.Customization.ChangeFaceCost);
                     this._customizationPacketFactory.SendChangeFace(player, faceId);
                 }
             }
@@ -83,11 +85,10 @@ namespace Rhisis.World.Systems.Customization
                 }
                 else
                 {
-                    player.PlayerData.Gold -= costs;
                     player.VisualAppearance.HairId = hairId;
                     player.VisualAppearance.HairColor = color;
 
-                    WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+                    this._playerDataSystem.DecreaseGold(player, costs);
                     this._customizationPacketFactory.SendSetHair(player, hairId, r, g, b);
                 }
             }

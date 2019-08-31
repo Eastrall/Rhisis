@@ -22,17 +22,19 @@ namespace Rhisis.World.Systems.Inventory
         private readonly IMapManager _mapManager;
         private readonly ISpecialEffectSystem _specialEffectSystem;
         private readonly ITeleportSystem _teleportSystem;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="InventoryItemUsage"/> instance.
         /// </summary>
-        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem, ITeleportSystem teleportSystem)
+        public InventoryItemUsage(ILogger<InventoryItemUsage> logger, IInventoryPacketFactory inventoryPacketFactory, IMapManager mapManager, ISpecialEffectSystem specialEffectSystem, ITeleportSystem teleportSystem, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._inventoryPacketFactory = inventoryPacketFactory;
             this._mapManager = mapManager;
             this._specialEffectSystem = specialEffectSystem;
             this._teleportSystem = teleportSystem;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         public void UseFoodItem(IPlayerEntity player, Item foodItemToUse)
@@ -74,7 +76,7 @@ namespace Rhisis.World.Systems.Inventory
                     }
 
                     PlayerHelper.SetPoints(player, parameter.Key, currentPoints);
-                    WorldPacketFactory.SendUpdateAttributes(player, parameter.Key, PlayerHelper.GetPoints(player, parameter.Key));
+                    this._moverPacketFactory.SendUpdateAttributes(player, parameter.Key, PlayerHelper.GetPoints(player, parameter.Key));
                 }
                 else
                 {

@@ -184,7 +184,7 @@ namespace Rhisis.World.Systems.Mailbox
 
             // Remove gold now
             player.PlayerData.Gold -= (int)neededGold;
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+            //WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
 
             // Create mail
             var mail = new DbMail
@@ -208,7 +208,7 @@ namespace Rhisis.World.Systems.Mailbox
             if (receiverEntity != null)
             {
                 receiverEntity.PlayerData.Mode |= ModeType.MODE_MAILBOX;
-                WorldPacketFactory.SendModifyMode(receiverEntity);
+                //WorldPacketFactory.SendModifyMode(receiverEntity);
             }
         }
 
@@ -274,7 +274,7 @@ namespace Rhisis.World.Systems.Mailbox
                 }
             }
             database.Complete();
-            WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
+            //WorldPacketFactory.SendUpdateAttributes(player, DefineAttributes.GOLD, player.PlayerData.Gold);
             WorldPacketFactory.SendRemoveMail(player, mail, RemovedFromMail.Gold);
         }
 
@@ -293,7 +293,7 @@ namespace Rhisis.World.Systems.Mailbox
             if (unreadMails == 0 && player.PlayerData.Mode.HasFlag(ModeType.MODE_MAILBOX))
             {
                 player.PlayerData.Mode &= ~ModeType.MODE_MAILBOX;
-                WorldPacketFactory.SendModifyMode(player);
+                //WorldPacketFactory.SendModifyMode(player);
             }
         }
     }

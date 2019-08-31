@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rhisis.Network.Packets;
 using Rhisis.Network.Packets.World;
+using Rhisis.World.Client;
 using Rhisis.World.Game.Core;
 using Rhisis.World.Game.Entities;
 using Rhisis.World.Game.Structures;
@@ -18,17 +19,20 @@ namespace Rhisis.World.Handlers
         private readonly ILogger<BattleHandler> _logger;
         private readonly IBattleSystem _battleSystem;
         private readonly IFollowSystem _followSystem;
+        private readonly IMoverPacketFactory _moverPacketFactory;
 
         /// <summary>
         /// Creates a new <see cref="BattleHandler"/> instance.
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="battleSystem">Battle system.</param>
-        public BattleHandler(ILogger<BattleHandler> logger, IBattleSystem battleSystem, IFollowSystem followSystem)
+        /// <param name="moverPacketFactory">Mover packet factory.</param>
+        public BattleHandler(ILogger<BattleHandler> logger, IBattleSystem battleSystem, IFollowSystem followSystem, IMoverPacketFactory moverPacketFactory)
         {
             this._logger = logger;
             this._battleSystem = battleSystem;
             this._followSystem = followSystem;
+            this._moverPacketFactory = moverPacketFactory;
         }
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace Rhisis.World.Handlers
         /// <param name="client">Client.</param>
         /// <param name="packet">Incoming packet.</param>
         [HandlerAction(PacketType.MELEE_ATTACK)]
-        public void OnMeleeAttack(WorldClient client, MeleeAttackPacket packet)
+        public void OnMeleeAttack(IWorldClient client, MeleeAttackPacket packet)
         {
             var target = client.Player.FindEntity<IMonsterEntity>(packet.ObjectId);
 
@@ -60,7 +64,7 @@ namespace Rhisis.World.Handlers
                 if (target.Moves.SpeedFactor != 2f)
                 {
                     target.Moves.SpeedFactor = 2f;
-                    WorldPacketFactory.SendSpeedFactor(target, target.Moves.SpeedFactor);
+                    this._moverPacketFactory.SendSpeedFactor(target, target.Moves.SpeedFactor);
                 }
 
                 this._followSystem.Follow(target, client.Player);

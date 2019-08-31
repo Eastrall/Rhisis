@@ -50,10 +50,12 @@ namespace Rhisis.World.Systems.PlayerData
             {
                 var database = DependencyContainer.Instance.Resolve<IDatabase>();
                 var character = database.Characters.Get(x => x.Id == e.PlayerId);
-                WorldPacketFactory.SendPlayerData(player, e.PlayerId, character.Name, (byte)character.ClassId, (byte)character.Level, character.Gender, PlayerDataComponent.StartVersion, false, send);
+                //WorldPacketFactory.SendPlayerData(player, e.PlayerId, character.Name, (byte)character.ClassId, (byte)character.Level, character.Gender, PlayerDataComponent.StartVersion, false, send);
             }
             else // Player is online
-                WorldPacketFactory.SendPlayerData(player, e.PlayerId, playerEntity.Object.Name, (byte)playerEntity.PlayerData.JobId, (byte)playerEntity.Object.Level, playerEntity.VisualAppearance.Gender, playerEntity.PlayerData.Version, true, send);
+            {
+                //WorldPacketFactory.SendPlayerData(player, e.PlayerId, playerEntity.Object.Name, (byte)playerEntity.PlayerData.JobId, (byte)playerEntity.Object.Level, playerEntity.VisualAppearance.Gender, playerEntity.PlayerData.Version, true, send);
+            }
         }
 
         private void GetPlayerData(IPlayerEntity player, QueryPlayerData2EventArgs e)
