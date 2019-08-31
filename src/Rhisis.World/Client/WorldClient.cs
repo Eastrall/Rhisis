@@ -8,7 +8,7 @@ using Rhisis.World.Game.Entities;
 using Sylver.HandlerInvoker;
 using System;
 
-namespace Rhisis.World
+namespace Rhisis.World.Client
 {
     public sealed class WorldClient : NetUser, IWorldClient
     {

@@ -8,6 +8,7 @@ using Rhisis.Core.Resources.Loaders;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Network;
 using Rhisis.Network.Packets;
+using Rhisis.World.Client;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Chat;
 using Rhisis.World.Game.Entities;
