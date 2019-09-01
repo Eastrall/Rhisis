@@ -14,22 +14,15 @@ jobs:
     include:
       - stage: "Build"
         script: 
-        - dotnet build src/Rhisis.Core/  --configuration Release
-        - dotnet build src/Rhisis.Database/ --configuration Release
-        - dotnet build src/Rhisis.Business/ --configuration Release
         - dotnet build src/Rhisis.Login/ --configuration Release
         - dotnet build src/Rhisis.Cluster/ --configuration Release
         - dotnet build src/Rhisis.World/ --configuration Release
         name: "Rhisis Servers"
       - script:
-        - dotnet build src/Rhisis.API/ --configuration Release
         - dotnet build src/Rhisis.CLI/ --configuration Release
         name: "Rhisis Tools"
 
       - stage: "Tests"
         script: 
-        - dotnet test test/Rhisis.Core.Tests/
-        - dotnet test test/Rhisis.Login.Tests/
-        - dotnet test test/Rhisis.Cluster.Tests/
-        - dotnet test test/Rhisis.World.Tests/
+        - dotnet test
         name: "Rhisis Tests"

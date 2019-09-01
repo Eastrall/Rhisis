@@ -66,7 +66,6 @@ namespace Rhisis.World
                 typeof(DialogLoader),
                 typeof(ShopLoader),
                 typeof(JobLoader),
-                typeof(TextClientLoader),
                 typeof(ExpTableLoader),
                 typeof(PenalityLoader),
                 typeof(NpcLoader));

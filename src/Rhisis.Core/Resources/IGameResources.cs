@@ -36,11 +36,6 @@ namespace Rhisis.Core.Resources
         IReadOnlyDictionary<int, JobData> Jobs { get; }
 
         /// <summary>
-        /// Gets the client texts data.
-        /// </summary>
-        IReadOnlyDictionary<string, string> ClientTexts { get; }
-
-        /// <summary>
         /// Gets the npcs data.
         /// </summary>
         IReadOnlyDictionary<string, NpcData> Npcs { get; }

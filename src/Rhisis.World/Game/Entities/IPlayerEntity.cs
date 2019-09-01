@@ -26,11 +26,6 @@ namespace Rhisis.World.Game.Entities
         TradeComponent Trade { get; set; }
 
         /// <summary>
-        /// Gets or sets the player's party component.
-        /// </summary>
-        PartyComponent Party { get; set; }
-
-        /// <summary>
         /// Gets or sets the player's taskbar component.
         /// </summary>
         TaskbarComponent Taskbar { get; set; }

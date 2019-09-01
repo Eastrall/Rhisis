@@ -14,7 +14,6 @@ namespace Rhisis.Core.Resources
         public const string Dialogs = nameof(DialogLoader);
         public const string Shops = nameof(ShopLoader);
         public const string Jobs = nameof(JobData);
-        public const string ClientTexts = nameof(TextClientLoader);
         public const string ExpTables = nameof(ExpTableLoader);
         public const string PenalityData = nameof(PenalityLoader);
         public const string Npcs = nameof(NpcLoader);

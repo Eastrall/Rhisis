@@ -4,16 +4,20 @@ This is the changelog of the Rhisis project. All notable changes to this project
 
 ## [Unreleased]
 
-## [0.4.0]() - 2019-07-31
+## [0.4.0](https://github.com/Eastrall/Rhisis/releases/tag/v0.4) - 2019-09-30
 
 ### Fixes
 
 - ![login] Optimize authentication SQL request ([#259](https://github.com/Eastrall/Rhisis/pull/259))
 
-### Changes
+### BREAKING CHANGES
 
 - ![login] Refactoring of the `LoginServer` with a [`HostBuilder`](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.hostbuilder?view=aspnetcore-2.2) and add `HandlerInvoker` system. ([#258](https://github.com/Eastrall/Rhisis/pull/258))
-- ![cluster] Refactoring of the `ClusterServer` with a [`HostBuilder`]() ([#259](https://github.com/Eastrall/Rhisis/pull/259))
+- ![cluster] Refactoring of the `ClusterServer` with a [`HostBuilder`](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.hostbuilder?view=aspnetcore-2.2) and add `HandlerInvoker` system. ([#259](https://github.com/Eastrall/Rhisis/pull/259))
+- ![world] Refactoring of the `WorldServer` with a [`HostBuilder`](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.hostbuilder?view=aspnetcore-2.2) and add `HandlerInvoker` system. ([#263](https://github.com/Eastrall/Rhisis/pull/263))
+	- Refactoring systems
+	- Refactoring packet factories
+	- Refactoring resource loaders
 
 ## [Released]
 

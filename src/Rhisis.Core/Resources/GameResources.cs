@@ -20,7 +20,6 @@ namespace Rhisis.Core.Resources
         private ConcurrentDictionary<string, DialogSet> _dialogs;
         private ConcurrentDictionary<string, ShopData> _shops;
         private ConcurrentDictionary<int, JobData> _jobs;
-        private ConcurrentDictionary<string, string> _clientTexts;
         private ConcurrentDictionary<string, NpcData> _npcs;
         private ExpTableData _expTableData;
         private DeathPenalityData _penalities;
@@ -39,9 +38,6 @@ namespace Rhisis.Core.Resources
 
         /// <inheritdoc />
         public IReadOnlyDictionary<int, JobData> Jobs => this.GetCacheValue(GameResourcesConstants.Jobs, ref this._jobs);
-
-        /// <inheritdoc />
-        public IReadOnlyDictionary<string, string> ClientTexts => this.GetCacheValue(GameResourcesConstants.ClientTexts, ref this._clientTexts);
 
         /// <inheritdoc />
         public IReadOnlyDictionary<string, NpcData> Npcs => this.GetCacheValue(GameResourcesConstants.Npcs, ref this._npcs);
