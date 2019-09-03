@@ -40,7 +40,7 @@ namespace Rhisis.CLI.Commands.User
             else
             {
                 Console.WriteLine("#########################");
-                Console.WriteLine("#   User information's   #");
+                Console.WriteLine("#   User information   #");
                 Console.WriteLine("#########################");
                 Console.WriteLine($"Username: {user.Username}");
                 Console.WriteLine($"Email: {user.Email}");
