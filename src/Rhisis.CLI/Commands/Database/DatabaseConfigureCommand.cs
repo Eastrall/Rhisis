@@ -57,11 +57,9 @@ namespace Rhisis.CLI.Commands.Database
             
             bool response = _consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (response)
-            {
-                ConfigurationHelper.Save(DatabaseConfigurationFile, dbConfiguration);
-                Console.WriteLine($"Database configuration saved in '{DatabaseConfigurationFile}'.");
-            }
+            if (!response) return;
+            ConfigurationHelper.Save(DatabaseConfigurationFile, dbConfiguration);
+            Console.WriteLine($"Database configuration saved in '{DatabaseConfigurationFile}'.");
         }
     }
 }

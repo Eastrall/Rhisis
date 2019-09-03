@@ -78,7 +78,7 @@ namespace Rhisis.Core.Helpers
             };
 
             if (!Directory.Exists(path))
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new NullReferenceException());
 
             string valueSerialized = JsonConvert.SerializeObject(value, serializerSettings);
 

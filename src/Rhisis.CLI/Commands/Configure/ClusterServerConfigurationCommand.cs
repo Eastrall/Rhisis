@@ -3,7 +3,7 @@ using Rhisis.CLI.Services;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using System;
-using System.Collections.Generic;
+using Rhisis.CLI.Models;
 
 namespace Rhisis.CLI.Commands.Configure
 {
@@ -53,17 +53,13 @@ namespace Rhisis.CLI.Commands.Configure
 
             bool response = this._consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (response)
+            if (!response) return;
+            ConfigurationHelper.Save(ConfigurationConstants.ClusterServerPath, new ClusterServerConfigurationModel
             {
-                var configuration = new Dictionary<string, object>
-                {
-                    { ConfigurationConstants.ClusterServer, clusterConfiguration.Value },
-                    { ConfigurationConstants.CoreServer, coreConfiguration.Value }
-                };
-
-                ConfigurationHelper.Save(ConfigurationConstants.ClusterServerPath, configuration);
-                Console.WriteLine($"Cluster Server configuration saved in {ConfigurationConstants.ClusterServerPath}!");
-            }
+                CoreConfiguration = coreConfiguration.Value,
+                ClusterServerConfiguration = clusterConfiguration.Value
+            });
+            Console.WriteLine($"Cluster Server configuration saved in {ConfigurationConstants.ClusterServerPath}!");
         }
     }
 }

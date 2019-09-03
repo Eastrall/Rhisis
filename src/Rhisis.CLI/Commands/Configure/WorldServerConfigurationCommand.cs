@@ -4,7 +4,7 @@ using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Configuration.World;
 using System;
-using System.Collections.Generic;
+using Rhisis.CLI.Models;
 
 namespace Rhisis.CLI.Commands.Configure
 {
@@ -40,9 +40,9 @@ namespace Rhisis.CLI.Commands.Configure
         public void OnExecute()
         {
             var worldServerConfiguration = ConfigurationHelper.Load<WorldConfiguration>(this.ConfigurationFile, ConfigurationConstants.WorldServer);
-            var coreServerConfiguratinon = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
+            var coreServerConfiguration = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
             var worldConfiguration = new ObjectConfigurationFiller<WorldConfiguration>(worldServerConfiguration);
-            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguratinon);
+            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguration);
 
             Console.WriteLine("----- World Server -----");
             worldConfiguration.Fill();
@@ -55,17 +55,13 @@ namespace Rhisis.CLI.Commands.Configure
 
             bool response = this._consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (response)
+            if (!response) return;
+            ConfigurationHelper.Save(ConfigurationConstants.WorldServerPath, new WorldServerConfigurationModel()
             {
-                var configuration = new Dictionary<string, object>
-                {
-                    { ConfigurationConstants.WorldServer, worldConfiguration.Value },
-                    { ConfigurationConstants.CoreServer, coreConfiguration.Value }
-                };
-
-                ConfigurationHelper.Save(ConfigurationConstants.WorldServerPath, configuration);
-                Console.WriteLine($"World Server configuration saved in {ConfigurationConstants.WorldServerPath}!");
-            }
+                CoreConfiguration = coreConfiguration.Value,
+                WorldConfiguration = worldConfiguration.Value
+            });
+            Console.WriteLine($"World Server configuration saved in {ConfigurationConstants.WorldServerPath}!");
         }
     }
 }

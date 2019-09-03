@@ -4,6 +4,7 @@ using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using System;
 using System.Collections.Generic;
+using Rhisis.CLI.Models;
 
 namespace Rhisis.CLI.Commands.Configure
 {
@@ -53,17 +54,19 @@ namespace Rhisis.CLI.Commands.Configure
 
             bool response = this._consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (response)
+            if (!response) return;
+            var configuration = new Dictionary<string, object>
             {
-                var configuration = new Dictionary<string, object>
-                {
-                    { ConfigurationConstants.LoginServer, loginConfiguration.Value },
-                    { ConfigurationConstants.CoreServer, coreConfiguration.Value }
-                };
+                { ConfigurationConstants.LoginServer, loginConfiguration.Value },
+                { ConfigurationConstants.CoreServer, coreConfiguration.Value }
+            };
 
-                ConfigurationHelper.Save(this.ConfigurationFile, configuration);
-                Console.WriteLine($"Login Server configuration saved in {this.ConfigurationFile}!");
-            }
+            ConfigurationHelper.Save(this.ConfigurationFile, new LoginServerConfigurationModel
+            {
+                CoreConfiguration = coreConfiguration.Value,
+                LoginConfiguration = loginConfiguration.Value
+            });
+            Console.WriteLine($"Login Server configuration saved in {this.ConfigurationFile}!");
         }
     }
 }
