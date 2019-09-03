@@ -54,7 +54,7 @@ namespace Rhisis.CLI.Commands.User
             user.Authority = (int)_consoleHelper.ReadEnum<AuthorityType>();
 
             Console.WriteLine("--------------------------------");
-            Console.WriteLine("User account informations:");
+            Console.WriteLine("User account information's:");
             Console.WriteLine($"Username: {user.Username}");
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Authority: {(AuthorityType)user.Authority}");

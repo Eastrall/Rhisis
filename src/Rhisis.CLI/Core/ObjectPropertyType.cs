@@ -1,9 +1,9 @@
-﻿namespace Rhisis.CLI.Commands.Configure
+﻿namespace Rhisis.CLI.Core
 {
     internal enum ObjectPropertyType
     {
-        String,
-        YesNo,
-        Number
+        STRING,
+        YES_NO,
+        NUMBER
     }
 }

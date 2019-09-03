@@ -4,6 +4,7 @@ using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using System;
 using System.Collections.Generic;
+using Rhisis.CLI.Core;
 using Rhisis.CLI.Models;
 
 namespace Rhisis.CLI.Commands.Configure
@@ -39,9 +40,9 @@ namespace Rhisis.CLI.Commands.Configure
         public void OnExecute()
         {
             var loginServerConfiguration = ConfigurationHelper.Load<LoginConfiguration>(this.ConfigurationFile, ConfigurationConstants.LoginServer);
-            var coreServerConfiguratinon = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
+            var coreServerConfiguration = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
             var loginConfiguration = new ObjectConfigurationFiller<LoginConfiguration>(loginServerConfiguration);
-            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguratinon);
+            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguration);
 
             Console.WriteLine("----- Login Server -----");
             loginConfiguration.Fill();

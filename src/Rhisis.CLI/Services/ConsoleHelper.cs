@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace Rhisis.CLI.Services
@@ -83,21 +84,21 @@ namespace Rhisis.CLI.Services
 
             do
             {
-                ConsoleKeyInfo keyinfo = Console.ReadKey(true);
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
-                if (keyinfo.Key != ConsoleKey.Backspace && keyinfo.Key != ConsoleKey.Enter)
+                if (keyInfo.Key != ConsoleKey.Backspace && keyInfo.Key != ConsoleKey.Enter)
                 {
-                    password.Append(keyinfo.KeyChar);
+                    password.Append(keyInfo.KeyChar);
                     Console.Write(passwordCharacter);
                 }
                 else
                 {
-                    if (keyinfo.Key == ConsoleKey.Backspace && password.Length > 0)
+                    if (keyInfo.Key == ConsoleKey.Backspace && password.Length > 0)
                     {
                         password = password.Remove((password.Length - 1), 1);
                         Console.Write("\b \b");
                     }
-                    else if (keyinfo.Key == ConsoleKey.Enter)
+                    else if (keyInfo.Key == ConsoleKey.Enter)
                     {
                         Console.Write(Environment.NewLine);
                         break;
@@ -122,6 +123,7 @@ namespace Rhisis.CLI.Services
 
             string response = Console.ReadLine();
 
+            Debug.Assert(response != null, nameof(response) + " != null");
             return response.Equals("y", StringComparison.OrdinalIgnoreCase)
                 || response.Equals("yes", StringComparison.OrdinalIgnoreCase)
                 || string.IsNullOrEmpty(response);

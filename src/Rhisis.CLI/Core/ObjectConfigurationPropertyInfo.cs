@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Rhisis.CLI.Commands.Configure
+namespace Rhisis.CLI.Core
 {
     /// <summary>
     /// Represents an object configuration property.
@@ -39,12 +38,12 @@ namespace Rhisis.CLI.Commands.Configure
 
                 builder.Append(this.DisplayName);
 
-                if (this.Value != null && this.Type != ObjectPropertyType.YesNo)
+                if (this.Value != null && this.Type != ObjectPropertyType.YES_NO)
                 {
                     builder.Append($" ({this.Value})");
                 }
 
-                if (this.Type == ObjectPropertyType.YesNo)
+                if (this.Type == ObjectPropertyType.YES_NO)
                 {
                     builder.Append($" (y/n)");
                 }
@@ -74,11 +73,11 @@ namespace Rhisis.CLI.Commands.Configure
             this._propertyInfo = propertyInfo;
 
             if (propertyInfo.PropertyType == typeof(bool))
-                this.Type = ObjectPropertyType.YesNo;
+                this.Type = ObjectPropertyType.YES_NO;
             else if (propertyInfo.PropertyType == typeof(string))
-                this.Type = ObjectPropertyType.String;
+                this.Type = ObjectPropertyType.STRING;
             else
-                this.Type = ObjectPropertyType.Number;
+                this.Type = ObjectPropertyType.NUMBER;
         }
 
 

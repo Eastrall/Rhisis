@@ -3,6 +3,7 @@ using Rhisis.CLI.Services;
 using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using System;
+using Rhisis.CLI.Core;
 using Rhisis.CLI.Models;
 
 namespace Rhisis.CLI.Commands.Configure

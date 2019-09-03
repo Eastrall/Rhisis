@@ -1,12 +1,13 @@
-﻿using Rhisis.CLI.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using Rhisis.CLI.Commands.Configure;
+using Rhisis.CLI.Services;
 
-namespace Rhisis.CLI.Commands.Configure
+namespace Rhisis.CLI.Core
 {
     /// <summary>
     /// Provides a mechanism to fill an object using the console inputs.
@@ -52,19 +53,21 @@ namespace Rhisis.CLI.Commands.Configure
             {
                 Console.Write(objectProperty.Display);
 
-                if (objectProperty.Type == ObjectPropertyType.String)
+                switch (objectProperty.Type)
                 {
-                    objectProperty.Value = objectProperty.IsPassword ?
-                        this._consoleHelper.ReadPassword() :
-                        this._consoleHelper.ReadStringOrDefault(objectProperty.Value?.ToString());
-                }
-                else if (objectProperty.Type == ObjectPropertyType.Number)
-                {
-                    objectProperty.Value = this._consoleHelper.ReadIntegerOrDefault(Convert.ToInt32(objectProperty.Value));
-                }
-                else if (objectProperty.Type == ObjectPropertyType.YesNo)
-                {
-                    objectProperty.Value = this._consoleHelper.AskConfirmation();
+                    case ObjectPropertyType.STRING:
+                        objectProperty.Value = objectProperty.IsPassword ?
+                            this._consoleHelper.ReadPassword() :
+                            this._consoleHelper.ReadStringOrDefault(objectProperty.Value?.ToString());
+                        break;
+                    case ObjectPropertyType.NUMBER:
+                        objectProperty.Value = this._consoleHelper.ReadIntegerOrDefault(Convert.ToInt32(objectProperty.Value));
+                        break;
+                    case ObjectPropertyType.YES_NO:
+                        objectProperty.Value = this._consoleHelper.AskConfirmation();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -80,12 +83,9 @@ namespace Rhisis.CLI.Commands.Configure
                 Console.WriteLine($"---------- {title} ----------");
             }
 
-            foreach (ObjectConfigurationPropertyInfo property in this._properties)
+            foreach (var property in this._properties.Where(property => !property.IsPassword))
             {
-                if (!property.IsPassword)
-                {
-                    Console.WriteLine($"{property.DisplayName} = {property.Value}");
-                }
+                Console.WriteLine($"{property.DisplayName} = {property.Value}");
             }
         }
 
