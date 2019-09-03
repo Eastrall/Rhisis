@@ -4,7 +4,7 @@ using Rhisis.Core.Helpers;
 using Rhisis.Core.Structures.Configuration;
 using System;
 using Rhisis.CLI.Core;
-using Rhisis.CLI.Models;
+using Rhisis.Core.Structures.Configuration.Models;
 
 namespace Rhisis.CLI.Commands.Configure
 {

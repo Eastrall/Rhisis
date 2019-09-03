@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Rhisis.Core.Structures.Configuration;
 
-namespace Rhisis.CLI.Models
+namespace Rhisis.Core.Structures.Configuration.Models
 {
-    class LoginServerConfigurationModel
+    public class LoginServerConfigurationModel
     {
         [JsonProperty(PropertyName = ConfigurationConstants.LoginServer)]
         public LoginConfiguration LoginConfiguration { get; set; }

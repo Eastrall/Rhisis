@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
-using Rhisis.Core.Structures.Configuration;
 using Rhisis.Core.Structures.Configuration.World;
 
-namespace Rhisis.CLI.Models
+namespace Rhisis.Core.Structures.Configuration.Models
 {
-    class WorldServerConfigurationModel
+    public class WorldServerConfigurationModel
     {
         [JsonProperty(PropertyName = ConfigurationConstants.WorldServer)]
         public WorldConfiguration WorldConfiguration { get; set; }

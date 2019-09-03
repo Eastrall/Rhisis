@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Rhisis.Database;
-
-namespace Rhisis.CLI.Models
+﻿namespace Rhisis.Core.Structures.Configuration.Models
 {
     public class DatabaseConfigurationModel
     {

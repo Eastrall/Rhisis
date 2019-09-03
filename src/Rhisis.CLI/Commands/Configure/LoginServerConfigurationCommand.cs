@@ -5,7 +5,8 @@ using Rhisis.Core.Structures.Configuration;
 using System;
 using System.Collections.Generic;
 using Rhisis.CLI.Core;
-using Rhisis.CLI.Models;
+using Rhisis.Core.Structures.Configuration.Models;
+
 
 namespace Rhisis.CLI.Commands.Configure
 {

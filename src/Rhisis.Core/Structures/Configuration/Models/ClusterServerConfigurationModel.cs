@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using Rhisis.Core.Structures.Configuration;
+﻿using Newtonsoft.Json;
 
-namespace Rhisis.CLI.Models
+namespace Rhisis.Core.Structures.Configuration.Models
 {
-    class ClusterServerConfigurationModel
+    public class ClusterServerConfigurationModel
     {
         [JsonProperty(PropertyName = ConfigurationConstants.ClusterServer)]
         public ClusterConfiguration ClusterServerConfiguration { get; set; }
