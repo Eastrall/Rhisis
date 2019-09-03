@@ -38,9 +38,9 @@ namespace Rhisis.CLI.Commands.Configure
         public void OnExecute()
         {
             var clusterServerConfiguration = ConfigurationHelper.Load<ClusterConfiguration>(this.ConfigurationFile, ConfigurationConstants.ClusterServer);
-            var coreServerConfiguratinon = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
+            var coreServerConfiguration = ConfigurationHelper.Load<CoreConfiguration>(this.ConfigurationFile, ConfigurationConstants.CoreServer);
             var clusterConfiguration = new ObjectConfigurationFiller<ClusterConfiguration>(clusterServerConfiguration);
-            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguratinon);
+            var coreConfiguration = new ObjectConfigurationFiller<CoreConfiguration>(coreServerConfiguration);
 
             Console.WriteLine("----- Cluster Server -----");
             clusterConfiguration.Fill();
