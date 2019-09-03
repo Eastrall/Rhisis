@@ -55,15 +55,15 @@ namespace Rhisis.CLI.Core
 
                 switch (objectProperty.Type)
                 {
-                    case ObjectPropertyType.STRING:
+                    case ObjectPropertyType.String:
                         objectProperty.Value = objectProperty.IsPassword ?
                             this._consoleHelper.ReadPassword() :
                             this._consoleHelper.ReadStringOrDefault(objectProperty.Value?.ToString());
                         break;
-                    case ObjectPropertyType.NUMBER:
+                    case ObjectPropertyType.Number:
                         objectProperty.Value = this._consoleHelper.ReadIntegerOrDefault(Convert.ToInt32(objectProperty.Value));
                         break;
-                    case ObjectPropertyType.YES_NO:
+                    case ObjectPropertyType.YesNo:
                         objectProperty.Value = this._consoleHelper.AskConfirmation();
                         break;
                     default:
@@ -83,7 +83,7 @@ namespace Rhisis.CLI.Core
                 Console.WriteLine($"---------- {title} ----------");
             }
 
-            foreach (var property in this._properties.Where(property => !property.IsPassword))
+            foreach (ObjectConfigurationPropertyInfo property in this._properties.Where(property => !property.IsPassword))
             {
                 Console.WriteLine($"{property.DisplayName} = {property.Value}");
             }

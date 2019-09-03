@@ -56,7 +56,8 @@ namespace Rhisis.CLI.Commands.Configure
 
             bool response = this._consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (!response) return;
+            if (!response) 
+                return;
             var configuration = new Dictionary<string, object>
             {
                 { ConfigurationConstants.LoginServer, loginConfiguration.Value },

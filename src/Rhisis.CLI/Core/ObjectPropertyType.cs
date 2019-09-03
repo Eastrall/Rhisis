@@ -1,9 +1,10 @@
-﻿namespace Rhisis.CLI.Core
+﻿// ReSharper disable InconsistentNaming
+namespace Rhisis.CLI.Core
 {
     internal enum ObjectPropertyType
     {
-        STRING,
-        YES_NO,
-        NUMBER
+        String,
+        YesNo,
+        Number
     }
 }

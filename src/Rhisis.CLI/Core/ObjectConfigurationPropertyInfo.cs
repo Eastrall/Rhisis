@@ -38,12 +38,12 @@ namespace Rhisis.CLI.Core
 
                 builder.Append(this.DisplayName);
 
-                if (this.Value != null && this.Type != ObjectPropertyType.YES_NO)
+                if (this.Value != null && this.Type != ObjectPropertyType.YesNo)
                 {
                     builder.Append($" ({this.Value})");
                 }
 
-                if (this.Type == ObjectPropertyType.YES_NO)
+                if (this.Type == ObjectPropertyType.YesNo)
                 {
                     builder.Append($" (y/n)");
                 }
@@ -73,11 +73,11 @@ namespace Rhisis.CLI.Core
             this._propertyInfo = propertyInfo;
 
             if (propertyInfo.PropertyType == typeof(bool))
-                this.Type = ObjectPropertyType.YES_NO;
+                this.Type = ObjectPropertyType.YesNo;
             else if (propertyInfo.PropertyType == typeof(string))
-                this.Type = ObjectPropertyType.STRING;
+                this.Type = ObjectPropertyType.String;
             else
-                this.Type = ObjectPropertyType.NUMBER;
+                this.Type = ObjectPropertyType.Number;
         }
 
 

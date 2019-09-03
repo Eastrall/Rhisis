@@ -54,7 +54,8 @@ namespace Rhisis.CLI.Commands.Configure
 
             bool response = this._consoleHelper.AskConfirmation("Save this configuration?");
 
-            if (!response) return;
+            if (!response) 
+                return;
             ConfigurationHelper.Save(ConfigurationConstants.ClusterServerPath, new ClusterServerConfigurationModel
             {
                 CoreConfiguration = coreConfiguration.Value,
