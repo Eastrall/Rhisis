@@ -58,11 +58,6 @@ namespace Rhisis.CLI.Commands.Configure
 
             if (!response) 
                 return;
-            var configuration = new Dictionary<string, object>
-            {
-                { ConfigurationConstants.LoginServer, loginConfiguration.Value },
-                { ConfigurationConstants.CoreServer, coreConfiguration.Value }
-            };
 
             ConfigurationHelper.Save(this.ConfigurationFile, new LoginServerConfigurationModel
             {
