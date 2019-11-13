@@ -57,6 +57,17 @@ namespace Rhisis.World.Handlers
         }
 
         /// <summary>
+        /// Handles the delete item request.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        [HandlerAction(PacketType.REMOVEINVENITEM)]
+        public void OnDeleteItem(IWorldClient client, RemoveInventoryItemPacket packet)
+        {
+            this._inventorySystem.DeleteItem(client.Player, packet.ItemUniqueId, packet.ItemQuantity);
+        }
+
+        /// <summary>
         /// Handles the use item request.
         /// </summary>
         /// <param name="client"></param>
