@@ -27,14 +27,5 @@ namespace Rhisis.Network.Packets.World
             this.ItemUniqueId = packet.Read<int>();
             this.ItemQuantity = packet.Read<int>();
         }
-
-        /// <summary>
-        /// Compares two <see cref="RemoveInventoryItemPacket"/>.
-        /// </summary>
-        /// <param name="other">Other <see cref="RemoveInventoryItemPacket"/></param>
-        public bool Equals(RemoveInventoryItemPacket other)
-        {
-            return this.ItemUniqueId == other.ItemUniqueId && this.ItemQuantity == other.ItemQuantity;
-        }
     }
 }
