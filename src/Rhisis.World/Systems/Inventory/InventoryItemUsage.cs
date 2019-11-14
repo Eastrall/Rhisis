@@ -173,13 +173,14 @@ namespace Rhisis.World.Systems.Inventory
             if (!item.Data.IsPermanant)
                 item.Quantity--;
 
-            this._inventoryPacketFactory.SendItemUpdate(player, itemUpdateType, item.UniqueId, item.Quantity);
 
-            if (item.Quantity <= 0)
-                item.Reset();
+            this._inventoryPacketFactory.SendItemUpdate(player, itemUpdateType, item.UniqueId, item.Quantity);
 
             if (item.Data.SfxObject3 != 0)
                 this._specialEffectSystem.StartSpecialEffect(player, (DefineSpecialEffects)item.Data.SfxObject3);
+
+            if (item.Quantity <= 0)
+                item.Reset();
         }
     }
 }
