@@ -47,6 +47,7 @@ namespace Rhisis.World.Game.Factories.Internal
                     Position = position,
                     Angle = RandomHelper.FloatRandom(0, 360f),
                     Spawned = true,
+                    IsSummoned = false,
                     CurrentMap = currentMap,
                     LayerId = currentMapLayer.Id
                 },

@@ -3,6 +3,7 @@ using Rhisis.Core.Structures.Game;
 using Rhisis.World.Game.Behaviors;
 using Rhisis.World.Game.Components;
 using Rhisis.World.Game.Maps.Regions;
+using Rhisis.Core.Structures;
 
 namespace Rhisis.World.Game.Entities
 {
@@ -16,6 +17,9 @@ namespace Rhisis.World.Game.Entities
 
         /// <inheritdoc />
         public IMapRespawnRegion Region { get; set; }
+
+        /// <inheritdoc />
+        public Rectangle Rectangle { get; set; }
 
         /// <inheritdoc />
         public MovableComponent Moves { get; set; }
