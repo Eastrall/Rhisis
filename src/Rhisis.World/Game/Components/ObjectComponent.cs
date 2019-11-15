@@ -57,6 +57,11 @@ namespace Rhisis.World.Game.Components
         public bool Spawned { get; set; }
 
         /// <summary>
+        /// Gets or sets the object admin summoned flag.
+        /// </summary>
+        public bool IsSummoned { get; set; }
+
+        /// <summary>
         /// Gets or sets the object's level.
         /// </summary>
         public int Level { get; set; }
