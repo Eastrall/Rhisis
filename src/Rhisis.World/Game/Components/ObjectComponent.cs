@@ -57,9 +57,9 @@ namespace Rhisis.World.Game.Components
         public bool Spawned { get; set; }
 
         /// <summary>
-        /// Gets or sets the object admin summoned flag.
+        /// Gets or sets if the mob can respawn.
         /// </summary>
-        public bool IsSummoned { get; set; }
+        public bool AbleRespawn { get; set; }
 
         /// <summary>
         /// Gets or sets the object's level.

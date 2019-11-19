@@ -22,7 +22,7 @@ namespace Rhisis.World.Game.Factories
         /// </summary>
         /// <param name="monster">base monster.</param>
         /// <param name="position">position for the new monster.</param>
-        /// <param name="summoned">is the mob summoned by admin command.</param>
-        IMonsterEntity DuplicateMonster(IMonsterEntity monster, Vector3 position, bool summoned = false);
+        /// <param name="respawn">is the mob able to respawn.</param>
+        IMonsterEntity DuplicateMonster(IMonsterEntity monster, Vector3 position, bool respawn = false);
     }
 }

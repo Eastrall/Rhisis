@@ -69,7 +69,7 @@ namespace Rhisis.World.Game.Factories.Internal
 
             return monster;
         }
-        public IMonsterEntity DuplicateMonster(IMonsterEntity baseMonster, Vector3 position, bool summoned = false)
+        public IMonsterEntity DuplicateMonster(IMonsterEntity baseMonster, Vector3 position, bool respawn = false)
         {           
             var monsterToSpawn = new MonsterEntity
             {
@@ -80,7 +80,7 @@ namespace Rhisis.World.Game.Factories.Internal
                     Size = baseMonster.Object.Size,
                     MovingFlags = ObjectState.OBJSTA_STAND,
                     Spawned = true,
-                    IsSummoned = summoned,
+                    AbleRespawn = respawn,
                     CurrentMap = baseMonster.Object.CurrentMap,
                     LayerId = baseMonster.Object.LayerId,
                     Position = position,
