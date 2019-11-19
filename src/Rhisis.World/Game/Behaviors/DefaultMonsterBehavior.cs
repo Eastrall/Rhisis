@@ -68,12 +68,7 @@ namespace Rhisis.World.Game.Behaviors
             if (monster.Timers.NextMoveTime <= Time.TimeInSeconds() &&
                 monster.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
             {
-                if (monster.Object.IsSummoned != true){
-                    this.MoveToPosition(monster, monster.Region.GetRandomPosition());
-                } else {
-                    this.MoveToPosition(monster, monster.Rectangle.GetRandomPosition());
-                }
-                
+                this.MoveToPosition(monster, monster.Region.GetRandomPosition());   
             }
             else if (monster.Object.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
             {

@@ -5,8 +5,9 @@ using Rhisis.World.Game.Factories;
 using Rhisis.World.Game.Maps;
 using Rhisis.World.Packets;
 using System;
-using Rhisis.World.Systems;
 using Rhisis.Core.Structures;
+using Rhisis.World.Game.Maps.Regions;
+using Rhisis.Core.Resources;
 
 namespace Rhisis.World.Game.Chat
 {
@@ -15,6 +16,7 @@ namespace Rhisis.World.Game.Chat
     [ChatCommand("/monster", AuthorityType.Administrator)]
     public class CreateMonsterChatCommand : IChatCommand
     {
+        private readonly IGameResources _gameResources;
         private readonly ILogger<CreateMonsterChatCommand> _logger;
         private readonly IMonsterFactory _monsterFactory;
         private readonly ITextPacketFactory _textPacketFactory;
@@ -25,45 +27,53 @@ namespace Rhisis.World.Game.Chat
         /// Creates a new <see cref="CreateMonsterChatCommand"/> instance.
         /// </summary>
         /// <param name="logger">Logger.</param>
-        /// <param name="mapManager">Map Manager.</param>
-        /// <param name="worldSpawnPacketFactory">World spawn packet factory.</param>
         /// <param name="monsterFactory">Monster factory.</param>
         /// <param name="textPacketFactory">Text packet factory.</param>
-        public CreateMonsterChatCommand(ILogger<CreateMonsterChatCommand> logger, IMapManager mapManager, IMonsterFactory monsterFactory, ITextPacketFactory textPacketFactory, IServiceProvider serviceProvider, IRespawnSystem respawn)
+        /// <param name="mapManager">Map Manager.</param>
+        /// <param name="serviceProvider">Service provider.</param>
+        /// <param name="serviceProvider">Game resources.</param>
+       
+
+        public CreateMonsterChatCommand(ILogger<CreateMonsterChatCommand> logger, IMapManager mapManager, IMonsterFactory monsterFactory, ITextPacketFactory textPacketFactory, IServiceProvider serviceProvider, IGameResources gameResources)
         {
             this._logger = logger;
             this._mapManager = mapManager;
             this._monsterFactory = monsterFactory;
             this._textPacketFactory = textPacketFactory;
             this._serviceProvider = serviceProvider;
+            this._gameResources = gameResources;
         }
 
         /// <inheritdoc />
         public void Execute(IPlayerEntity player, object[] parameters)
         {
-            if (parameters.Length <= 0)
+            if (parameters.Length <= 0 || parameters.Length > 2)
             {
-                throw new ArgumentException($"Create monster command must have at least one parameter.", nameof(parameters));
+                throw new ArgumentException($"Create monster command must have 1 or 2 parameters.", nameof(parameters));
             }
 
+            if (!Int32.TryParse((string)parameters[0], out int monsterId)) {
+                throw new ArgumentException($"Cannot convert '{parameters[0]}' in int.");
+            }
+
+            int quantityToSpawn = 1;
+
+            if ( parameters.Length == 2) {
+                if (!Int32.TryParse((string)parameters[1], out quantityToSpawn)) {
+                    throw new ArgumentException($"Cannot convert '{parameters[1]}' in int.");
+                }
+            }
+
+            const int sizeOfSpawnArea = 12;    
             IMapInstance currentMap = player.Object.CurrentMap;
             IMapLayer currentMapLayer = currentMap.GetMapLayer(player.Object.LayerId);
-            var currentPosition = new Vector3();
-            currentPosition.X = player.Object.Position.X;
-            currentPosition.Y = player.Object.Position.Y;
-            currentPosition.Z = player.Object.Position.Z;
-            int sizeOfSpawnArea = 12; 
-            var simulatedRegion = new Rectangle((int)player.Object.Position.X-sizeOfSpawnArea/2, (int)player.Object.Position.Z-sizeOfSpawnArea/2, sizeOfSpawnArea, sizeOfSpawnArea);
-            int monsterId = Convert.ToInt32(parameters[0]);
-            int quantityToSpawn = parameters.Length >= 2 ? Convert.ToInt32(parameters[1]) : 1;   
-
-
+            Vector3 currentPosition = player.Object.Position.Clone();
+            var respawnRegion = new MapRespawnRegion((int)currentPosition.X-sizeOfSpawnArea/2, (int)currentPosition.Z-sizeOfSpawnArea/2, sizeOfSpawnArea, sizeOfSpawnArea, 0 , WorldObjectType.Mover, monsterId, quantityToSpawn);
+            IMonsterEntity monsterToCreate = this._monsterFactory.CreateMonster(currentMap, currentMapLayer, monsterId, respawnRegion);
+            this._logger.LogDebug($"Administrator {player.Object.Name} is creating {quantityToSpawn} {monsterToCreate.Object.Name}");  
             for (int i = 0; i < quantityToSpawn; i++) {
-                IMonsterEntity monsterToCreate = this._monsterFactory.CreateMonster(currentMap, currentMapLayer, monsterId, currentPosition);
-                monsterToCreate.Object.IsSummoned = true;
-                monsterToCreate.Rectangle = simulatedRegion;
-                currentMapLayer.AddEntity(monsterToCreate);
-                this._logger.LogDebug($"Administrator {player.Object.Name} is creating a {monsterToCreate.Object.Name}");  
+                IMonsterEntity monsterToSpawn = this._monsterFactory.DuplicateMonster(monsterToCreate, currentPosition, true);
+                currentMapLayer.AddEntity(monsterToSpawn);
             }
         }
     }
