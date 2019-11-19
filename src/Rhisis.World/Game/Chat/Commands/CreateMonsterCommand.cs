@@ -68,7 +68,7 @@ namespace Rhisis.World.Game.Chat
             IMapInstance currentMap = player.Object.CurrentMap;
             IMapLayer currentMapLayer = currentMap.GetMapLayer(player.Object.LayerId);
             Vector3 currentPosition = player.Object.Position.Clone();
-            var respawnRegion = new MapRespawnRegion((int)currentPosition.X-sizeOfSpawnArea/2, (int)currentPosition.Z-sizeOfSpawnArea/2, sizeOfSpawnArea, sizeOfSpawnArea, 0 , WorldObjectType.Mover, monsterId, quantityToSpawn);
+            var respawnRegion = new MapRespawnRegion((int)currentPosition.X-sizeOfSpawnArea/2, (int)currentPosition.Z-sizeOfSpawnArea/2, sizeOfSpawnArea, sizeOfSpawnArea, 65535 , WorldObjectType.Mover, monsterId, quantityToSpawn);
             IMonsterEntity monsterToCreate = this._monsterFactory.CreateMonster(currentMap, currentMapLayer, monsterId, respawnRegion);
             this._logger.LogDebug($"Administrator {player.Object.Name} is creating {quantityToSpawn} {monsterToCreate.Object.Name}");  
             for (int i = 0; i < quantityToSpawn; i++) {
