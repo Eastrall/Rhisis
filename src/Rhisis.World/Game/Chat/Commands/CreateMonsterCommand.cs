@@ -52,14 +52,17 @@ namespace Rhisis.World.Game.Chat
                 throw new ArgumentException($"Create monster command must have 1 or 2 parameters.", nameof(parameters));
             }
 
-            if (!Int32.TryParse((string)parameters[0], out int monsterId)) {
+            if (!int.TryParse((string)parameters[0], out int monsterId)) 
+            {
                 throw new ArgumentException($"Cannot convert '{parameters[0]}' in int.");
             }
 
             int quantityToSpawn = 1;
 
-            if ( parameters.Length == 2) {
-                if (!Int32.TryParse((string)parameters[1], out quantityToSpawn)) {
+            if (parameters.Length == 2) 
+            {
+                if (!int.TryParse((string)parameters[1], out quantityToSpawn)) 
+                {
                     throw new ArgumentException($"Cannot convert '{parameters[1]}' in int.");
                 }
             }
@@ -69,10 +72,11 @@ namespace Rhisis.World.Game.Chat
             IMapLayer currentMapLayer = currentMap.GetMapLayer(player.Object.LayerId);
             Vector3 currentPosition = player.Object.Position.Clone();
             var respawnRegion = new MapRespawnRegion((int)currentPosition.X-sizeOfSpawnArea/2, (int)currentPosition.Z-sizeOfSpawnArea/2, sizeOfSpawnArea, sizeOfSpawnArea, 65535 , WorldObjectType.Mover, monsterId, quantityToSpawn);
-            IMonsterEntity monsterToCreate = this._monsterFactory.CreateMonster(currentMap, currentMapLayer, monsterId, respawnRegion);
+            IMonsterEntity monsterToCreate = this._monsterFactory.CreateMonster(currentMap, currentMapLayer, monsterId, respawnRegion, true);
             this._logger.LogDebug($"Administrator {player.Object.Name} is creating {quantityToSpawn} {monsterToCreate.Object.Name}");  
-            for (int i = 0; i < quantityToSpawn; i++) {
-                IMonsterEntity monsterToSpawn = this._monsterFactory.DuplicateMonster(monsterToCreate, currentPosition, true);
+            for (int i = 0; i < quantityToSpawn; i++) 
+            {
+                IMonsterEntity monsterToSpawn = this._monsterFactory.DuplicateMonster(monsterToCreate, currentPosition);
                 currentMapLayer.AddEntity(monsterToSpawn);
             }
         }

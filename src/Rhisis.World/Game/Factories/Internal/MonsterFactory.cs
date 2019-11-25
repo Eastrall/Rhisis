@@ -28,7 +28,7 @@ namespace Rhisis.World.Game.Factories.Internal
         }
 
         /// <inheritdoc />
-        public IMonsterEntity CreateMonster(IMapInstance currentMap, IMapLayer currentMapLayer, int moverId, IMapRespawnRegion region)
+        public IMonsterEntity CreateMonster(IMapInstance currentMap, IMapLayer currentMapLayer, int moverId, IMapRespawnRegion region, bool respawn = false)
         {
             if (!this._gameResources.Movers.TryGetValue(moverId, out MoverData moverData))
             {
@@ -40,10 +40,19 @@ namespace Rhisis.World.Game.Factories.Internal
                 Object = new ObjectComponent
                 {
                     ModelId = moverId,
+                    Type = WorldObjectType.Mover,
+                    Size = ObjectComponent.DefaultObjectSize,
+                    MovingFlags = ObjectState.OBJSTA_STAND,
+                    Spawned = true,
+                    AbleRespawn = respawn,
                     Name = moverData.Name,
                     Level = moverData.Level,
                     CurrentMap = currentMap,
                     LayerId = currentMapLayer.Id
+                },
+                Timers = new TimerComponent
+                {
+                    NextMoveTime = RandomHelper.LongRandom(8, 20)
                 },
                 Health = new HealthComponent
                 {
@@ -52,7 +61,6 @@ namespace Rhisis.World.Game.Factories.Internal
                     Fp = 0
                 }
             };
-
             monster.Moves = new MovableComponent
             {
                 Speed = moverData.Speed / 2,
@@ -63,50 +71,29 @@ namespace Rhisis.World.Game.Factories.Internal
             monster.Attributes.ResetAttribute(DefineAttributes.INT, moverData.Intelligence);
             monster.Data = moverData;
             monster.Region = region;
+            monster.Behavior = this._behaviorManager.GetBehavior(BehaviorType.Monster, monster, monster.Object.ModelId);
 
             if (monster.Data.Class == MoverClassType.RANK_BOSS)
                 monster.Object.Size *= 2;
 
             return monster;
         }
-        public IMonsterEntity DuplicateMonster(IMonsterEntity baseMonster, Vector3 position, bool respawn = false)
+        public IMonsterEntity DuplicateMonster(IMonsterEntity baseMonster, Vector3 position)
         {           
-            var monsterToSpawn = new MonsterEntity
-            {
-                Object = new ObjectComponent
-                {
-                    ModelId = baseMonster.Object.ModelId,
-                    Type = WorldObjectType.Mover,
-                    Size = baseMonster.Object.Size,
-                    MovingFlags = ObjectState.OBJSTA_STAND,
-                    Spawned = true,
-                    AbleRespawn = respawn,
-                    CurrentMap = baseMonster.Object.CurrentMap,
-                    LayerId = baseMonster.Object.LayerId,
-                    Position = position,
-                    Angle = RandomHelper.FloatRandom(0, 360f),
-                },
-                Timers = new TimerComponent
-                {
-                    NextMoveTime = RandomHelper.LongRandom(8, 20)
-                },
-                Health = new HealthComponent
-                {
-                    Hp = baseMonster.Health.Hp,
-                    Mp = baseMonster.Health.Mp,
-                    Fp = 0
-                }
-            };
-            monsterToSpawn.Moves = new MovableComponent
-            {
-                Speed = baseMonster.Moves.Speed / 2,
-                DestinationPosition = monsterToSpawn.Object.Position.Clone()
-            };
+            var monsterToSpawn = new MonsterEntity();
 
-            monsterToSpawn.Data = baseMonster.Data;
+            monsterToSpawn.Object = baseMonster.Object;
+            monsterToSpawn.Timers = baseMonster.Timers;
+            monsterToSpawn.Health = baseMonster.Health;
+            monsterToSpawn.Moves = baseMonster.Moves;
             monsterToSpawn.Attributes = baseMonster.Attributes;
+            monsterToSpawn.Behavior = baseMonster.Behavior;
+            monsterToSpawn.Data   = baseMonster.Data;
             monsterToSpawn.Region = baseMonster.Region;
-            monsterToSpawn.Behavior = this._behaviorManager.GetBehavior(BehaviorType.Monster, monsterToSpawn, monsterToSpawn.Object.ModelId);
+
+            monsterToSpawn.Object.Position = position;
+            monsterToSpawn.Moves.DestinationPosition = position;
+            monsterToSpawn.Object.Angle = RandomHelper.FloatRandom(0, 360f);
 
             return monsterToSpawn;
         }
