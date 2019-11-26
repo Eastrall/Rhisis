@@ -61,11 +61,11 @@ namespace Rhisis.World.Game.Maps
                 {
                     if (respawnRegion.ObjectType == Rhisis.Core.Common.WorldObjectType.Mover)
                     {
-                        IMonsterEntity monster = this._monsterFactory.CreateMonster(parentMapInstance, mapLayer, respawnRegion.ModelId, respawnRegion);
                         for (int i = 0; i < respawnRegion.Count; i++)
                         {
-                            IMonsterEntity monsterToSpawn = this._monsterFactory.DuplicateMonster(monster, respawnRegion.GetRandomPosition());   
-                            mapLayer.AddEntity(monsterToSpawn);
+                            IMonsterEntity monster = this._monsterFactory.CreateMonster(parentMapInstance, mapLayer, respawnRegion.ModelId, respawnRegion);
+                                
+                            mapLayer.AddEntity(monster);
                         }
                     }
                     else if (respawnRegion.ObjectType == Rhisis.Core.Common.WorldObjectType.Item)
