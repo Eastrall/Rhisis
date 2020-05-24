@@ -2,7 +2,6 @@
 {
     public enum DefineAttributes
     {
-        NONE = 0,
         STR = 1,
         DEX = 2,
         INT = 3,

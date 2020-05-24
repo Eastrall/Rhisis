@@ -73,7 +73,7 @@ namespace Rhisis.World.Game.Maps
                     }
                     else if (respawnRegion.ObjectType == WorldObjectType.Item)
                     {
-                        var item = _itemFactory.CreateItem(respawnRegion.ModelId, 0, 0, 0);
+                        var item = _itemFactory.CreateInventoryItem(respawnRegion.ModelId, 0, 0, 0);
 
                         for (int i = 0; i < respawnRegion.Count; ++i)
                         {

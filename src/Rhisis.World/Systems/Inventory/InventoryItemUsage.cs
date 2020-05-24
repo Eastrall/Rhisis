@@ -47,7 +47,7 @@ namespace Rhisis.World.Systems.Inventory
             _worldServerConfiguration = worldServerConfiguration.Value;
         }
 
-        public void UseFoodItem(IPlayerEntity player, Item foodItemToUse)
+        public void UseFoodItem(IPlayerEntity player, InventoryItem foodItemToUse)
         {
             foreach (KeyValuePair<DefineAttributes, int> parameter in foodItemToUse.Data.Params)
             {
@@ -99,7 +99,7 @@ namespace Rhisis.World.Systems.Inventory
             DecreaseItem(player, foodItemToUse);
         }
 
-        public void UseBlinkwingItem(IPlayerEntity player, Item blinkwing)
+        public void UseBlinkwingItem(IPlayerEntity player, InventoryItem blinkwing)
         {
             if (player.Object.Level < blinkwing.Data.LimitLevel)
             {
@@ -163,7 +163,7 @@ namespace Rhisis.World.Systems.Inventory
             _specialEffectSystem.SetStateModeBaseMotion(player, StateModeBaseMotion.BASEMOTION_ON, blinkwing);
         }
 
-        public void UseMagicItem(IPlayerEntity player, Item magicItem)
+        public void UseMagicItem(IPlayerEntity player, InventoryItem magicItem)
         {
             player.Inventory.ItemInUseActionId = player.Delayer.DelayAction(TimeSpan.FromMilliseconds(magicItem.Data.SkillReadyType), () =>
             {
@@ -174,7 +174,7 @@ namespace Rhisis.World.Systems.Inventory
             _specialEffectSystem.SetStateModeBaseMotion(player, StateModeBaseMotion.BASEMOTION_ON, magicItem);
         }
 
-        public void UsePerin(IPlayerEntity player, Item perinItem)
+        public void UsePerin(IPlayerEntity player, InventoryItem perinItem)
         {
             int perinValue = _worldServerConfiguration.Perin.PerinValue;
             if (!_playerDataSystem.IncreaseGold(player, perinValue))
@@ -193,7 +193,7 @@ namespace Rhisis.World.Systems.Inventory
         /// </summary>
         /// <param name="player">Player.</param>
         /// <param name="item">Item to decrease.</param>
-        private void DecreaseItem(IPlayerEntity player, Item item, bool noFollowSfx = false)
+        private void DecreaseItem(IPlayerEntity player, InventoryItem item, bool noFollowSfx = false)
         {
             var itemUpdateType = UpdateItemType.UI_NUM;
 

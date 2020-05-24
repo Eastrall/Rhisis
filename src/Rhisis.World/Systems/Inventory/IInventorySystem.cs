@@ -16,7 +16,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="creatorId">Id of the character that created the item. Used for GMs and admins.</param>
         /// <param name="sendToPlayer">Sends the packet to the current player.</param>
         /// <returns>Number of items created.</returns>
-        int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1, bool sendToPlayer = true);
+        int CreateItem(IPlayerEntity player, ItemBase item, int quantity, int creatorId = -1, bool sendToPlayer = true);
 
         /// <summary>
         /// Deletes an item in player's inventory.
@@ -36,7 +36,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="quantity">Quantity to delete.</param>
         /// <param name="sendToPlayer">Sends the packet to the current player.</param>
         /// <returns>Deleted quantity.</returns>
-        int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity, bool sendToPlayer = true);
+        int DeleteItem(IPlayerEntity player, InventoryItem itemToDelete, int quantity, bool sendToPlayer = true);
 
         /// <summary>
         /// Moves an item in player's inventory from a source slot to a destination slot.
@@ -69,14 +69,14 @@ namespace Rhisis.World.Systems.Inventory
         /// </summary>
         /// <param name="player">Current player.</param>
         /// <param name="systemItem">System item to use.</param>
-        void UseSystemItem(IPlayerEntity player, Item systemItem);
+        void UseSystemItem(IPlayerEntity player, InventoryItem systemItem);
 
         /// <summary>
         /// Uses a scroll item from player's inventory.
         /// </summary>
         /// <param name="player">Current player.</param>
         /// <param name="scrollItem">Scroll item to use.</param>
-        void UseScrollItem(IPlayerEntity player, Item scrollItem);
+        void UseScrollItem(IPlayerEntity player, InventoryItem scrollItem);
 
         /// <summary>
         /// Drops an item from player's inventory to the ground.

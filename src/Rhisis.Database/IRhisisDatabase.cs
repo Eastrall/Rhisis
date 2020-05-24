@@ -27,6 +27,11 @@ namespace Rhisis.Database
         DbSet<DbItem> Items { get; }
 
         /// <summary>
+        /// Gets the inventory items from the database.
+        /// </summary>
+        DbSet<DbInventoryItem> InventoryItems { get; }
+
+        /// <summary>
         /// Gets or sets the mails.
         /// </summary>
         DbSet<DbMail> Mails { get; }
@@ -45,6 +50,16 @@ namespace Rhisis.Database
         /// Gets or sets the skills.
         /// </summary>
         DbSet<DbSkill> Skills { get; }
+
+        /// <summary>
+        /// Gets the attributes from the database.
+        /// </summary>
+        DbSet<DbAttribute> Attributes { get; }
+
+        /// <summary>
+        /// Gets the item attributes from the database.
+        /// </summary>
+        DbSet<DbItemAttributes> ItemAttributes { get; }
 
         /// <summary>
         /// Creates a Microsoft.EntityFrameworkCore.DbSet`1 that can be used to query and save instances of TEntity.

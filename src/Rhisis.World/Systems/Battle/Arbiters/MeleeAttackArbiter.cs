@@ -38,7 +38,7 @@ namespace Rhisis.World.Systems.Battle.Arbiters
 
             if (Attacker is IPlayerEntity player)
             {
-                Item rightWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
+                InventoryItem rightWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
 
                 // TODO: GetDamagePropertyFactor()
                 var weaponAttack = BattleHelper.GetWeaponAttackDamages(rightWeapon.Data.WeaponType, player);
@@ -203,7 +203,7 @@ namespace Rhisis.World.Systems.Battle.Arbiters
 
             if (Attacker is IPlayerEntity player)
             {
-                Item weapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
+                InventoryItem weapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
 
                 if (weapon.Data.WeaponType == WeaponType.MELEE_YOYO || attackerAttackFlags.HasFlag(AttackFlags.AF_FORCE))
                 {

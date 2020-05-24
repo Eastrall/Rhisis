@@ -1,12 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Rhisis.Database.Entities
+﻿namespace Rhisis.Database.Entities
 {
     public class DbEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        /// <summary>
+        /// Gets or sets the entity id.
+        /// </summary>
         public int Id { get; set; }
+
+        protected DbEntity()
+        {
+        }
     }
 }

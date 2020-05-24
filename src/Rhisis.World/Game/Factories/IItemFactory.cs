@@ -17,35 +17,35 @@ namespace Rhisis.World.Game.Factories
         /// <param name="item">Item model.</param>
         /// <param name="owner">Item owner.</param>
         /// <returns>New item entity.</returns>
-        IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemDescriptor item, IWorldEntity owner = null);
+        IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemBase item, IWorldEntity owner = null);
 
         /// <summary>
-        /// Creates a new <see cref="Item"/>.
+        /// Creates a new <see cref="InventoryItem"/>.
         /// </summary>
         /// <param name="id">Item id.</param>
         /// <param name="refine">Item refine.</param>
         /// <param name="element">Item element.</param>
         /// <param name="elementRefine">Item element refine.</param>
         /// <param name="creatorId">Creator id.</param>
-        /// <returns>New item.</returns>
-        Item CreateItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1);
+        /// <returns>New inventory item.</returns>
+        InventoryItem CreateInventoryItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1);
 
         /// <summary>
-        /// Creates a new <see cref="Item"/> using it's Item name.
+        /// Creates a new <see cref="InventoryItem"/> using its item name.
         /// </summary>
         /// <param name="name">Item name.</param>
         /// <param name="refine">Item refine.</param>
         /// <param name="element">Item element.</param>
         /// <param name="elementRefine">Item element refine.</param>
         /// <param name="creatorId">Creator id.</param>
-        /// <returns>New item.</returns>
-        Item CreateItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1);
+        /// <returns>New inventory item.</returns>
+        InventoryItem CreateInventoryItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1);
 
         /// <summary>
-        /// Creates a new <see cref="Item"/> from a <see cref="DbItem"/> instance.
+        /// Creates a new <see cref="InventoryItem"/> from a <see cref="DbItem"/> instance.
         /// </summary>
-        /// <param name="databaseItem">Database item.</param>
-        /// <returns>New item.</returns>
-        Item CreateItem(DbItem databaseItem);
+        /// <param name="databaseInventoryItem">Database inventory item.</param>
+        /// <returns>New inventory item.</returns>
+        InventoryItem CreateInventoryItem(DbInventoryItem databaseInventoryItem);
     }
 }

@@ -10,27 +10,27 @@ namespace Rhisis.World.Systems.Inventory
         /// </summary>
         /// <param name="player">Player using the item.</param>
         /// <param name="foodItemToUse">Food item to use.</param>
-        void UseFoodItem(IPlayerEntity player, Item foodItemToUse);
+        void UseFoodItem(IPlayerEntity player, InventoryItem foodItemToUse);
 
         /// <summary>
         /// Uses blinkwing items.
         /// </summary>
         /// <param name="player"></param>
         /// <param name="blinkwing"></param>
-        void UseBlinkwingItem(IPlayerEntity player, Item blinkwing);
+        void UseBlinkwingItem(IPlayerEntity player, InventoryItem blinkwing);
 
         /// <summary>
         /// Uses fireworks items.
         /// </summary>
         /// <param name="player"></param>
         /// <param name="magicItem"></param>
-        void UseMagicItem(IPlayerEntity player, Item magicItem);
+        void UseMagicItem(IPlayerEntity player, InventoryItem magicItem);
 
         /// <summary>
         /// Uses perin items.
         /// </summary>
         /// <param name="player"></param>
         /// <param name="perinItem"></param>
-        void UsePerin(IPlayerEntity player, Item perinItem);
+        void UsePerin(IPlayerEntity player, InventoryItem perinItem);
     }
 }

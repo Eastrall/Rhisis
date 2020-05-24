@@ -40,6 +40,6 @@ namespace Rhisis.World.Game.Entities
         /// <summary>
         /// Gets the default living entity hand item.
         /// </summary>
-        Item Hand { get; }
+        InventoryItem Hand { get; }
     }
 }

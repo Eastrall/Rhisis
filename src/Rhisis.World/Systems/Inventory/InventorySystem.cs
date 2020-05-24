@@ -31,7 +31,7 @@ namespace Rhisis.World.Systems.Inventory
         public const int MaxItems = 73;
         public const int InventorySize = EquipOffset;
         public const int MaxHumanParts = MaxItems - EquipOffset;
-        public static readonly Item Hand = new Item(11, 1, -1, RightWeaponSlot);
+        public static readonly InventoryItem Hand = new InventoryItem(11, 1, -1, RightWeaponSlot);
 
         private readonly ILogger<InventorySystem> _logger;
         private readonly IRhisisDatabase _database;
@@ -70,13 +70,16 @@ namespace Rhisis.World.Systems.Inventory
         /// <inheritdoc />
         public void Initialize(IPlayerEntity player)
         {
-            IEnumerable<DbItem> items = _database.Items.Where(x => x.CharacterId == player.PlayerData.Id && !x.IsDeleted);
-            
-            if (items != null)
+            IEnumerable<DbInventoryItem> inventoryItems = _database.InventoryItems
+                .Include(x => x.Item)
+                    .ThenInclude(x => x.ItemAttributes)
+                .Where(x => x.CharacterId == player.PlayerData.Id && !x.Item.IsDeleted);
+
+            if (inventoryItems.Any())
             {
-                foreach (DbItem databaseItem in items)
+                foreach (DbInventoryItem databaseInventoryItem in inventoryItems)
                 {
-                    Item item = _itemFactory.CreateItem(databaseItem);
+                    InventoryItem item = _itemFactory.CreateInventoryItem(databaseInventoryItem);
 
                     if (item != null)
                     {
@@ -89,56 +92,69 @@ namespace Rhisis.World.Systems.Inventory
         /// <inheritdoc />
         public void Save(IPlayerEntity player)
         {
-            DbCharacter character = _database.Characters.Include(x => x.Items).FirstOrDefault(x => x.Id == player.PlayerData.Id);
-            IEnumerable<DbItem> itemsToDelete = (from dbItem in character.Items
-                                                 let inventoryItem = player.Inventory.GetItem(x => x.DbId == dbItem.Id)
-                                                 where !dbItem.IsDeleted && inventoryItem == null
-                                                 select dbItem).ToList();
+            IQueryable<DbInventoryItem> query = _database.InventoryItems.Include(x => x.Item);
 
-            foreach (DbItem dbItem in itemsToDelete)
+            var t1 = query.Where(x => x.CharacterId == player.PlayerData.Id).ToList();
+            IEnumerable<DbInventoryItem> databaseItemsToRemove = from dbInventoryItem in t1
+                                                                 where player.Inventory.GetItem(x => x.DbId == dbInventoryItem.Id) == null
+                                                                 select dbInventoryItem;
+
+            if (databaseItemsToRemove.Any())
             {
-                dbItem.IsDeleted = true;
+                foreach (DbInventoryItem dbInventoryItem in databaseItemsToRemove)
+                {
+                    dbInventoryItem.Item.IsDeleted = true;
+                    dbInventoryItem.Item.ItemAttributes.Clear();
+                    // TODO: audit
+                    _database.InventoryItems.Remove(dbInventoryItem);
+                }
 
-                _database.Items.Update(dbItem);
+                _database.SaveChanges();
             }
 
-            // Add or update items
-            foreach (Item item in player.Inventory)
+            IEnumerable<DbInventoryItem> databaseInventoryItems = _database.InventoryItems
+                .Include(x => x.Item)
+                .ThenInclude(x => x.ItemAttributes)
+                .Where(x => x.CharacterId == player.PlayerData.Id && !x.Item.IsDeleted);
+
+            foreach (InventoryItem item in player.Inventory)
             {
                 if (item == null || item.Id == -1)
                 {
                     continue;
                 }
 
-                DbItem dbItem = character.Items.FirstOrDefault(x => x.Id == item.DbId && !x.IsDeleted);
+                DbInventoryItem dbInventoryItem = databaseInventoryItems.FirstOrDefault(x => x.Id == item.DbId);
 
-                if (dbItem != null && dbItem.Id != 0)
+                if (dbInventoryItem != null)
                 {
-                    dbItem.CharacterId = player.PlayerData.Id;
-                    dbItem.ItemId = item.Id;
-                    dbItem.ItemCount = item.Quantity;
-                    dbItem.ItemSlot = item.Slot;
-                    dbItem.Refine = item.Refine;
-                    dbItem.Element = (byte)item.Element;
-                    dbItem.ElementRefine = item.ElementRefine;
-
-                    _database.Items.Update(dbItem);
+                    dbInventoryItem.Quantity = item.Quantity;
+                    dbInventoryItem.Slot = item.Slot;
+                    dbInventoryItem.Item.Refine = item.Refine == 0 ? (byte?)null : item.Refine;
+                    dbInventoryItem.Item.Element = item.Element == ElementType.None ? (byte?)null : (byte)item.Element;
+                    dbInventoryItem.Item.ElementRefine = item.ElementRefine == 0 ? (byte?)null : item.ElementRefine;
+                    // TODO: update attributes
                 }
                 else
                 {
-                    dbItem = new DbItem
+                    dbInventoryItem = new DbInventoryItem
                     {
                         CharacterId = player.PlayerData.Id,
-                        CreatorId = item.CreatorId,
-                        ItemId = item.Id,
-                        ItemCount = item.Quantity,
-                        ItemSlot = item.Slot,
-                        Refine = item.Refine,
-                        Element = (byte)item.Element,
-                        ElementRefine = item.ElementRefine
+                        Quantity = item.Quantity,
+                        Slot = item.Slot,
+                        Item = new DbItem
+                        {
+                            IsDeleted = false,
+                            ItemId = item.Id,
+                            CreatorId = item.CreatorId,
+                            Refine = item.Refine == 0 ? (byte?)null : item.Refine,
+                            Element = item.Element == ElementType.None ? (byte?)null : (byte)item.Element,
+                            ElementRefine = item.ElementRefine == 0 ? (byte?)null : item.ElementRefine,
+                            // TODO: add attributes
+                        }
                     };
 
-                    _database.Items.Add(dbItem);
+                    _database.InventoryItems.Add(dbInventoryItem);
                 }
             }
 
@@ -146,7 +162,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public int CreateItem(IPlayerEntity player, ItemDescriptor item, int quantity, int creatorId = -1, bool sendToPlayer = true)
+        public int CreateItem(IPlayerEntity player, ItemBase item, int quantity, int creatorId = -1, bool sendToPlayer = true)
         {
             int createdAmount = 0;
 
@@ -154,7 +170,7 @@ namespace Rhisis.World.Systems.Inventory
             {
                 for (var i = 0; i < InventoryContainerComponent.InventorySize; i++)
                 {
-                    Item inventoryItem = player.Inventory.GetItemAtIndex(i);
+                    InventoryItem inventoryItem = player.Inventory.GetItemAtIndex(i);
 
                     if (inventoryItem?.Id == item.Id)
                     {
@@ -190,7 +206,7 @@ namespace Rhisis.World.Systems.Inventory
                     }
                     else
                     {
-                        Item newItem = _itemFactory.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine, creatorId);
+                        InventoryItem newItem = _itemFactory.CreateInventoryItem(item.Id, item.Refine, item.Element, item.ElementRefine, creatorId);
 
                         if (newItem == null)
                         {
@@ -223,7 +239,7 @@ namespace Rhisis.World.Systems.Inventory
                         break;
                     }
 
-                    Item newItem = _itemFactory.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine, creatorId);
+                    InventoryItem newItem = _itemFactory.CreateInventoryItem(item.Id, item.Refine, item.Element, item.ElementRefine, creatorId);
 
                     if (newItem == null)
                     {
@@ -256,7 +272,7 @@ namespace Rhisis.World.Systems.Inventory
                 return 0;
             }
 
-            Item itemToDelete = player.Inventory.GetItemAtIndex(itemUniqueId);
+            InventoryItem itemToDelete = player.Inventory.GetItemAtIndex(itemUniqueId);
 
             if (itemToDelete == null)
             {
@@ -267,7 +283,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public int DeleteItem(IPlayerEntity player, Item itemToDelete, int quantity, bool sendToPlayer = true)
+        public int DeleteItem(IPlayerEntity player, InventoryItem itemToDelete, int quantity, bool sendToPlayer = true)
         {
             int quantityToDelete = Math.Min(itemToDelete.Quantity, quantity);
 
@@ -305,14 +321,14 @@ namespace Rhisis.World.Systems.Inventory
                 throw new InvalidOperationException("Cannot move an item to the same slot.");
             }
 
-            Item sourceItem = player.Inventory.GetItemAtSlot(sourceSlot);
+            InventoryItem sourceItem = player.Inventory.GetItemAtSlot(sourceSlot);
 
             if (sourceItem == null)
             {
                 throw new InvalidOperationException("Source item not found");
             }
 
-            Item destinationItem = player.Inventory.GetItemAtSlot(destinationSlot);
+            InventoryItem destinationItem = player.Inventory.GetItemAtSlot(destinationSlot);
 
             if (destinationItem != null && sourceItem.Id == destinationItem.Id && sourceItem.Data.IsStackable)
             {
@@ -354,7 +370,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <inheritdoc />
         public bool EquipItem(IPlayerEntity player, int itemUniqueId, int equipPart)
         {
-            Item itemToEquip = player.Inventory.GetItemAtIndex(itemUniqueId);
+            InventoryItem itemToEquip = player.Inventory.GetItemAtIndex(itemUniqueId);
 
             if (itemToEquip == null)
             {
@@ -385,7 +401,7 @@ namespace Rhisis.World.Systems.Inventory
                     return false;
                 }
 
-                Item equipedItem = player.Inventory.GetEquipedItem(itemToEquip.Data.Parts);
+                InventoryItem equipedItem = player.Inventory.GetEquipedItem(itemToEquip.Data.Parts);
 
                 if (equipedItem != null)
                 {
@@ -413,7 +429,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <inheritdoc />
         public void UseItem(IPlayerEntity player, int itemUniqueId, int part)
         {
-            Item itemToUse = player.Inventory.GetItemAtIndex(itemUniqueId);
+            InventoryItem itemToUse = player.Inventory.GetItemAtIndex(itemUniqueId);
 
             if (itemToUse == null)
             {
@@ -505,7 +521,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public void UseSystemItem(IPlayerEntity player, Item systemItem)
+        public void UseSystemItem(IPlayerEntity player, InventoryItem systemItem)
         {
             switch (systemItem.Data.ItemKind3)
             {
@@ -520,7 +536,7 @@ namespace Rhisis.World.Systems.Inventory
         }
 
         /// <inheritdoc />
-        public void UseScrollItem(IPlayerEntity player, Item scrollItem)
+        public void UseScrollItem(IPlayerEntity player, InventoryItem scrollItem)
         {
             switch (scrollItem.Data.Id)
             {
@@ -537,7 +553,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <inhertidoc />
         public void DropItem(IPlayerEntity player, int itemUniqueId, int quantity)
         {
-            Item itemToDrop = player.Inventory.GetItemAtIndex(itemUniqueId);
+            InventoryItem itemToDrop = player.Inventory.GetItemAtIndex(itemUniqueId);
 
             if (itemToDrop == null)
             {
@@ -566,7 +582,7 @@ namespace Rhisis.World.Systems.Inventory
         /// <param name="player">Player trying to equip an item.</param>
         /// <param name="item">Item to equip.</param>
         /// <returns>True if the player can equip the item; false otherwise.</returns>
-        private bool IsItemEquipable(IPlayerEntity player, Item item)
+        private bool IsItemEquipable(IPlayerEntity player, InventoryItem item)
         {
             if (item.Data.ItemSex != int.MaxValue && item.Data.ItemSex != player.VisualAppearance.Gender)
             {

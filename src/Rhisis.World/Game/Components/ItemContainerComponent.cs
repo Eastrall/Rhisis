@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace Rhisis.World.Game.Components
 {
-    public class ItemContainerComponent : IPacketSerializer, IEnumerable<Item>
+    public class ItemContainerComponent : IPacketSerializer, IEnumerable<InventoryItem>
     {
-        protected readonly List<Item> _items;
+        protected readonly List<InventoryItem> _items;
         protected readonly int[] _itemsMask;
 
         /// <summary>
@@ -45,11 +45,11 @@ namespace Rhisis.World.Game.Components
             MaxStorageCapacity = maxStorageCapacity;
             ExtraCapacity = MaxCapacity - MaxStorageCapacity;
             _itemsMask = Enumerable.Range(0, MaxCapacity).ToArray();
-            _items = new List<Item>(MaxCapacity);
+            _items = new List<InventoryItem>(MaxCapacity);
 
             for (int i = 0; i < MaxCapacity; i++)
             {
-                _items.Add(new Item
+                _items.Add(new InventoryItem
                 {
                     Slot = i,
                     UniqueId = i
@@ -62,9 +62,9 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <param name="predicate">Match predicate.</param>
         /// <returns>Item matching the predicate function; null otherwise.</returns>
-        public Item GetItem(Func<Item, bool> predicate)
+        public InventoryItem GetItem(Func<InventoryItem, bool> predicate)
         {
-            Item item = _items.FirstOrDefault(predicate);
+            InventoryItem item = _items.FirstOrDefault(predicate);
 
             if (item == null)
             {
@@ -79,21 +79,21 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <param name="id">Item id.</param>
         /// <returns>Item if found; null otherwise.</returns>
-        public Item GetItemById(int id) => GetItem(x => x.Id == id);
+        public InventoryItem GetItemById(int id) => GetItem(x => x.Id == id);
 
         /// <summary>
         /// Gets the item at a given slot.
         /// </summary>
         /// <param name="slot">Container slot.</param>
         /// <returns></returns>
-        public Item GetItemAtSlot(int slot)
+        public InventoryItem GetItemAtSlot(int slot)
         {
             if (slot < 0 || slot > MaxCapacity)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            Item item = _items[_itemsMask[slot]];
+            InventoryItem item = _items[_itemsMask[slot]];
 
             if (item == null)
             {
@@ -108,14 +108,14 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <param name="index">Index or Unique Id.</param>
         /// <returns></returns>
-        public Item GetItemAtIndex(int index)
+        public InventoryItem GetItemAtIndex(int index)
         {
             if (index < 0 || index > MaxCapacity)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            Item item = _items[index];
+            InventoryItem item = _items[index];
 
             if (item == null)
             {
@@ -176,7 +176,7 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <param name="item">Index to set.</param>
         /// <param name="index">Index.</param>
-        public void SetItemAtIndex(Item item, int index)
+        public void SetItemAtIndex(InventoryItem item, int index)
         {
             _items[index] = item;
 
@@ -191,7 +191,7 @@ namespace Rhisis.World.Game.Components
         /// </summary>
         /// <param name="item">Item to set.</param>
         /// <param name="slot">Slot.</param>
-        public void SetItemAtSlot(Item item, int slot)
+        public void SetItemAtSlot(InventoryItem item, int slot)
         {
             SetItemAtIndex(item, _itemsMask[slot]);
         }
@@ -208,7 +208,7 @@ namespace Rhisis.World.Game.Components
 
             for (int i = 0; i < MaxCapacity; i++)
             {
-                Item item = _items.ElementAt(i);
+                InventoryItem item = _items.ElementAt(i);
 
                 if (item.Id != -1)
                 {
@@ -224,7 +224,7 @@ namespace Rhisis.World.Game.Components
         }
 
         /// <inheritdoc />
-        public IEnumerator<Item> GetEnumerator() => _items.GetEnumerator();
+        public IEnumerator<InventoryItem> GetEnumerator() => _items.GetEnumerator();
 
         /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

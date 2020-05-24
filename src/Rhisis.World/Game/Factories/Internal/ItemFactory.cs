@@ -37,13 +37,13 @@ namespace Rhisis.World.Game.Factories.Internal
             _logger = logger;
             _serviceProvider = serviceProvider;
             _gameResources = gameResources;
-            _itemFactory = ActivatorUtilities.CreateFactory(typeof(Item), new[] { typeof(int), typeof(byte), typeof(ElementType), typeof(byte), typeof(ItemData), typeof(int) });
-            _itemDatabaseFactory = ActivatorUtilities.CreateFactory(typeof(Item), new[] { typeof(DbItem), typeof(ItemData) });
+            _itemFactory = ActivatorUtilities.CreateFactory(typeof(InventoryItem), new[] { typeof(int), typeof(byte), typeof(ElementType), typeof(byte), typeof(ItemData), typeof(int) });
+            _itemDatabaseFactory = ActivatorUtilities.CreateFactory(typeof(InventoryItem), new[] { typeof(DbInventoryItem), typeof(ItemData) });
             _itemEntityFactory = ActivatorUtilities.CreateFactory(typeof(ItemEntity), Type.EmptyTypes);
         }
 
         /// <inheritdoc />
-        public Item CreateItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
+        public InventoryItem CreateInventoryItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
         {            
             if (!_gameResources.Items.TryGetValue(id, out ItemData itemData))
             {
@@ -51,10 +51,10 @@ namespace Rhisis.World.Game.Factories.Internal
                 return null;
             }
 
-            return _itemFactory(_serviceProvider, new object[] { id, refine, element, elementRefine, itemData, creatorId }) as Item;
+            return _itemFactory(_serviceProvider, new object[] { id, refine, element, elementRefine, itemData, creatorId }) as InventoryItem;
         }
 
-        public Item CreateItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
+        public InventoryItem CreateInventoryItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
         {
             var itemData = _gameResources.Items.FirstOrDefault(x => x.Value.Name == name);
             if (itemData.Value is null)
@@ -62,23 +62,29 @@ namespace Rhisis.World.Game.Factories.Internal
                 _logger.LogWarning($"Cannot find item data for item name: '{name}'.");
                 return null;
             }
-            return _itemFactory(_serviceProvider, new object[] { itemData.Value.Id, refine, element, elementRefine, itemData.Value, creatorId }) as Item;
+            return _itemFactory(_serviceProvider, new object[] { itemData.Value.Id, refine, element, elementRefine, itemData.Value, creatorId }) as InventoryItem;
         }
 
         /// <inheritdoc />
-        public Item CreateItem(DbItem databaseItem)
+        public InventoryItem CreateInventoryItem(DbInventoryItem databaseInventoryItem)
         {
-            if (!_gameResources.Items.TryGetValue(databaseItem.ItemId, out ItemData itemData))
+            if (databaseInventoryItem.Item == null)
             {
-                _logger.LogWarning($"Cannot find item data for item id: '{databaseItem.ItemId}'.");
+                _logger.LogWarning($"Inventory item is NULL. Did you forgot to Include() the Item property?");
                 return null;
             }
 
-            return _itemDatabaseFactory(_serviceProvider, new object[] { databaseItem, itemData }) as Item;
+            if (!_gameResources.Items.TryGetValue(databaseInventoryItem.Item.ItemId, out ItemData itemData))
+            {
+                _logger.LogWarning($"Cannot find item data for item id: '{databaseInventoryItem.ItemId}'.");
+                return null;
+            }
+
+            return _itemDatabaseFactory(_serviceProvider, new object[] { databaseInventoryItem, itemData }) as InventoryItem;
         }
 
         /// <inheritdoc />
-        public IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemDescriptor item, IWorldEntity owner = null)
+        public IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemBase item, IWorldEntity owner = null)
         {
             var itemEntity = _itemEntityFactory(_serviceProvider, null) as IItemEntity;
 
@@ -96,7 +102,7 @@ namespace Rhisis.World.Game.Factories.Internal
             itemEntity.Drop = new DropComponent
             {
                 Owner = owner,
-                Item = CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine)
+                Item = CreateInventoryItem(item.Id, item.Refine, item.Element, item.ElementRefine)
             };
 
             return itemEntity;

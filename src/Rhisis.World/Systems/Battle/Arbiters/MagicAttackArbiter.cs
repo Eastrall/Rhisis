@@ -38,7 +38,7 @@ namespace Rhisis.World.Systems.Battle.Arbiters
 
             if (Attacker is IPlayerEntity player)
             {
-                Item wandWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
+                InventoryItem wandWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? player.Hand;
 
                 weaponAttackResult = BattleHelper.GetWeaponAttackPower(Attacker, wandWeapon);
                 var weaponAttackDamages = BattleHelper.GetWeaponAttackDamages(WeaponType.MAGIC_WAND, player);

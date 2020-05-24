@@ -6,7 +6,7 @@ namespace Rhisis.World.Game.Components
 {
     public class DropComponent
     {
-        public Item Item { get; set; }
+        public InventoryItem Item { get; set; }
 
         public IWorldEntity Owner { get; set; }
 

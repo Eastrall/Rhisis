@@ -27,6 +27,9 @@ namespace Rhisis.Database
         public DbSet<DbItem> Items { get; set; }
 
         /// <inheritdoc />
+        public DbSet<DbInventoryItem> InventoryItems { get; set; }
+
+        /// <inheritdoc />
         public DbSet<DbMail> Mails { get; set; }
 
         /// <inheritdoc />
@@ -37,6 +40,12 @@ namespace Rhisis.Database
 
         /// <inheritdoc />
         public DbSet<DbSkill> Skills { get; set; }
+
+        /// <inheritdoc />
+        public DbSet<DbAttribute> Attributes { get; set; }
+
+        /// <inheritdoc />
+        public DbSet<DbItemAttributes> ItemAttributes { get; set; }
 
         /// <summary>
         /// Create a new <see cref="RhisisDatabaseContext"/> instance.

@@ -225,7 +225,7 @@ namespace Rhisis.World.Systems.Quest
                     {
                         if (questItem.Sex == GenderType.Any || questItem.Sex == player.PlayerData.Gender)
                         {
-                            Item inventoryItem = player.Inventory.GetItemById(_gameResources.GetDefinedValue(questItem.Id));
+                            InventoryItem inventoryItem = player.Inventory.GetItemById(_gameResources.GetDefinedValue(questItem.Id));
 
                             if (inventoryItem == null || inventoryItem.Quantity < questItem.Quantity)
                             {
@@ -453,7 +453,7 @@ namespace Rhisis.World.Systems.Quest
 
                     if (_gameResources.Items.TryGetValue(rewardItemId, out ItemData itemData))
                     {
-                        var item = new Item(itemData.Id, rewardItem.Refine, rewardItem.Element, rewardItem.ElementRefine, itemData, -1);
+                        var item = new InventoryItem(itemData.Id, rewardItem.Refine, rewardItem.Element, rewardItem.ElementRefine, itemData, -1);
 
                         _inventorySystem.CreateItem(player, item, rewardItem.Quantity);
                         _textPacketFactory.SendDefinedText(player, DefineText.TID_GAME_REAPITEM, $"\"{_gameResources.GetText(item.Data.Name)}\"");
@@ -470,7 +470,7 @@ namespace Rhisis.World.Systems.Quest
                     {
                         if (questItem.Sex == GenderType.Any || questItem.Sex == player.PlayerData.Gender)
                         {
-                            Item inventoryItem = player.Inventory.GetItemById(_gameResources.GetDefinedValue(questItem.Id));
+                            InventoryItem inventoryItem = player.Inventory.GetItemById(_gameResources.GetDefinedValue(questItem.Id));
 
                             if (inventoryItem != null)
                             {

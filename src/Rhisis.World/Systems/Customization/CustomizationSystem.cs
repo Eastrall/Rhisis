@@ -55,7 +55,7 @@ namespace Rhisis.World.Systems.Customization
             }
             else
             {
-                Item couponItem = player.Inventory.GetItemById(DefineItem.II_SYS_SYS_SCR_FACEOFFFREE);
+                InventoryItem couponItem = player.Inventory.GetItemById(DefineItem.II_SYS_SYS_SCR_FACEOFFFREE);
 
                 if (couponItem == null)
                 {

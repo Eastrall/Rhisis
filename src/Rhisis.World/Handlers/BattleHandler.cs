@@ -44,7 +44,7 @@ namespace Rhisis.World.Handlers
                 return;
             }
 
-            Item weaponItem = serverClient.Player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? serverClient.Player.Hand;
+            InventoryItem weaponItem = serverClient.Player.Inventory.GetEquipedItem(ItemPartType.RightWeapon) ?? serverClient.Player.Hand;
 
             if (weaponItem != null && weaponItem.Data?.AttackSpeed != packet.WeaponAttackSpeed)
             {

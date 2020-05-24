@@ -50,7 +50,7 @@ namespace Rhisis.World.Game.Entities.Internal
         public MoverData Data { get; set; }
 
         /// <inheritdoc />
-        public Item Hand { get; set; }
+        public InventoryItem Hand { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="MonsterEntity"/> instance.

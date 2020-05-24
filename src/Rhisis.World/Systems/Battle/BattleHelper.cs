@@ -102,7 +102,7 @@ namespace Rhisis.World.Systems.Battle
         /// <param name="entity">Living entity using the weapon.</param>
         /// <param name="weapon">Weapon used by the living entity.</param>
         /// <returns><see cref="AttackResult"/> with AttackMin and AttackMax range.</returns>
-        public static AttackResult GetWeaponAttackPower(ILivingEntity entity, Item weapon)
+        public static AttackResult GetWeaponAttackPower(ILivingEntity entity, InventoryItem weapon)
         {
             float multiplier = GetWeaponItemMultiplier(weapon);
             int power = weapon?.Refine > 0 ? (int)Math.Pow(weapon?.Refine ?? default, 1.5f) : default;
@@ -119,11 +119,11 @@ namespace Rhisis.World.Systems.Battle
         /// </summary>
         /// <param name="weapon">Current used weapon.</param>
         /// <returns></returns>
-        public static float GetWeaponItemMultiplier(Item weapon)
+        public static float GetWeaponItemMultiplier(InventoryItem weapon)
         {
             // TODO: check if item has expired.
             float multiplier = 1.0f;
-            int refine = weapon.Data.WeaponKind == WeaponKindType.Ultimate ? Item.RefineMax : weapon.Refine;
+            int refine = weapon.Data.WeaponKind == WeaponKindType.Ultimate ? InventoryItem.RefineMax : weapon.Refine;
 
             if (refine > 0)
             {
@@ -141,7 +141,7 @@ namespace Rhisis.World.Systems.Battle
         /// <param name="entity">Current entity.</param>
         /// <param name="weapon">Current entity weapon.</param>
         /// <returns>Weapon extra damages</returns>
-        public static int GetWeaponExtraDamages(ILivingEntity entity, Item weapon)
+        public static int GetWeaponExtraDamages(ILivingEntity entity, InventoryItem weapon)
         {
             int extraDamages = weapon.Data.WeaponType switch
             {

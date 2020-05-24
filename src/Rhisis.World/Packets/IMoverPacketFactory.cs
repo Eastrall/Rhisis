@@ -77,7 +77,7 @@ namespace Rhisis.World.Packets
         /// <param name="entity">Entity.</param>
         /// <param name="flags">StateMode flags.</param>
         /// <param name="item">Optional item.</param>
-        void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null);
+        void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, InventoryItem item = null);
 
         /// <summary>
         /// Sends the entity following a target.

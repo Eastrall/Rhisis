@@ -105,7 +105,7 @@ namespace Rhisis.World.Game.Behaviors
 
                 if (dropItem.Probability * _worldConfiguration.Rates.Drop >= dropChance)
                 {
-                    var item = new Item(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
+                    var item = new InventoryItem(dropItem.ItemId, 1, -1, -1, -1, (byte)RandomHelper.Random(0, dropItem.ItemMaxRefine));
 
                     _dropSystem.DropItem(_monster, item, killerEntity);
                     itemCount++;
@@ -133,7 +133,7 @@ namespace Rhisis.World.Game.Behaviors
 
                     if (dropChance < itemDropProbability * _worldConfiguration.Rates.Drop)
                     {
-                        var item = new Item(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
+                        var item = new InventoryItem(itemData.Id, 1, -1, -1, -1, (byte)itemRefine);
 
                         _dropSystem.DropItem(_monster, item, killerEntity);
                         break;

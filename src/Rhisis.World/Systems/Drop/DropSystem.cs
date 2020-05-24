@@ -35,9 +35,9 @@ namespace Rhisis.World.Systems.Drop
         }
 
         /// <inheritdoc />
-        public void DropItem(IWorldEntity entity, ItemDescriptor item, IWorldEntity owner, int quantity = 1)
+        public void DropItem(IWorldEntity entity, ItemBase item, IWorldEntity owner, int quantity = 1)
         {
-            Item droppedItem = _itemFactory.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine);
+            InventoryItem droppedItem = _itemFactory.CreateInventoryItem(item.Id, item.Refine, item.Element, item.ElementRefine);
             IItemEntity newItem = _itemFactory.CreateItemEntity(entity.Object.CurrentMap, entity.Object.CurrentLayer, droppedItem, owner);
 
             newItem.Drop.Item.Quantity = quantity;
@@ -68,7 +68,7 @@ namespace Rhisis.World.Systems.Drop
             else if (gold > (DropGoldLimit3 * _worldServerConfiguration.Rates.Gold))
                 goldItemId = DefineItem.II_GOLD_SEED4;
 
-            DropItem(entity, new Item(goldItemId), owner, gold);
+            DropItem(entity, new InventoryItem(goldItemId), owner, gold);
         }
     }
 }

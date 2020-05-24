@@ -56,14 +56,14 @@ namespace Rhisis.World.Game.Chat
             byte elementRefine = parameters.Length >= 5 ? Convert.ToByte(parameters[4]) : (byte)0;
 
             string itemInput = parameters[0].ToString();
-            Item itemToCreate;
+            InventoryItem itemToCreate;
             if (!int.TryParse(itemInput, out int itemId))
             {
-                itemToCreate = _itemFactory.CreateItem(itemInput, refine, element, elementRefine, player.PlayerData.Id);
+                itemToCreate = _itemFactory.CreateInventoryItem(itemInput, refine, element, elementRefine, player.PlayerData.Id);
             }
             else
             {
-                itemToCreate = _itemFactory.CreateItem(itemId, refine, element, elementRefine, player.PlayerData.Id);
+                itemToCreate = _itemFactory.CreateInventoryItem(itemId, refine, element, elementRefine, player.PlayerData.Id);
             }
 
             if(itemToCreate != null)

@@ -158,10 +158,26 @@ namespace Rhisis.Cluster.Handlers
             };
 
             //TODO: create game constants for slot.
-            newCharacter.Items.Add(new DbItem(defaultEquipment.StartSuit, 44));
-            newCharacter.Items.Add(new DbItem(defaultEquipment.StartHand, 46));
-            newCharacter.Items.Add(new DbItem(defaultEquipment.StartShoes, 47));
-            newCharacter.Items.Add(new DbItem(defaultEquipment.StartWeapon, 52));
+            newCharacter.Items.Add(new DbInventoryItem
+            {
+                ItemId = defaultEquipment.StartSuit,
+                Slot = 44
+            });
+            newCharacter.Items.Add(new DbInventoryItem
+            {
+                ItemId = defaultEquipment.StartHand,
+                Slot = 46
+            });
+            newCharacter.Items.Add(new DbInventoryItem
+            {
+                ItemId = defaultEquipment.StartShoes,
+                Slot = 47
+            });
+            newCharacter.Items.Add(new DbInventoryItem
+            {
+                ItemId = defaultEquipment.StartWeapon,
+                Slot = 52
+            });
 
             _database.Characters.Add(newCharacter);
             _database.SaveChanges();
@@ -286,6 +302,7 @@ namespace Rhisis.Cluster.Handlers
         {
             return _database.Characters.AsNoTracking()
                 .Include(x => x.Items)
+                    .ThenInclude(x => x.Item)
                 .Where(x => x.UserId == userId && !x.IsDeleted);
         }
     }

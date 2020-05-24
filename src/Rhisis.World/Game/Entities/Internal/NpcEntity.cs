@@ -51,7 +51,7 @@ namespace Rhisis.World.Game.Entities.Internal
         public TimerComponent Timers { get; set; }
 
         /// <inheritdoc />
-        public Item Hand { get; set; }
+        public InventoryItem Hand { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="NpcEntity"/> instance.

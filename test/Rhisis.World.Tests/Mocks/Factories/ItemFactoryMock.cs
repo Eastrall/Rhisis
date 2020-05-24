@@ -13,7 +13,7 @@ namespace Rhisis.World.Tests.Mocks.Factories
 {
     public class ItemFactoryMock : IItemFactory
     {
-        public Item CreateItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
+        public InventoryItem CreateInventoryItem(int id, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
         {
             var itemData = new ItemData
             {
@@ -21,16 +21,16 @@ namespace Rhisis.World.Tests.Mocks.Factories
                 Name = $"Item n°{id}"
             };
 
-            return new Item(id, refine, element, elementRefine, itemData, creatorId);
+            return new InventoryItem(id, refine, element, elementRefine, itemData, creatorId);
         }
 
-        public Item CreateItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
+        public InventoryItem CreateInventoryItem(string name, byte refine, ElementType element, byte elementRefine, int creatorId = -1)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public Item CreateItem(DbItem databaseItem)
+        public InventoryItem CreateInventoryItem(DbInventoryItem databaseItem)
         {
             var itemData = new ItemData
             {
@@ -38,10 +38,10 @@ namespace Rhisis.World.Tests.Mocks.Factories
                 Name = $"Item n°{databaseItem.ItemId}"
             };
 
-            return new Item(databaseItem, itemData);
+            return new InventoryItem(databaseItem, itemData);
         }
 
-        public IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemDescriptor item, IWorldEntity owner = null)
+        public IItemEntity CreateItemEntity(IMapInstance currentMapContext, IMapLayer currentMapLayerContext, ItemBase item, IWorldEntity owner = null)
         {
             throw new NotImplementedException();
         }

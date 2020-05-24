@@ -4,14 +4,8 @@ using System.Runtime.Serialization;
 namespace Rhisis.Core.Structures.Game
 {
     [DataContract]
-    public class ItemDescriptor
+    public class ItemBase
     {
-        /// <summary>
-        /// Gets the item database id.
-        /// </summary>
-        [IgnoreDataMember]
-        public int DbId { get; protected set; }
-
         /// <summary>
         /// Gets the item Id.
         /// </summary>
@@ -49,10 +43,12 @@ namespace Rhisis.Core.Structures.Game
         public ItemData Data { get; protected set; }
 
         /// <summary>
-        /// Creates a new <see cref="ItemDescriptor"/> instance.
+        /// Creates a new <see cref="ItemBase"/> instance.
         /// </summary>
-        protected ItemDescriptor()
+        protected ItemBase()
         {
         }
+
+        public override string ToString() => $"{Data?.Name ?? "[undefined]"}";
     }
 }

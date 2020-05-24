@@ -150,7 +150,7 @@ namespace Rhisis.World.Packets.Internal
         }
 
         /// <inheritdoc />
-        public void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, Item item = null)
+        public void SendStateMode(IWorldEntity entity, StateModeBaseMotion flags, InventoryItem item = null)
         {
             using var packet = new FFPacket();
             

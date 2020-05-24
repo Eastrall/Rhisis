@@ -19,6 +19,6 @@ namespace Rhisis.World.Systems.SpecialEffect
         /// <param name="entity">Entity that activates or deactivates the state mode.</param>
         /// <param name="motionState"></param>
         /// <param name="item"></param>
-        void SetStateModeBaseMotion(IWorldEntity entity, StateModeBaseMotion motionState, Item item = null);
+        void SetStateModeBaseMotion(IWorldEntity entity, StateModeBaseMotion motionState, InventoryItem item = null);
     }
 }

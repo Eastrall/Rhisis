@@ -64,7 +64,7 @@ namespace Rhisis.World.Systems.Battle.Arbiters
                 attackMax = Skill.LevelData.AbilityMax;
             }
 
-            Item weaponItem = Attacker.Hand;
+            InventoryItem weaponItem = Attacker.Hand;
 
             if (Attacker is IPlayerEntity player)
             {

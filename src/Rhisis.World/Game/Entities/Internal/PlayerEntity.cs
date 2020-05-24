@@ -71,7 +71,7 @@ namespace Rhisis.World.Game.Entities.Internal
         public SkillTreeComponent SkillTree { get; set; }
 
         /// <inheritdoc />
-        public Item Hand { get; set; }
+        public InventoryItem Hand { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="PlayerEntity"/> instance.

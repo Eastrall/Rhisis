@@ -127,7 +127,7 @@ namespace Rhisis.World.Game.Factories.Internal
             player.Timers.NextHealTime = Time.TimeInSeconds() + RecoverySystem.NextIdleHealStand;
 
             player.Behavior = _behaviorManager.GetDefaultBehavior(BehaviorType.Player, player);
-            player.Hand = _itemFactory.CreateItem(11, 0, ElementType.None, 0);
+            player.Hand = _itemFactory.CreateInventoryItem(11, 0, ElementType.None, 0);
 
             var gameServices = _serviceProvider.GetRequiredService<IEnumerable<IGameSystemLifeCycle>>().OrderBy(x => x.Order);
 

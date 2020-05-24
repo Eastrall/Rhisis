@@ -26,7 +26,7 @@ namespace Rhisis.World.Packets.Internal
         }
 
         /// <inheritdoc />
-        public void SendItemEquip(IPlayerEntity entity, Item item, int targetPart, bool equip)
+        public void SendItemEquip(IPlayerEntity entity, InventoryItem item, int targetPart, bool equip)
         {
             using var packet = new FFPacket();
             
@@ -43,7 +43,7 @@ namespace Rhisis.World.Packets.Internal
         }
 
         /// <inheritdoc />
-        public void SendItemCreation(IPlayerEntity entity, Item item)
+        public void SendItemCreation(IPlayerEntity entity, InventoryItem item)
         {
             using var packet = new FFPacket();
             

@@ -286,7 +286,7 @@ namespace Rhisis.World.Systems.Skills
                 return false;
             }
 
-            Item rightWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon);
+            InventoryItem rightWeapon = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon);
 
             if (skill.Data.LinkKind.HasValue)
             {
@@ -306,7 +306,7 @@ namespace Rhisis.World.Systems.Skills
                         break;
 
                     case ItemKind3.SHIELD:
-                        Item leftWeapon = player.Inventory.GetEquipedItem(ItemPartType.LeftWeapon);
+                        InventoryItem leftWeapon = player.Inventory.GetEquipedItem(ItemPartType.LeftWeapon);
 
                         playerHasCorrectWeapon = leftWeapon == null || leftWeapon.Data?.ItemKind3 != ItemKind3.SHIELD;
                         break;
@@ -330,7 +330,7 @@ namespace Rhisis.World.Systems.Skills
 
             if (skill.Data.BulletLinkKind.HasValue)
             {
-                Item bulletItem = player.Inventory.GetEquipedItem(ItemPartType.Bullet);
+                InventoryItem bulletItem = player.Inventory.GetEquipedItem(ItemPartType.Bullet);
 
                 if (bulletItem.Id == -1 || bulletItem.Data.ItemKind2 != skill.Data.BulletLinkKind)
                 {

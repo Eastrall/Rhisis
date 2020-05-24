@@ -1,31 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Rhisis.Database.Entities
 {
-    [Table("characters")]
     public sealed class DbCharacter : DbEntity
     {
         /// <summary>
         /// Gets or sets the character name.
         /// </summary>
-        [Required]
         public string Name { get; set; }
         
         /// <summary>
         /// Gets or sets the character gender.
         /// </summary>
-        [Required]
         public byte Gender { get; set; }
         
         /// <summary>
         /// Gets or sets the character level.
         /// </summary>
-        [Required]
-        [DefaultValue(1)]
         public int Level { get; set; }
         
         /// <summary>
@@ -46,8 +38,6 @@ namespace Rhisis.Database.Entities
         /// <summary>
         /// Gets or sets the character slot.
         /// </summary>
-        [Required]
-        [Column(TypeName = "TINYINT")]
         public byte Slot { get; set; }
         
         /// <summary>
@@ -88,25 +78,21 @@ namespace Rhisis.Database.Entities
         /// <summary>
         /// Gets or sets the character skin set id.
         /// </summary>
-        [Required]
         public int SkinSetId { get; set; }
 
         /// <summary>
         /// Gets or sets the character hair id.
         /// </summary>
-        [Required]
         public int HairId { get; set; }
 
         /// <summary>
         /// Gets or sets the character hair color.
         /// </summary>
-        [Required]
         public int HairColor { get; set; }
 
         /// <summary>
         /// Gets or sets the character hair id.
         /// </summary>
-        [Required]
         public int FaceId { get; set; }
         
         /// <summary>
@@ -142,7 +128,6 @@ namespace Rhisis.Database.Entities
         /// <summary>
         /// Gets or sets the character bank code.
         /// </summary>
-        [Column(TypeName = "SMALLINT(4)")]
         public int BankCode { get; set; }
         
         /// <summary>
@@ -158,37 +143,37 @@ namespace Rhisis.Database.Entities
         /// <summary>
         /// Gets or sets the last connection time.
         /// </summary>
-        [Column(TypeName = "DATETIME")]
         public DateTime LastConnectionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the play time amount in seconds.
         /// </summary>
-        [Column(TypeName = "BIGINT")]
         public long PlayTime { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the character is deleted.
         /// </summary>
-        [DefaultValue(false)]
         public bool IsDeleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cluster id where this character belongs.
+        /// </summary>
+        public int ClusterId { get; set; }
 
         /// <summary>
         /// Gets the character associated user id.
         /// </summary>
-        [Required]
         public int UserId { get; set; }
 
         /// <summary>
         /// Gets the character associated user.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
         public DbUser User { get; set; }
 
         /// <summary>
         /// Gets the character items.
         /// </summary>
-        public ICollection<DbItem> Items { get; set; }
+        public ICollection<DbInventoryItem> Items { get; set; }
 
         /// <summary>
         /// Gets the character received mails.
@@ -207,7 +192,7 @@ namespace Rhisis.Database.Entities
 
         public DbCharacter()
         {
-            Items = new HashSet<DbItem>();
+            Items = new HashSet<DbInventoryItem>();
             ReceivedMails = new HashSet<DbMail>();
             SentMails = new HashSet<DbMail>();
             TaskbarShortcuts = new HashSet<DbShortcut>();

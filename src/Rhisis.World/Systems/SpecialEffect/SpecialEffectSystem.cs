@@ -23,7 +23,7 @@ namespace Rhisis.World.Systems.SpecialEffect
         }
 
         /// <inheritdoc />
-        public void SetStateModeBaseMotion(IWorldEntity entity, StateModeBaseMotion motionState, Item item = null)
+        public void SetStateModeBaseMotion(IWorldEntity entity, StateModeBaseMotion motionState, InventoryItem item = null)
         {
             if (motionState == StateModeBaseMotion.BASEMOTION_ON)
             {

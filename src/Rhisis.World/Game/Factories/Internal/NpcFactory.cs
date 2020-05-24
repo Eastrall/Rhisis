@@ -67,7 +67,7 @@ namespace Rhisis.World.Game.Factories.Internal
             npc.Behavior = _behaviorManager.GetBehavior(BehaviorType.Npc, npc, npc.Object.ModelId);
             npc.Timers.LastSpeakTime = RandomHelper.Random(10, 15);
             npc.Quests = _gameResources.Quests.Values.Where(x => !string.IsNullOrEmpty(x.StartCharacter) && x.StartCharacter.Equals(npc.Object.Name, StringComparison.OrdinalIgnoreCase)).ToList();
-            npc.Hand = _itemFactory.CreateItem(11, 0, ElementType.None, 0);
+            npc.Hand = _itemFactory.CreateInventoryItem(11, 0, ElementType.None, 0);
 
             if (_gameResources.Npcs.TryGetValue(npc.Object.Name, out NpcData npcData))
             {
@@ -85,8 +85,8 @@ namespace Rhisis.World.Game.Factories.Internal
 
                     for (var j = 0; j < npcShopData.Items[i].Count && j < npc.Shop[i].MaxCapacity; j++)
                     {
-                        ItemDescriptor item = npcShopData.Items[i][j];
-                        Item shopItem = _itemFactory.CreateItem(item.Id, item.Refine, item.Element, item.ElementRefine);
+                        ItemBase item = npcShopData.Items[i][j];
+                        InventoryItem shopItem = _itemFactory.CreateInventoryItem(item.Id, item.Refine, item.Element, item.ElementRefine);
 
                         shopItem.Slot = j;
                         shopItem.Quantity = shopItem.Data.PackMax;

@@ -138,13 +138,13 @@ namespace Rhisis.Cluster.Packets
                     packet.Write(0); // Mode ??
 
                     const int EquipOffset = 42;
-                    IEnumerable<DbItem> equipedItems = character.Items.Where(x => x.ItemSlot > EquipOffset && !x.IsDeleted);
+                    IEnumerable<DbInventoryItem> equipedItems = character.Items.Where(x => x.Slot > EquipOffset && !x.Item.IsDeleted);
 
                     packet.Write(equipedItems.Count());
 
-                    foreach (DbItem item in equipedItems)
+                    foreach (DbInventoryItem inventoryItem in equipedItems)
                     {
-                        packet.Write(item.ItemId);
+                        packet.Write(inventoryItem.Item.ItemId);
                     }
                 }
 

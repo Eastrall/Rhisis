@@ -127,14 +127,14 @@ namespace Rhisis.World.Systems.Battle
         {
             if (attacker is IPlayerEntity player)
             {
-                Item equipedItem = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon);
+                InventoryItem equipedItem = player.Inventory.GetEquipedItem(ItemPartType.RightWeapon);
 
                 if (equipedItem == null || equipedItem.Data.WeaponType != WeaponType.RANGE_BOW)
                 {
                     return;
                 }
 
-                Item bulletItem = player.Inventory.GetEquipedItem(ItemPartType.Bullet);
+                InventoryItem bulletItem = player.Inventory.GetEquipedItem(ItemPartType.Bullet);
 
                 if (bulletItem == null || bulletItem.Data.ItemKind3 != ItemKind3.ARROW)
                 {

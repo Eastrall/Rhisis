@@ -141,7 +141,7 @@ namespace Rhisis.World.Systems.Trade
                 return;
             }
 
-            Item inventoryItem = player.Inventory.GetItemAtIndex(itemUniqueId);
+            InventoryItem inventoryItem = player.Inventory.GetItemAtIndex(itemUniqueId);
 
             if (inventoryItem == null)
             {
@@ -334,7 +334,7 @@ namespace Rhisis.World.Systems.Trade
         /// <param name="itemToTrade">Item to trade.</param>
         /// <param name="errorText">Output error text if item is not valid.</param>
         /// <returns>True if item is valid; false otherwise.</returns>
-        private bool IsTradeItemValid(IPlayerEntity player, Item itemToTrade, out DefineText errorText)
+        private bool IsTradeItemValid(IPlayerEntity player, InventoryItem itemToTrade, out DefineText errorText)
         {
             errorText = DefineText.TID_BLANK;
 
@@ -440,12 +440,12 @@ namespace Rhisis.World.Systems.Trade
         {
             for (int i = 0; i < MaxTrade; i++)
             {
-                Item item = player.Trade.Items.ElementAt(i);
+                InventoryItem item = player.Trade.Items.ElementAt(i);
 
                 if (item == null || item.Slot == -1)
                     continue;
 
-                Item newItem = item.Clone();
+                InventoryItem newItem = item.Clone();
                 int tradeQuantity = item.ExtraUsed;
                 int futureQuantity = Math.Max(item.Quantity - tradeQuantity, 0);
 

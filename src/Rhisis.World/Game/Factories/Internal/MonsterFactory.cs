@@ -75,7 +75,7 @@ namespace Rhisis.World.Game.Factories.Internal
             monster.Attributes[DefineAttributes.DEX] = moverData.Dexterity;
             monster.Attributes[DefineAttributes.INT] = moverData.Intelligence;
             monster.Behavior = _behaviorManager.GetBehavior(BehaviorType.Monster, monster, moverId);
-            monster.Hand = _itemFactory.CreateItem(11, 0, ElementType.None, 0);
+            monster.Hand = _itemFactory.CreateInventoryItem(11, 0, ElementType.None, 0);
 
             if (moverData.Class == MoverClassType.RANK_BOSS)
             {

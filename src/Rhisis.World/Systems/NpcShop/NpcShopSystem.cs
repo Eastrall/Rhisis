@@ -98,7 +98,7 @@ namespace Rhisis.World.Systems.NpcShop
                 return;
             }
 
-            Item shopItem = shopTab.GetItemAtSlot(shopItemInfo.Slot);
+            InventoryItem shopItem = shopTab.GetItemAtSlot(shopItemInfo.Slot);
 
             if (shopItem.Id != shopItemInfo.ItemId)
             {
@@ -124,7 +124,7 @@ namespace Rhisis.World.Systems.NpcShop
         /// <inheritdoc />
         public void SellItem(IPlayerEntity player, int playerItemUniqueId, int quantity)
         {
-            Item itemToSell = player.Inventory.GetItemAtIndex(playerItemUniqueId);
+            InventoryItem itemToSell = player.Inventory.GetItemAtIndex(playerItemUniqueId);
 
             if (itemToSell == null)
                 throw new ArgumentNullException(nameof(itemToSell), $"Cannot find item with unique id: '{playerItemUniqueId}' in '{player.Object.Name}''s inventory.");
