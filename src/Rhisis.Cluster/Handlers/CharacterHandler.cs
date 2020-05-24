@@ -155,6 +155,7 @@ namespace Rhisis.Cluster.Handlers
                 StatPoints = 0, //TODO: create default stat point constant.
                 SkillPoints = 0, //TODO: create default skill point constant.
                 Experience = 0,
+                ClusterId = _clusterServer.ClusterConfiguration.Id
             };
 
             //TODO: create game constants for slot.
