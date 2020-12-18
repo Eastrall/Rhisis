@@ -5,7 +5,6 @@ using Rhisis.Network;
 using Rhisis.Network.Packets.World;
 using Sylver.HandlerInvoker.Attributes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -19,6 +18,10 @@ namespace Rhisis.WorldServer.Handlers
     {
         private readonly IChatCommandManager _chatCommandManager;
 
+        /// <summary>
+        /// Creates a new <see cref="ChatHandler"/> instance.
+        /// </summary>
+        /// <param name="chatCommandManager">Chat command manager.</param>
         public ChatHandler(IChatCommandManager chatCommandManager)
         {
             _chatCommandManager = chatCommandManager;
