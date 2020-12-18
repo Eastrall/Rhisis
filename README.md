@@ -8,7 +8,7 @@
   <a href="http://forthebadge.com"><img src="http://forthebadge.com/images/badges/built-with-love.svg"></a><br>
 </p>
 
-<h4>Built with C# 8 and the <a href="https://dotnet.microsoft.com/download/dotnet-core" target="_blank">.NET Core Framework 3.0</a>.</h4>
+<h4>Built with C# 9 and the <a href="https://dotnet.microsoft.com/download/dotnet-core" target="_blank">.NET 5</a>.</h4>
 
 <p>This project has been created for learning purposes about the network and game logic problematics on the server-side.<br>
 We choose to use the <a href="https://github.com/Eastrall/Sylver.Network">Sylver.Network</a> to manage our server connecitions because it provides a clients management system and also a robust packet management system entirely customisable.</p>
@@ -35,10 +35,18 @@ We choose to use the <a href="https://github.com/Eastrall/Sylver.Network">Sylver
 
 <p align="center"><img src="https://i.imgur.com/wpfB1VZ.gif"></p>
 
+## Status
+
+| Project 	| Status 	|
+|---------	|--------	|
+| Login Server |        	|
+| Cluster Server |        	|
+| World Server |    |
+
 ## Technical information
 
 - Language: `C#` 9 (latest)
-- Framework: `.NET Core 3.0`
+- Framework: `.NET 5`
 - Application type: `Console` with `Docker` support
 - Database type: `MySQL`
 - Configuration files type: `JSON`

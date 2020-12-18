@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
@@ -94,6 +95,13 @@ namespace Rhisis.Core.Structures.Configuration
         [IgnoreDataMember]
         [NotMapped]
         public bool IsValid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MySQL server version number.
+        /// </summary>
+        [DataMember(Name = "serverVersion")]
+        [Display(Name = "MySQL Server version", Order = 8)]
+        public Version ServerVersion { get; set; } = new Version(5, 7, 32);
 
         /// <inheritdoc />
         public override string ToString() 

@@ -66,6 +66,16 @@ namespace Rhisis.CLI.Core
                     case ObjectPropertyType.YesNo:
                         objectProperty.Value = _consoleHelper.AskConfirmation();
                         break;
+                    case ObjectPropertyType.Version:
+                        string versionInput = _consoleHelper.ReadStringOrDefault(objectProperty.Value?.ToString());
+
+                        if (!Version.TryParse(versionInput, out Version version))
+                        {
+                            throw new InvalidOperationException($"Failed to parse version: '{versionInput}'");
+                        }
+
+                        objectProperty.Value = version;
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

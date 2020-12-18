@@ -76,6 +76,8 @@ namespace Rhisis.CLI.Core
                 Type = ObjectPropertyType.YesNo;
             else if (propertyInfo.PropertyType == typeof(string))
                 Type = ObjectPropertyType.String;
+            else if (propertyInfo.PropertyType == typeof(Version))
+                Type = ObjectPropertyType.Version;
             else
                 Type = ObjectPropertyType.Number;
         }

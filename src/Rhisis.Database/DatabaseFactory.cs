@@ -1,9 +1,9 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Rhisis.Core.Structures.Configuration;
+using System;
 
 namespace Rhisis.Database
 {
@@ -40,7 +40,9 @@ namespace Rhisis.Database
         /// <returns>A new instance of an IDatabase implementation</returns>
         public IRhisisDatabase CreateDatabaseInstance(DatabaseConfiguration configuration)
         {
-            var optionsBuilder = new DbContextOptionsBuilder().UseMySql(BuildConnectionString(configuration));
+            var optionsBuilder = new DbContextOptionsBuilder().UseMySql(
+                BuildConnectionString(configuration), 
+                new MySqlServerVersion(configuration.ServerVersion));
 
             return new RhisisDatabaseContext(optionsBuilder.Options, configuration);
         }

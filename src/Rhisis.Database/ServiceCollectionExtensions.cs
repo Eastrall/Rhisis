@@ -11,14 +11,15 @@ namespace Rhisis.Database
         {
             IConfigurationSection databaseConfigSection = configuration.GetSection(ConfigurationConstants.DatabaseConfiguration);
             DatabaseConfiguration databaseConfiguration = databaseConfigSection.Get<DatabaseConfiguration>();
-            
+            var mysqlServerVersion = new MySqlServerVersion(databaseConfiguration.ServerVersion);
+
             services.AddDbContext<IRhisisDatabase, RhisisDatabaseContext>(options =>
             {
-                options.UseMySql(DatabaseFactory.BuildConnectionString(databaseConfiguration));
+            options.UseMySql(DatabaseFactory.BuildConnectionString(databaseConfiguration), mysqlServerVersion);
             }, ServiceLifetime.Transient);
             services.AddDbContext<RhisisDatabaseContext>(options =>
             {
-                options.UseMySql(DatabaseFactory.BuildConnectionString(databaseConfiguration));
+                options.UseMySql(DatabaseFactory.BuildConnectionString(databaseConfiguration), mysqlServerVersion);
             }, ServiceLifetime.Transient);
 
             services.AddSingleton(databaseConfiguration); // TODO: remove this and use IOptions<> instead

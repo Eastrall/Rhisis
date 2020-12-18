@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{4DB760
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		.travis.yml = .travis.yml
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
 		LICENSE = LICENSE
@@ -56,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhisis.WorldServer", "src\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhisis.ClusterServer", "src\Rhisis.ClusterServer\Rhisis.ClusterServer.csproj", "{6D99DDA4-3132-49ED-8533-057CEC3D48B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhisis.Redis", "src\Rhisis.Redis\Rhisis.Redis.csproj", "{6C0CB974-1A11-4A97-8995-8C5388111156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhisis.Redis", "src\Rhisis.Redis\Rhisis.Redis.csproj", "{6C0CB974-1A11-4A97-8995-8C5388111156}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

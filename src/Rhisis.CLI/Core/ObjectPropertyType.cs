@@ -5,6 +5,7 @@ namespace Rhisis.CLI.Core
     {
         String,
         YesNo,
-        Number
+        Number,
+        Version
     }
 }

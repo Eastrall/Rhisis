@@ -3,13 +3,12 @@ using Microsoft.EntityFrameworkCore.DataEncryption;
 using Microsoft.EntityFrameworkCore.DataEncryption.Providers;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Rhisis.Core.Structures.Configuration;
 using Rhisis.Database.Entities;
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using Rhisis.Core.Structures.Configuration;
 
 namespace Rhisis.Database
 {
@@ -112,7 +111,7 @@ namespace Rhisis.Database
                 Database.OpenConnection();
                 Database.CloseConnection();
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 return false;
             }
