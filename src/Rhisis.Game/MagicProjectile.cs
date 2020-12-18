@@ -2,9 +2,11 @@
 using Rhisis.Game.Abstractions.Entities;
 using Rhisis.Game.Common;
 using System;
+using System.Diagnostics;
 
 namespace Rhisis.Game
 {
+    [DebuggerDisplay("Magic Projectile: {MagicPower}")]
     public class MagicProjectile : Projectile, IMagicProjectile
     {
         public override AttackFlags Type => AttackFlags.AF_MAGIC;
