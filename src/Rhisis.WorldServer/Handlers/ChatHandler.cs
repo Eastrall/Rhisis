@@ -24,7 +24,15 @@ internal sealed class ChatHandler : WorldPacketHandler
 
                 string[] commandParameters = GetCommandParameters(packet.Message, commandName, chatCommand.ParsingType);
 
-                chatCommand.Execute(Player, commandParameters);
+                // EMOTICON Part : BEGIN
+                if (chatCommand.GetType().Name == "GetEmoticonsCommand")
+                {   
+                    Player.Speak(packet.Message);
+                } else
+                {
+                    chatCommand.Execute(Player, commandParameters);
+                }
+                // EMOTICON Part : END
             }
             else
             {
