@@ -63,6 +63,8 @@ internal sealed class ChatHandler : WorldPacketHandler
                      throw new ArgumentException($"Cannot find chat command: '/{commandName}'", nameof(chatCommand));
 
                     string[] commandParameters = GetCommandParameters(packet.Message, commandName, chatCommand.ParsingType);
+
+                    chatCommand.Execute(Player, commandParameters);
                 }
 
             }
