@@ -263,11 +263,10 @@ public sealed class Player : Mover
     /// <summary>
     /// Sends a motion to every entities around.
     /// </summary>
-    /// <param name="message">Message.</param>
-    public void Motion(int motionId)
+    /// <param name="motion">motionId.</param>
+    public void Motion(ObjectMessageType motion)
     {
-        ObjectMessageType objectMessageType = (ObjectMessageType)motionId;
-        using MotionSnapshot snapshot = new(this, objectMessageType);
+        using MotionSnapshot snapshot = new(this, motion);
 
         SendToVisible(snapshot, sendToSelf: true);
     }

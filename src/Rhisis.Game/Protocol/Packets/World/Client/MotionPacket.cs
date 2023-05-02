@@ -1,3 +1,4 @@
+using Rhisis.Game.Common;
 using Rhisis.Protocol;
 
 namespace Rhisis.Game.Protocol.Packets.World.Client;
@@ -5,12 +6,12 @@ namespace Rhisis.Game.Protocol.Packets.World.Client;
 public class MotionPacket
 {
     /// <summary>
-    /// Gets the motion id.
+    /// Gets the motion.
     /// </summary>
-    public int MotionId { get; private set; }
+    public ObjectMessageType Motion { get; private set; }
 
     public MotionPacket(FFPacket packet)
     {
-        MotionId = packet.ReadInt32();
+        Motion = (ObjectMessageType)packet.ReadInt32();
     }
 }
