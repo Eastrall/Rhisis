@@ -8,10 +8,10 @@ public class MotionPacket
     /// <summary>
     /// Gets the motion.
     /// </summary>
-    public ObjectMessageType Motion { get; private set; }
+    public ObjectMessageType MotionEnum { get; private set; }
 
     public MotionPacket(FFPacket packet)
     {
-        Motion = (ObjectMessageType)packet.ReadInt32();
+        MotionEnum = (ObjectMessageType)packet.ReadInt32();
     }
 }
