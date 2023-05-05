@@ -8,7 +8,7 @@ public class MotionPacket
     /// <summary>
     /// Gets the motion.
     /// </summary>
-    public ObjectMessageType MotionEnum { get; private set; }
+    public ObjectMessageType MotionEnum { get; }
 
     public MotionPacket(FFPacket packet)
     {
